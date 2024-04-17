@@ -1,0 +1,28 @@
+# DOCKERFILE used for local development
+# must be located in the root project folder
+
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["src/{{cookiecutter.assembly_name}}/{{cookiecutter.assembly_name}}.csproj", "src/{{cookiecutter.assembly_name}}/"]
+COPY ["src/{{cookiecutter.assembly_name}}.Api/{{cookiecutter.assembly_name}}.Api.csproj", "src/{{cookiecutter.assembly_name}}.Api/"]
+COPY ["src/{{cookiecutter.assembly_name}}.Data.Abstractions/{{cookiecutter.assembly_name}}.Data.Abstractions.csproj", "src/{{cookiecutter.assembly_name}}.Data.Abstractions/"]
+COPY ["src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj", "src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/"]
+
+RUN dotnet restore "src/{{cookiecutter.assembly_name}}/{{cookiecutter.assembly_name}}.csproj" -s https://www.myget.org/F/lpoint/auth/01429c3b-aacd-4dba-8fba-74cc294ed537/api/v3/index.json
+COPY . .
+
+# build the application
+WORKDIR "/src/{{cookiecutter.assembly_name}}"
+RUN dotnet build "{{cookiecutter.assembly_name}}.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "{{cookiecutter.assembly_name}}.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+ENTRYPOINT ["dotnet", "{{cookiecutter.assembly_name}}.dll"]
