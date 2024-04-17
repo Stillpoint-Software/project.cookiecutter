@@ -8,6 +8,7 @@ The solution includes the following projects:
 - Abstractions
 - Database
 - Migrations
+- Tests
 
 # How to run
 
