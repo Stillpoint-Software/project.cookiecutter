@@ -28,10 +28,10 @@ services:
     environment:
       Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name}}-container;User Id=postgres;Password=postgres
 
-  project:
-    image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name}}
-    container_name: {{cookiecutter.assembly_name}}
-    hostname: {{cookiecutter.assembly_name}}
+  {{cookiecutter.assembly_name|lower}}:
+    image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name|lower}}
+    container_name: {{cookiecutter.assembly_name|lower}}
+    hostname: {{cookiecutter.assembly_name|lower}}
     build:
       context: .
       dockerfile: src/{{cookiecutter.assembly_name}}/Dockerfile
@@ -39,7 +39,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name}}-container;User Id=postgres;Password=postgres
+      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id=postgres;Password=postgres
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
