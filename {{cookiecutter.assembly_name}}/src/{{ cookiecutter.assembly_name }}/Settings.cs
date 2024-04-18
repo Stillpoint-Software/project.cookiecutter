@@ -7,6 +7,7 @@ public class ApiSettings
     public string WebUrl { get; set; }
 }
 
+{%- if cookiecutter.include_azure == "yes" -%}
 public class ApplicationInsights
 {
     public string ConnectionString { get; set; }
@@ -40,3 +41,4 @@ public class AzureContainerRegistrySettings
     public string User { get; set; }
     public string Password { get; set; }
 }
+{% endif %}

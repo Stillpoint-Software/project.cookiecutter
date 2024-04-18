@@ -1,5 +1,4 @@
 ﻿namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
-
 public class AuthSettings
 {
     public string Domain { get; set; }

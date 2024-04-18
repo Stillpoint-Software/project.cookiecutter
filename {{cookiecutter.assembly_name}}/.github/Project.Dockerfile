@@ -13,7 +13,7 @@ WORKDIR /src
 COPY ["src/{{cookiecutter.assembly_name}}/{{cookiecutter.assembly_name}}.csproj", "src/{{cookiecutter.assembly_name}}/"]
 COPY ["src/{{cookiecutter.assembly_name}}.Api/{{cookiecutter.assembly_name}}.Api.csproj", "src/{{cookiecutter.assembly_name}}.Api/"]
 COPY ["src/{{cookiecutter.assembly_name}}.Data.Abstractions/{{cookiecutter.assembly_name}}.Data.Abstractions.csproj", "src/{{cookiecutter.assembly_name}}.Data.Abstractions/"]
-COPY ["src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/GlyphEditor.Data.{{cookiecutter.database}}.csproj", "src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/"]
+COPY ["src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj", "src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/"]
 COPY ["tests/{{cookiecutter.assembly_name}}.Tests/{{cookiecutter.assembly_name}}.Tests.csproj", "tests/{{cookiecutter.assembly_name}}.Tests/"]
 COPY ["tests/{{cookiecutter.assembly_name}}.Tests/Resources/", "tests/{{cookiecutter.assembly_name}}.Tests/Resources/"]
 

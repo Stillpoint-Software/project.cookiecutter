@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  project:
+  {{ cookiecutter.assembly_name|lower }}:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80

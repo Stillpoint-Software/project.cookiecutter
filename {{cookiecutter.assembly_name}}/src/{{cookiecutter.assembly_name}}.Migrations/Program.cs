@@ -23,13 +23,16 @@ internal class Program
                 .CreateDefaultBuilder()
                 .ConfigureAppConfiguration( ( context, builder ) =>
                 {
+                    {%- if cookiecutter.include_azure == "yes" -%}
                     // WARNING: Use the pre-built bootstrapConfig instead of context.Configuration 
                     var vaultName = bootstrapConfig["Azure:KeyVault:VaultName"];
-
+                    {% endif %}
                     builder
                         .AddAppSettingsFile()
                         .AddAppSettingsEnvironmentFile()
+                         {%- if cookiecutter.include_azure == "yes" -%}
                         .AddAzureSecrets( context.HostingEnvironment, vaultName, bootstrapLogger )
+                        {% endif %}
                         .AddUserSecrets<Program>( optional: true )
                         .AddEnvironmentVariables()
                         .AddCommandLineEx( args, SwitchMappings() );

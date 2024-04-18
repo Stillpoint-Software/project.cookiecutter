@@ -8,9 +8,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
-
+     {%- if cookiecutter.include_oauth == "yes" -%}
 public class AuthService : IAuthService
 {
+
     private readonly IHttpClientFactory _clientFactory;
     private readonly AuthSettings _authSettings;
     private readonly ILogger _logger;
@@ -21,7 +22,7 @@ public class AuthService : IAuthService
         _authSettings = authSettings.Value;
         _logger = logger;
     }
-
+    
     public async Task<string> GetApiToken()
     {
         try
@@ -101,8 +102,10 @@ public class AuthService : IAuthService
             throw new ServiceException( nameof( CreateUser ), "Error creating user", ex );
         }
     }
-
+ 
 }
+   {% endif %}
+  {%- if cookiecutter.include_oauth == "yes" -%}
 public record AuthResult
 {
     [JsonPropertyName( "access_token" )]
@@ -114,4 +117,5 @@ public record AuthResult
     public string TokenType { get; set; }
 
 }
+ {% endif %}
 

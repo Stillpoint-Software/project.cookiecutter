@@ -67,7 +67,7 @@ public class MainService : BackgroundService
         if ( reset )
         {
             var resetRunner = DeployChanges.To
-                .PostgresqlDatabase( connectionString )
+                .{{cookiecutter.database}}Database( connectionString )
                 .WithScriptsEmbeddedInAssembly( Assembly.GetExecutingAssembly(), ResetFilter( assemblyName ) )
                 .JournalTo( new NullJournal() )
                 .LogToConsole()
@@ -80,7 +80,7 @@ public class MainService : BackgroundService
         }
 
         var upgrader = DeployChanges.To
-            .PostgresqlDatabase( connectionString )
+            .{{cookiecutter.database}}Database( connectionString )
             .WithScriptsEmbeddedInAssembly( Assembly.GetExecutingAssembly(), MigrationFilter( assemblyName, scriptRegex ) )
             .LogToConsole()
             .Build();

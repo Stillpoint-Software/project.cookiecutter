@@ -24,8 +24,10 @@ internal class Program
                     builder
                         .WithDefaults( context.Configuration )
                         .WithConsole()
-                        .WithFileWriter( context.Configuration )
+                        .WithFileWriter( context.Configuration );
+                         {%- if cookiecutter.include_azure == "yes" -%}
                         .WithAzureApplicationInsights( services );
+                        {% endif %}
                 } )
                 .ConfigureWebHostDefaults( builder =>
                 {
@@ -34,13 +36,17 @@ internal class Program
                 } )
                 .ConfigureAppConfiguration( ( context, builder ) =>
                 {
+                    {%- if cookiecutter.include_azure == "yes" -%}
                     // WARNING: Use the pre-built bootstrapConfig instead of context.Configuration
                     var vaultName = bootstrapConfig["Azure:KeyVault:VaultName"];
+                    {% endif %}
 
                     builder
                         .AddAppSettingsFile()
                         .AddAppSettingsEnvironmentFile()
+                          {%- if cookiecutter.include_azure == "yes" -%}
                         .AddAzureSecrets( context.HostingEnvironment, vaultName )
+                          {% endif %}
                         .AddUserSecrets<Program>( optional: true ) // secrets won't exist in non-local environments
                         .AddEnvironmentVariables();
                 } )

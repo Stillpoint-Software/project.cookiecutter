@@ -14,6 +14,7 @@ namespace {{cookiecutter.assembly_name}}.Api.Identity;
 
 public class CryptoRandom : Random
 {
+     {%- if cookiecutter.include_azure == "yes" -%}
     private readonly RandomNumberGenerator _randomizer = RandomNumberGenerator.Create();
     private readonly byte[] _buffer = new byte[sizeof( int )];
 
@@ -80,4 +81,5 @@ public class CryptoRandom : Random
 
         return rand / (1.0 + uint.MaxValue);
     }
+    {% endif %}
 }

@@ -38,12 +38,14 @@ public class Startup : IStartupRegistry
         // additional registrations
         services.AddBackgroundServices();
         services.Configure<ApiSettings>( options => Configuration.GetSection( "Api" ).Bind( options ) );
+        
+        {%- if cookiecutter.include_azure == "yes" -%}
         services.Configure<AzureStorageSettings>( options =>
         {
             options.ConnectionString = Configuration.GetValue( "Azure:Storage:Data:ConnectionString", "" );
             options.ContainerName = Configuration.GetValue( "Azure:Storage:ContainerName", "" );
         } );
-
+        {% endif %}
     }
 }
 
