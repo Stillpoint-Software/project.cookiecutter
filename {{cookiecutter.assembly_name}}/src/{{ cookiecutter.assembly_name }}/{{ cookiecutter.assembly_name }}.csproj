@@ -46,7 +46,6 @@
     <None Remove="logs\**" />
   </ItemGroup>
  <ItemGroup>
-   <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
    <PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="8.0.1" />
    {%- if cookiecutter.include_azure == "yes" -%}
@@ -61,8 +60,9 @@
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="13.0.3" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
    {%- if cookiecutter.database == "Postgresql" -%}
+   <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
    <PackageReference Include="Npgsql" Version="8.0.2" />
-   {%- elif cookiecutter.database == "MongoDb" -%}
+   {%- elif cookiecutter.database == "Mongo" -%}
    <PackageReference Include="MongoDb.Driver" Version="2.25.0" />
    {% endif %}
    <PackageReference Include="Serilog" Version="3.1.1" />

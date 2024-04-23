@@ -61,7 +61,6 @@ public class Startup : IStartupRegistry
         {% endif %}
 
         // configure services
-
         services.AddCors( c => c.AddPolicy( "CorsAllowAll", build =>
         {
             build.AllowAnyOrigin()
@@ -90,8 +89,16 @@ public class Startup : IStartupRegistry
             x.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         } );
 
+        {%- if cookiecutter.database == "Postgresql" -%}
+
         services.AddHealthChecks()
             .AddNpgSql( Configuration["{{cookiecutter.database}}:ConnectionString"]! );
+        {%- elif cookiecutter.database == "Mongo" -%}
+        
+        services.AddHealthChecks()
+          .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
+        {% endif %}
+       
 
         services.AddApiVersioning( options =>
         {
@@ -216,11 +223,11 @@ public class Startup : IStartupRegistry
                 c.OAuthUsePkce();
                 {% endif %}
                 if ( !env.IsDevelopment() ) return;
-                   {%- if cookiecutter.include_oauth == "yes" -%}
+                {%- if cookiecutter.include_oauth == "yes" -%}
                 // preset id and secret in dev
                 c.OAuthClientId( Configuration["OAuth:Swagger:ClientId"] );
                 c.OAuthClientSecret( Configuration["OAuth:Swagger:ClientSecret"] );
-                  {% endif %}
+                {% endif %}
             } );
         }
     }

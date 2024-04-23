@@ -1,11 +1,16 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
-using DbUp;
-using DbUp.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using {{cookiecutter.assembly_name}}.Migrations.System;
+{%- if cookiecutter.database == "Postgresql" -%}
+using DbUp;
+using DbUp.Helpers;
+{%- elif cookiecutter.database == "Mongo" -%}
+{% endif %}
+
 
 namespace {{cookiecutter.assembly_name}}.Migrations;
 
@@ -43,6 +48,7 @@ public class MainService : BackgroundService
 
         _applicationLifetime.StopApplication();
     }
+   {%- if cookiecutter.database == "Postgresql" -%}
 
     private static async Task RunMigrationsAsync( IConfiguration configuration, ILoggerFactory logFactory, CancellationToken stoppingToken )
     {
@@ -105,4 +111,29 @@ public class MainService : BackgroundService
         return migration =>
             !string.Equals( migration, $"{assemblyName}.Scripts.HardReset.sql", StringComparison.OrdinalIgnoreCase ) || scriptPattern.IsMatch( migration );
     }
+   {%- elif cookiecutter.database == "Mongo" -%}
+    private static async Task RunMigrationsAsync( IConfiguration configuration, ILoggerFactory logFactory, CancellationToken stoppingToken )
+    {
+        try
+        {
+            var database = configuration["MongoDb:Database"];
+            var connectionString = configuration["MongoDb:ConnectionString"];
+            var logger = logFactory.CreateLogger( "Migrations" );
+
+            logger.LogInformation( "Migrating mongoDb database." );
+
+            var runner = new MigrationRunner( database, typeof( MigrationRunner ).Assembly );
+            await runner.UpAsync();
+
+            logger?.LogInformation( "Migrated mongoDb database." );
+        }
+        catch ( Exception ex )
+        {
+            throw new Exception( "An error occurred while migrating the mongoDb database", ex );
+
+        }
+
+        await Task.CompletedTask;
+    }
+   {% endif %}
 }

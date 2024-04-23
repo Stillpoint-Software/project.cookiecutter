@@ -60,13 +60,22 @@ internal class Program
     {
         return new Dictionary<string, string>()
         {
-            // short names
+            {%- if cookiecutter.database == "Postgresql" -%}
+             // short names
             { "-c", "{{cookiecutter.database}}:ConnectionString" },
             { "-r", "Runner:HardReset" },
 
             // aliases
             { "--connection", "{{cookiecutter.database}}:ConnectionString" },
             { "--reset", "Runner:HardReset" },
+            {%- elif cookiecutter.database == "Mongo" -%}
+            // short names
+            { "-c", "MongoDb:ConnectionString" },
+
+            // aliases
+            { "--connection", "MongoDb:ConnectionString" }
+            {% endif %}
+           
         };
     }
 }

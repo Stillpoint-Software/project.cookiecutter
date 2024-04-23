@@ -26,9 +26,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+     {%- if cookiecutter.database == "Postgresql" -%}
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
     <PackageReference Include="Testcontainers" Version="3.8.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0" />
+    {%- elif cookiecutter.database == "Mongo" -%}
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+    <PackageReference Include="Testcontainers" Version="3.8.0" />
+    <PackageReference Include="Testcontainers.MongoDb" Version="3.8.0" />
+    {% endif %}
   </ItemGroup>
 
   <ItemGroup>

@@ -24,10 +24,10 @@ public class SampleContext : DbContext
         var sampleTableBuilder = modelBuilder
             .Entity<Sample>()
             .ToTable( "sample" );
-        sampleTableBuilder.HasKey( x => x.SampleId );
-        sampleTableBuilder.Property( x => x.SampleId )
+        sampleTableBuilder.HasKey( x => x.Id );
+        sampleTableBuilder.Property( x => x.Id )
             .UseIdentityAlwaysColumn()
-            .HasColumnName( "sample_id" );
+            .HasColumnName( "id" );
         sampleTableBuilder.Property( x => x.Name ).HasColumnName( "name" );
         sampleTableBuilder.Property( x => x.Description ).HasColumnName( "description" );
         sampleTableBuilder.Property( x => x.CreatedBy ).HasColumnName( "created_by" );

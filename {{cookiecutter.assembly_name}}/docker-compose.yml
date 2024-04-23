@@ -54,7 +54,7 @@ services:
   {% endif %}
 {% endif %}
 
-{%- if cookiecutter.database == "MongoDb" -%}
+{%- if cookiecutter.database == "Mongo" -%}
 version: '3.1'
 
 services:
@@ -65,20 +65,24 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: {{cookiecutter.database|lower}}
-      MONGO_DB: {{cookiecutter.assembly_name}}-container
-    volumes:
-      - type: bind
-        source: ./data
-        target: /data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
     ports:
-      - "27017:27017"
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
     healthcheck:
       test: ["CMD-SHELL", "mongosh --eval 'db.runCommand("ping").ok' --quiet"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-migration:
+  migration:
     container_name: migration
     build:
       context: .
@@ -87,7 +91,7 @@ migration:
       db:
         condition: service_healthy
     environment:
-      MongoDb__ConnectionString: Host=db;Database={{cookiecutter.assembly_name}}-container;User Id=root;Password=MongoDb
+      MongoDb__ConnectionString: mongodb://root:example@mongodb:27017/
 
   {{cookiecutter.assembly_name|lower}}:
     image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name|lower}}
@@ -100,7 +104,7 @@ migration:
       db:
         condition: service_healthy
     environment:
-      MongoDb__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id=root;Password=mongo
+      MongoDb__ConnectionString: mongodb://db:27017/{{cookiecutter.assembly_name|lower}}-container
   {%- if cookiecutter.include_azure == "yes" -%}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite

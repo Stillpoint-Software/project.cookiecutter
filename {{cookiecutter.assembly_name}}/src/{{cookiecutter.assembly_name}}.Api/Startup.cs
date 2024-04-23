@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace {{cookiecutter.assembly_name}}.Api;
 
@@ -33,7 +34,7 @@ public class Startup : IStartupRegistry
         // IOptions<T>
 
         // include implementation registries 
-        services.IncludeStartupRegistry<Data.Postgresql.Startup>( Configuration );
+        services.IncludeStartupRegistry<Data.{{ cookiecutter.database}}.Startup>( Configuration );
 
         // additional registrations
         services.AddBackgroundServices();

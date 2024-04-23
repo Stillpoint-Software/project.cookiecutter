@@ -2,13 +2,20 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+{%- if cookiecutter.database == "Postgresql" -%}
 using Testcontainers.PostgreSql;
+{%- elif cookiecutter.database == "Mongo" -%}
+using Testcontainers.MongoDb;
+{% endif %}
+
 
 namespace {{cookiecutter.assembly_name}}.Tests;
 
 [TestClass]
 public class InitializeTestContainer
 {
+
+    {%- if cookiecutter.database == "Postgresql" -%}
     public static IDbConnectionProvider ConnectionProvider { get; set; }
 
     [AssemblyInitialize]
@@ -72,4 +79,66 @@ public class InitializeTestContainer
             return container.State == TestcontainersStates.Exited;
         }
     }
+     {%- elif cookiecutter.database == "Mongo" -%}
+     [AssemblyInitialize]
+    public static async Task Initialize( TestContext context )
+    {
+        var cancellationToken = context.CancellationTokenSource.Token;
+
+        var network = new NetworkBuilder()
+            .WithName( Guid.NewGuid().ToString( "D" ) )
+            .WithCleanUp( true )
+            .Build();
+
+        await network.CreateAsync( cancellationToken )
+            .ConfigureAwait( false );
+
+        var mongodbContainer = new MongoDbBuilder()
+            .WithNetwork( network )
+            .WithNetworkAliases( "db" )
+            .WithImage( "mongo:latest" )
+            .WithUsername( "test" )
+            .WithPassword( "test" )
+            .WithPortBinding( 27017, 27017 )
+            .WithCleanUp( true )
+            .WithWaitStrategy( Wait.ForUnixContainer().UntilPortIsAvailable( 27017 ) )
+            .Build();
+
+        var location = CommonDirectoryPath.GetSolutionDirectory();
+        var image = new ImageFromDockerfileBuilder()
+            .WithDeleteIfExists( true )
+            .WithCleanUp( true )
+            .WithName( "db-migrations" )
+            .WithDockerfile( "src/Doctors.Migrations/Dockerfile" )
+            .WithDockerfileDirectory( location.DirectoryPath )
+            .Build();
+
+        await image.CreateAsync( cancellationToken )
+            .ConfigureAwait( false );
+
+        await mongodbContainer.StartAsync( cancellationToken )
+            .ConfigureAwait( false );
+
+        var migrationContainer = new ContainerBuilder()
+            .WithCleanUp( true )
+            .WithNetwork( network )
+            .WithImage( image )
+            .WithEnvironment( "MongoDb__ConnectionString", "mongodb://root:example@mongodb:27017/" )
+            .WithWaitStrategy( Wait.ForUnixContainer().AddCustomWaitStrategy( new WaitUntilExited() ) )
+            .Build();
+
+        await migrationContainer.StartAsync( cancellationToken )
+            .ConfigureAwait( false );
+
+    }
+
+    public class WaitUntilExited : IWaitUntil
+    {
+        public async Task<bool> UntilAsync( IContainer container )
+        {
+            await Task.CompletedTask;
+            return container.State == TestcontainersStates.Exited;
+        }
+    }
+    {% endif %}
 }
