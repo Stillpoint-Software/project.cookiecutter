@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: {{cookiecutter.database|lower}}
       POSTGRES_PASSWORD: {{cookiecutter.database|lower}}
-      POSTGRES_DB: {{cookiecutter.assembly_name}}-container
+      POSTGRES_DB: {{cookiecutter.assembly_name|lower}}-container
     ports:
       - "5432:5432"
     healthcheck:
@@ -27,7 +27,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
+      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
 
   {{cookiecutter.assembly_name|lower}}:
     image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name|lower}}

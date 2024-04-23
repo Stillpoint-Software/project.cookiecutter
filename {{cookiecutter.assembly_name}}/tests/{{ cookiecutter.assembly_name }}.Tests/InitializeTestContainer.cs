@@ -46,7 +46,7 @@ public class InitializeTestContainer
         var image = new ImageFromDockerfileBuilder()
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
-            .WithName( "migration" )
+            .WithName( "db-migrations" )
             .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();
@@ -108,7 +108,7 @@ public class InitializeTestContainer
         var image = new ImageFromDockerfileBuilder()
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
-            .WithName( "db-migrations" )
+            .WithName( "migration" )
             .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();

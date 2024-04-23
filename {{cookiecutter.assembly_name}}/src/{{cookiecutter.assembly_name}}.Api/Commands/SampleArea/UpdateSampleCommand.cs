@@ -37,16 +37,14 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
             .Build();
     }
 
-    private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
+    private async Task UpdateSampleAsync( IPipelineContext context, UpdateSample update )
     {
-        var updateSample = await _sampleService.UpdateSampleAsync( update.Id, update.Name, update.Description );
-        if ( updateSample == null )
-            return null;
+        await _sampleService.UpdateSampleAsync( update.Id, update.Name, update.Description );
 
         return new SampleDefinition(
-            updateSample.SampleId,
-            updateSample.Name,
-            updateSample.Description
+            update.Id,
+            update.Name,
+            update.Description
         );
     }
 }
