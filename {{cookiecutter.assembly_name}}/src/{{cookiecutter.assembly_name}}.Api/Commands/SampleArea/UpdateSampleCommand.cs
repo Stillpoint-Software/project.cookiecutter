@@ -84,7 +84,7 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
         await _sampleService.UpdateSampleAsync( update.sampleId, update.Name, update.Description );
 
         return new SampleDefinition(
-            update.Id,
+            update.sampleId,
             update.Name,
             update.Description
         );

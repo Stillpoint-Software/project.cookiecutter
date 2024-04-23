@@ -5,6 +5,7 @@ using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using {{cookiecutter.assembly_name}}.Tests.TestSupport;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using {{cookiecutter.assembly_name}}.Api.Identity;
    {%- if cookiecutter.database == "Postgresql" -%}
    {%- elif cookiecutter.database == "Mongo" -%}
    using MongoDB.Driver;

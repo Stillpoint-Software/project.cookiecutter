@@ -45,7 +45,7 @@ public class Startup( IConfiguration configuration ) : IStartupRegistry
         services.AddSingleton<IMongoDbService, MongoDbService>();
 
         services.AddHealthChecks()
-           .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
+           .AddMongoDb( Configuration["Mongo:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
         {% endif %}
     }
 

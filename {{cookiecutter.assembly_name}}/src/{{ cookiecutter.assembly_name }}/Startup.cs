@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace {{cookiecutter.assembly_name}};
 
@@ -94,9 +95,9 @@ public class Startup : IStartupRegistry
         services.AddHealthChecks()
             .AddNpgSql( Configuration["{{cookiecutter.database}}:ConnectionString"]! );
         {%- elif cookiecutter.database == "Mongo" -%}
-        
+
         services.AddHealthChecks()
-          .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
+          .AddMongoDb( Configuration["Mongo:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
         {% endif %}
        
 

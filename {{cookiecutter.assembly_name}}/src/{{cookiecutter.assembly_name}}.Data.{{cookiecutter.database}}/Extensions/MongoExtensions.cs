@@ -13,10 +13,10 @@ internal static class {{cookiecutter.database}}Extensions
         // MongoDB is already a pool connection, so if you don’t use a Singleton
         // a new pool connection will always be created.
 
-        var connectionString = config["MongoDbConnection:ConnectionString"];
-        var databaseName = config["MongoDbConnection:Database"];
+        var connectionString = config["Mongo:ConnectionString"];
+        var databaseName = config["Mongo:Database"];
         {%- if cookiecutter.include_azure == "yes" -%}
-        var keyVaultNameSpace = config["MongoDb:KeyVaultNamespace"];
+        var keyVaultNameSpace = config["Mongo:KeyVaultNamespace"];
           services.AddSingleton<IMongoDbService, MongoDbService>(
             c => new MongoDbService( connectionString, databaseName, keyVaultNameSpace )
         );
@@ -29,8 +29,8 @@ internal static class {{cookiecutter.database}}Extensions
 
     public static void AddMongoDbMigrations( this IServiceCollection services, IConfiguration config )
     {
-        var connectionString = config["MongoDbConnection:ConnectionString"];
-        var databaseName = config["MongoDbConnection:Database"];
+        var connectionString = config["Mongo:ConnectionString"];
+        var databaseName = config["Mongo:Database"];
 
         services.AddSingleton<IMigrationDatabaseProvider>(
             c => new MigrationDatabaseProvider( connectionString, databaseName )

@@ -116,20 +116,20 @@ public class MainService : BackgroundService
     {
         try
         {
-            var database = configuration["MongoDb:Database"];
-            var connectionString = configuration["MongoDb:ConnectionString"];
+            var database = configuration["{{cookiecutter.database}}:Database"];
+            var connectionString = configuration["{{cookiecutter.database}}:ConnectionString"];
             var logger = logFactory.CreateLogger( "Migrations" );
 
-            logger.LogInformation( "Migrating mongoDb database." );
+            logger.LogInformation( "Migrating {{cookiecutter.database}} database." );
 
             var runner = new MigrationRunner( database, typeof( MigrationRunner ).Assembly );
             await runner.UpAsync();
 
-            logger?.LogInformation( "Migrated mongoDb database." );
+            logger?.LogInformation( "Migrated {{cookiecutter.database}} database." );
         }
         catch ( Exception ex )
         {
-            throw new Exception( "An error occurred while migrating the mongoDb database", ex );
+            throw new Exception( "An error occurred while migrating the {{cookiecutter.database}} database", ex );
 
         }
 

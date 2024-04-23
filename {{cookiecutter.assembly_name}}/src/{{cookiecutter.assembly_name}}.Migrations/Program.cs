@@ -70,10 +70,10 @@ internal class Program
             { "--reset", "Runner:HardReset" },
             {%- elif cookiecutter.database == "Mongo" -%}
             // short names
-            { "-c", "MongoDb:ConnectionString" },
+            { "-c", "{{cookiecutter.database}}:ConnectionString" },
 
             // aliases
-            { "--connection", "MongoDb:ConnectionString" }
+            { "--connection", "{{cookiecutter.database}}:ConnectionString" }
             {% endif %}
            
         };

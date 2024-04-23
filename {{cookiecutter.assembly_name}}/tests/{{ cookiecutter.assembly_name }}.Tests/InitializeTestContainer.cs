@@ -46,7 +46,7 @@ public class InitializeTestContainer
         var image = new ImageFromDockerfileBuilder()
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
-            .WithName( "db-migrations" )
+            .WithName( "migration" )
             .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();
@@ -109,7 +109,7 @@ public class InitializeTestContainer
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
             .WithName( "db-migrations" )
-            .WithDockerfile( "src/Doctors.Migrations/Dockerfile" )
+            .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();
 
@@ -123,7 +123,7 @@ public class InitializeTestContainer
             .WithCleanUp( true )
             .WithNetwork( network )
             .WithImage( image )
-            .WithEnvironment( "MongoDb__ConnectionString", "mongodb://root:example@mongodb:27017/" )
+            .WithEnvironment( "Mongo__ConnectionString", "mongodb://root:{{cookiecutter.databasde|lower}}@mongodb:27017/" )
             .WithWaitStrategy( Wait.ForUnixContainer().AddCustomWaitStrategy( new WaitUntilExited() ) )
             .Build();
 
