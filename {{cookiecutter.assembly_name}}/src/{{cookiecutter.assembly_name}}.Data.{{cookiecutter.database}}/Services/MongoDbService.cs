@@ -9,7 +9,7 @@ public class MongoDbService : IMongoDbService
 {
     private readonly IMongoDatabase _database;
 
-    public MongoDbService( string connectionString, string databaseName, string? keyVaultNameSpace )
+     public MongoDbService( string connectionString, string databaseName, string? keyVaultNameSpace )
     {
         var clientSettings = MongoClientSettings.FromConnectionString( connectionString );
         clientSettings.LinqProvider = LinqProvider.V3;
@@ -17,8 +17,6 @@ public class MongoDbService : IMongoDbService
         var client = new MongoClient( clientSettings );
         _database = client.GetDatabase( databaseName );
     }
-
- 
 
     public IMongoCollection<T> GetCollection<T>( string name )
     {

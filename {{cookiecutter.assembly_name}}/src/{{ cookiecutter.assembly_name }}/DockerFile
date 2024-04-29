@@ -15,7 +15,7 @@ COPY ["src/{{cookiecutter.assembly_name}}.Api/{{cookiecutter.assembly_name}}.Api
 COPY ["src/{{cookiecutter.assembly_name}}.Data.Abstractions/{{cookiecutter.assembly_name}}.Data.Abstractions.csproj", "src/{{cookiecutter.assembly_name}}.Data.Abstractions/"]
 COPY ["src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj", "src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/"]
 
-RUN dotnet restore "src/{{cookiecutter.assembly_name}}/{{cookiecutter.assembly_name}}.csproj" -s https://www.myget.org/F/lpoint/auth/01429c3b-aacd-4dba-8fba-74cc294ed537/api/v3/index.json
+RUN dotnet restore "src/{{cookiecutter.assembly_name}}/{{cookiecutter.assembly_name}}.csproj" 
 COPY . .
 
 # build the application

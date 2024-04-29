@@ -1,10 +1,9 @@
 {
   "assembly_name": "Project Name",
   "root_namespace": "{{ cookiecutter.assembly_name|lower  }}",
-  "project_description": "My project description",
   "api_app_name": "{{ cookiecutter.assembly_name|lower }}",
   "api_web_url": "https://www.{{ cookiecutter.assembly_name|lower  }}.com/",
-  "database": ["Postgresql","Mongo"],
+  "database": ["Postgresql", "MongoDb"],
   "_copy_without_render": [".github/workflows/*.yml", ".github/README.md"],
   "include_oauth": ["yes", "no"],
   "include_azure": ["yes", "no"],

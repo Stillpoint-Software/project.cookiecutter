@@ -5,7 +5,7 @@
     <Configurations>Debug;Release;Debug_api;Release_api;Debug_migration;Release_migration</Configurations>
   </PropertyGroup>
  <ItemGroup>
-    {%- if cookiecutter.include_azure == "yes" -%}
+    {% if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Azure.ResourceManager" Version="1.11.0" />
     {% endif %}
     <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.1.14" />
@@ -13,11 +13,11 @@
     <PackageReference Include="Hyperbee.Pipeline" Version="1.1.5" />
     <PackageReference Include="Hyperbee.Resources" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
-    {%- if cookiecutter.database == "Postgresql" -%}
+    {% if cookiecutter.database == "Postgresql" %}
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
     <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
-    {%- elif cookiecutter.database == "Mongo" -%}
+    {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="MongoDb.Driver" Version="2.25.0" />
     <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="8.0.1" />
     {% endif %}
@@ -28,9 +28,6 @@
  
  <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-    {%- if cookiecutter.database == "Mongo" -%}
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Migrations\{{cookiecutter.assembly_name}}.Migrations.csproj" />
-    {% endif %}
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

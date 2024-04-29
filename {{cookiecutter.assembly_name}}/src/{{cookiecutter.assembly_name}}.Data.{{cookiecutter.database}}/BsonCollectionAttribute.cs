@@ -1,12 +1,7 @@
 ﻿namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 
 [AttributeUsage( AttributeTargets.Class, Inherited = false )]
-public class BsonCollectionAttribute : Attribute
+public class BsonCollectionAttribute( string collectionName ) : Attribute
 {
-    public BsonCollectionAttribute( string collectionName )
-    {
-        CollectionName = collectionName;
-    }
-
-    public string CollectionName { get; }
+    public string CollectionName { get; } = collectionName;
 }

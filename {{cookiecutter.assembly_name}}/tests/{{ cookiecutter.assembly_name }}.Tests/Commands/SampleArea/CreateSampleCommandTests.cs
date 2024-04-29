@@ -1,15 +1,14 @@
 ﻿using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Api.Validators;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Tests.TestSupport;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using {{cookiecutter.assembly_name}}.Api.Identity;
-   {%- if cookiecutter.database == "Postgresql" -%}
-   {%- elif cookiecutter.database == "Mongo" -%}
-   using MongoDB.Driver;
-   {% endif %}
+{% if cookiecutter.database == "MongoDb" %}
+using MongoDB.Driver;
+{% endif %}
 
 namespace {{cookiecutter.assembly_name}}.Tests.Commands.SampleArea;
 
@@ -17,7 +16,7 @@ namespace {{cookiecutter.assembly_name}}.Tests.Commands.SampleArea;
 public class CreateSampleCommandTests
 {
 
-   {%- if cookiecutter.database == "Mongo" -%}
+   {% if cookiecutter.database == "MongoDb" %}
     private readonly IMongoDatabase _database;
 
     public CreateSampleCommandTests()

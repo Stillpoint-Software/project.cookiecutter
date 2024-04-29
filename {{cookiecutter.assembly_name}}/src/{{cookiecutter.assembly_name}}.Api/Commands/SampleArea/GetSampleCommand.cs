@@ -10,8 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
-{%- if cookiecutter.database == "Postgresql" -%}
-
+{% if cookiecutter.database == "Postgresql" %}
 public interface IGetSampleCommand : ICommandFunction<int, SampleDefinition>;
 
 public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, IGetSampleCommand
@@ -47,8 +46,7 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
         return null;
     }
 }
-   {%- elif cookiecutter.database == "Mongo" -%}
-
+{% elif cookiecutter.database == "MongoDb" %}
 public interface IGetSampleCommand : ICommandFunction<string, SampleDefinition>;
 
 public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>, IGetSampleCommand
@@ -84,4 +82,4 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
         return null;
     }
 }
-   {% endif %}
+{% endif %}

@@ -1,19 +1,17 @@
-{%- if cookiecutter.database == "Mongo" -%}
+{% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 {% endif %}
-
 namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 public record Sample
 {
-   {%- if cookiecutter.database == "Postgresql" -%}
+   {% if cookiecutter.database == "Postgresql" %}
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-
     public string CreatedBy { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
-   {%- elif cookiecutter.database == "Mongo" -%}
+   {% elif cookiecutter.database == "MongoDb" %}
     [BsonId]
     [BsonRepresentation( BsonType.ObjectId )]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
@@ -25,6 +23,4 @@ public record Sample
     [BsonRepresentation( BsonType.String )]
     public DateTimeOffset? CreatedDate { get; set; } = DateTimeOffset.UtcNow;
    {% endif %}
-
- 
 }

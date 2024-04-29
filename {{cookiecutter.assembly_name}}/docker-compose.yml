@@ -1,4 +1,4 @@
-{%- if cookiecutter.database == "Postgresql" -%}
+{% if cookiecutter.database == "Postgresql" %}
 version: '3.8'
 
 services:
@@ -41,7 +41,7 @@ services:
         condition: service_healthy
     environment:
       Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
-  {%- if cookiecutter.include_azure == "yes" -%}
+  {% if cookiecutter.include_azure == "yes" %}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: storage
@@ -53,8 +53,7 @@ services:
       - "10002:10002"
   {% endif %}
 {% endif %}
-
-{%- if cookiecutter.database == "Mongo" -%}
+{% if cookiecutter.database == "MongoDb" %}
 version: '3.9'
 
 services:
@@ -84,7 +83,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      Mongo__ConnectionString: mongodb://root:{{cookiecutter.database|lower}}@mongodb:27017/
+      Mongo__ConnectionString: mongodb://root:{{cookiecutter.database|lower}}@db:27017/
 
   {{cookiecutter.assembly_name|lower}}:
     image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name|lower}}
@@ -97,8 +96,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      Mongo__ConnectionString: mongodb://root:{{cookiecutter.database|lower}}@mongodb:27017/{{cookiecutter.assembly_name|lower}}-container
-  {%- if cookiecutter.include_azure == "yes" -%}
+      Mongo__ConnectionString: mongodb://root:{{cookiecutter.database|lower}}@db:27017/{{cookiecutter.assembly_name|lower}}-container
+  {% if cookiecutter.include_azure == "yes" %}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: storage

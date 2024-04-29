@@ -9,9 +9,6 @@ using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
 using Microsoft.Extensions.Logging;
 
-{%- if cookiecutter.database == "Mongo" -%}
-using MongoDB.Bson;
-{% endif %}
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
@@ -46,9 +43,8 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             .Build();
     }
 
-    {%- if cookiecutter.database == "Postgresql" -%}
- 
-  private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
+   {% if cookiecutter.database == "Postgresql" %}
+   private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
     {
 
         return await Task.FromResult( new Sample
@@ -69,7 +65,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         );
     }
 
-   {%- elif cookiecutter.database == "Mongo" -%}
+   {% elif cookiecutter.database == "MongoDb" %}
     private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
     {
         return await Task.FromResult( new Sample

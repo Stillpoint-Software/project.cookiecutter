@@ -1,21 +1,19 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
-{%- if cookiecutter.database == "Postgresql" -%}
+{% if cookiecutter.database == "Postgresql" %}
+using {{cookiecutter.assembly_name}}.Data.Postgresql;
 using Testcontainers.PostgreSql;
-{%- elif cookiecutter.database == "Mongo" -%}
+{% elif cookiecutter.database == "MongoDb" %}
 using Testcontainers.MongoDb;
 {% endif %}
-
 
 namespace {{cookiecutter.assembly_name}}.Tests;
 
 [TestClass]
 public class InitializeTestContainer
 {
-
-    {%- if cookiecutter.database == "Postgresql" -%}
+    {% if cookiecutter.database == "Postgresql" %}
     public static IDbConnectionProvider ConnectionProvider { get; set; }
 
     [AssemblyInitialize]
@@ -79,7 +77,7 @@ public class InitializeTestContainer
             return container.State == TestcontainersStates.Exited;
         }
     }
-     {%- elif cookiecutter.database == "Mongo" -%}
+     {% elif cookiecutter.database == "MongoDb" %}
      [AssemblyInitialize]
     public static async Task Initialize( TestContext context )
     {
@@ -123,7 +121,7 @@ public class InitializeTestContainer
             .WithCleanUp( true )
             .WithNetwork( network )
             .WithImage( image )
-            .WithEnvironment( "Mongo__ConnectionString", "mongodb://root:{{cookiecutter.databasde|lower}}@mongodb:27017/" )
+            .WithEnvironment( "{{cookiecutter.database}}__ConnectionString", "mongodb://root:{{cookiecutter.database|lower}}@mongodb:27017/" )
             .WithWaitStrategy( Wait.ForUnixContainer().AddCustomWaitStrategy( new WaitUntilExited() ) )
             .Build();
 

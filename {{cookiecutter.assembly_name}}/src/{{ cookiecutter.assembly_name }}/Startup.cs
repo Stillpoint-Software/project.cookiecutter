@@ -1,7 +1,12 @@
 #define CONTAINER_DIAGNOSTICS
 
 using System.Globalization;
+{% if cookiecutter.include_oauth == "yes" %}
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+{% endif %}
+using Microsoft.IdentityModel.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
@@ -11,11 +16,11 @@ using {{cookiecutter.assembly_name}}.Middleware;
 using Hyperbee.Extensions.Lamar;
 using Hyperbee.Pipeline;
 using Lamar;
+{% if cookiecutter.include_azure == "yes" %}
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+{% endif %}
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
+
 using Serilog;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -42,7 +47,7 @@ public class Startup : IStartupRegistry
             _.WithDefaultConventions();
         } );
 
-        {%- if cookiecutter.include_azure == "yes" -%}
+        {% if cookiecutter.include_azure == "yes" %}
         // IOptions<T>
 
             services.Configure<AzureDetailSettings>( options =>
@@ -90,14 +95,12 @@ public class Startup : IStartupRegistry
             x.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         } );
 
-        {%- if cookiecutter.database == "Postgresql" -%}
-
+        {% if cookiecutter.database == "Postgresql" %}
         services.AddHealthChecks()
             .AddNpgSql( Configuration["{{cookiecutter.database}}:ConnectionString"]! );
-        {%- elif cookiecutter.database == "Mongo" -%}
-
+        {% elif cookiecutter.database == "MongoDb" %}
         services.AddHealthChecks()
-          .AddMongoDb( Configuration["Mongo:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
+          .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
         {% endif %}
        
 
@@ -109,7 +112,7 @@ public class Startup : IStartupRegistry
             options.ApiVersionReader = new HeaderApiVersionReader( "X-Version" );
         } );
 
-        {%- if cookiecutter.include_azure == "yes" -%}
+        {% if cookiecutter.include_azure == "yes" %}
         services.AddApplicationInsights( Configuration );
         {% endif %}
 
@@ -119,7 +122,7 @@ public class Startup : IStartupRegistry
         services.AddDataProtection();
 
         
-         {%- if cookiecutter.include_oauth == "yes" -%}
+        {% if cookiecutter.include_oauth == "yes" %}
         // security
         services.AddAuthentication( options => //BF review hyperbee AddSecurity implementation
         {
@@ -157,9 +160,9 @@ public class Startup : IStartupRegistry
         if ( env.IsDevelopment() )
         {
             app.UseDeveloperExceptionPage();
-             {%- if cookiecutter.include_azure == "yes" -%}
+            {% if cookiecutter.include_azure == "yes" %}
             TelemetryDebugWriter.IsTracingDisabled = true; // reduce noise in local debug console
-             {% endif %}
+            {% endif %}
         }
         else
         {
@@ -180,7 +183,7 @@ public class Startup : IStartupRegistry
 
         app.UseAuthentication();
         app.UseAuthorization();
-        {%- if cookiecutter.include_azure == "yes" -%}
+        {% if cookiecutter.include_azure == "yes" %}
         //app.UseHttpsRedirection();  // Not needed for Azure container app as it already redirects to https
         {% else %}
         app.UseHttpsRedirection();
@@ -204,7 +207,7 @@ public class Startup : IStartupRegistry
             c.MapHealthChecks( Infrastructure.HealthChecksFilter.HealthCheckEndpoint );
         } );    // Must follow call to UseRouting()
 
-         {%- if cookiecutter.include_azure == "yes" -%}
+        {% if cookiecutter.include_azure == "yes" %}
         // Application stopped handling
         app.UseApplicationStopped( applicationLifetime, () => OnApplicationStopped( app.ApplicationServices ) );
         {% endif %}
@@ -218,13 +221,13 @@ public class Startup : IStartupRegistry
             {
                 c.RoutePrefix = string.Empty; // serve the Swagger UI at the app root (http://localhost:<port>/)
                 c.SwaggerEndpoint( "/swagger/v1/swagger.json", "{{cookiecutter.assembly_name}} API V1" );
-               {%- if cookiecutter.include_oauth == "yes" -%}
+                {% if cookiecutter.include_oauth == "yes" %}
                 c.OAuthAppName( Configuration["Api:AppName"] );
                 c.OAuthScopeSeparator( " " );
                 c.OAuthUsePkce();
                 {% endif %}
                 if ( !env.IsDevelopment() ) return;
-                {%- if cookiecutter.include_oauth == "yes" -%}
+                {% if cookiecutter.include_oauth == "yes" %}
                 // preset id and secret in dev
                 c.OAuthClientId( Configuration["OAuth:Swagger:ClientId"] );
                 c.OAuthClientSecret( Configuration["OAuth:Swagger:ClientSecret"] );
@@ -244,19 +247,16 @@ public class Startup : IStartupRegistry
         Console.WriteLine( container.WhatDoIHave() );
 #endif
     }
-{%- if cookiecutter.include_azure == "yes" -%}
+    {% if cookiecutter.include_azure == "yes" %}
     private static void OnApplicationStopped( IServiceProvider services )
     {
-          
         var client = services.GetRequiredService<ITelemetryClientProvider>().Client;
-        
 
         // Microsoft recommends adding a delay after the call to Flush()
         // https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics#flushing-data
 
         client.Flush();
         Thread.Sleep( 5000 );
-        
     }
-     {% endif %}
+    {% endif %}
 }

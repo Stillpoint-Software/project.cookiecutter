@@ -7,7 +7,7 @@ public class ApiSettings
     public string WebUrl { get; set; }
 }
 
-{%- if cookiecutter.include_azure == "yes" -%}
+{% if cookiecutter.include_azure == "yes" %}
 public class ApplicationInsights
 {
     public string ConnectionString { get; set; }

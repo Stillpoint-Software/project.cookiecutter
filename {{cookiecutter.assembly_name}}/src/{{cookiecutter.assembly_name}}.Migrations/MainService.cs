@@ -1,22 +1,13 @@
-﻿using System.Reflection;
-using System.Text.RegularExpressions;
-using Microsoft.Extensions.Configuration;
+﻿using Hyperbee.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using {{cookiecutter.assembly_name}}.Migrations.System;
-{%- if cookiecutter.database == "Postgresql" -%}
-using DbUp;
-using DbUp.Helpers;
-{%- elif cookiecutter.database == "Mongo" -%}
-{% endif %}
-
 
 namespace {{cookiecutter.assembly_name}}.Migrations;
 
 public class MainService : BackgroundService
 {
-    private readonly IHostApplicationLifetime _applicationLifetime;
+   private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<MainService> _logger;
     private readonly IServiceProvider _serviceProvider;
 
@@ -36,10 +27,8 @@ public class MainService : BackgroundService
 
         try
         {
-            var config = provider.GetRequiredService<IConfiguration>();
-            var logFactory = provider.GetRequiredService<ILoggerFactory>();
-
-            await RunMigrationsAsync( config, logFactory, stoppingToken );
+            var runner = provider.GetRequiredService<MigrationRunner>();
+            await runner.RunAsync( stoppingToken );
         }
         catch ( Exception ex )
         {
@@ -48,92 +37,4 @@ public class MainService : BackgroundService
 
         _applicationLifetime.StopApplication();
     }
-   {%- if cookiecutter.database == "Postgresql" -%}
-
-    private static async Task RunMigrationsAsync( IConfiguration configuration, ILoggerFactory logFactory, CancellationToken stoppingToken )
-    {
-        var connectionString = configuration["{{cookiecutter.database}}:ConnectionString"];
-        var reset = configuration.GetValue<bool>( "Runner:HardReset" );
-        var logger = logFactory.CreateLogger( "Migrations" );
-
-        logger.LogInformation( "Migrating {{cookiecutter.database}} database." );
-
-        logger.LogDebug( $"Connection: {connectionString}" );
-        logger.LogInformation( $"HardReset: {reset}" );
-
-        // this will ensure that the database is created
-        EnsureDatabase.For.PostgresqlDatabase( connectionString );
-
-        var assemblyName = Assembly.GetAssembly( typeof( MainService ) )!.GetName().Name;
-        var scriptRegex = new Regex(
-            @$"{assemblyName}\.Scripts\.Script\d{{4}}-.+\.sql",
-            RegexOptions.IgnoreCase
-        );
-
-        if ( reset )
-        {
-            var resetRunner = DeployChanges.To
-                .{{cookiecutter.database}}Database( connectionString )
-                .WithScriptsEmbeddedInAssembly( Assembly.GetExecutingAssembly(), ResetFilter( assemblyName ) )
-                .JournalTo( new NullJournal() )
-                .LogToConsole()
-                .Build();
-
-            var resetResults = resetRunner.PerformUpgrade();
-
-            if ( !resetResults.Successful )
-                throw new Exception( "An error occurred while migrating the {{cookiecutter.database}} database", resetResults.Error );
-        }
-
-        var upgrader = DeployChanges.To
-            .{{cookiecutter.database}}Database( connectionString )
-            .WithScriptsEmbeddedInAssembly( Assembly.GetExecutingAssembly(), MigrationFilter( assemblyName, scriptRegex ) )
-            .LogToConsole()
-            .Build();
-
-        var result = upgrader.PerformUpgrade();
-
-        if ( !result.Successful )
-            throw new Exception( "An error occurred while migrating the {{cookiecutter.database}} database", result.Error );
-
-        logger.LogInformation( "Migrated {{cookiecutter.database}} database." );
-
-        await Task.CompletedTask;
-    }
-
-    private static Func<string, bool> ResetFilter( string assemblyName )
-    {
-        return migration => string.Equals( migration, $"{assemblyName}.Scripts.HardReset.sql", StringComparison.OrdinalIgnoreCase );
-    }
-
-    private static Func<string, bool> MigrationFilter( string assemblyName, Regex scriptPattern )
-    {
-        return migration =>
-            !string.Equals( migration, $"{assemblyName}.Scripts.HardReset.sql", StringComparison.OrdinalIgnoreCase ) || scriptPattern.IsMatch( migration );
-    }
-   {%- elif cookiecutter.database == "Mongo" -%}
-    private static async Task RunMigrationsAsync( IConfiguration configuration, ILoggerFactory logFactory, CancellationToken stoppingToken )
-    {
-        try
-        {
-            var database = configuration["{{cookiecutter.database}}:Database"];
-            var connectionString = configuration["{{cookiecutter.database}}:ConnectionString"];
-            var logger = logFactory.CreateLogger( "Migrations" );
-
-            logger.LogInformation( "Migrating {{cookiecutter.database}} database." );
-
-            var runner = new MigrationRunner( database, typeof( MigrationRunner ).Assembly );
-            await runner.UpAsync();
-
-            logger?.LogInformation( "Migrated {{cookiecutter.database}} database." );
-        }
-        catch ( Exception ex )
-        {
-            throw new Exception( "An error occurred while migrating the {{cookiecutter.database}} database", ex );
-
-        }
-
-        await Task.CompletedTask;
-    }
-   {% endif %}
 }

@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-
 namespace {{cookiecutter.assembly_name}}.Migrations;
 
 internal class Program
@@ -23,14 +22,14 @@ internal class Program
                 .CreateDefaultBuilder()
                 .ConfigureAppConfiguration( ( context, builder ) =>
                 {
-                    {%- if cookiecutter.include_azure == "yes" -%}
+                    {% if cookiecutter.include_azure == "yes" %}
                     // WARNING: Use the pre-built bootstrapConfig instead of context.Configuration 
                     var vaultName = bootstrapConfig["Azure:KeyVault:VaultName"];
                     {% endif %}
                     builder
                         .AddAppSettingsFile()
                         .AddAppSettingsEnvironmentFile()
-                         {%- if cookiecutter.include_azure == "yes" -%}
+                        {% if cookiecutter.include_azure == "yes" %}
                         .AddAzureSecrets( context.HostingEnvironment, vaultName, bootstrapLogger )
                         {% endif %}
                         .AddUserSecrets<Program>( optional: true )
@@ -40,6 +39,13 @@ internal class Program
                 .ConfigureServices( ( context, services ) =>
                 {
                     services
+                    {% if cookiecutter.database == "Postgresql" %}
+                        .AddProvider( context.Configuration, bootstrapLogger )
+                        .AddMigrations( context.Configuration )
+                    {% elif cookiecutter.database == "MongoDb" %}
+                        .AddMongoDbProvider( context.Configuration, bootstrapLogger )
+                        .AddMongoDbMigrations( context.Configuration )
+                    {% endif %}
                         .AddHostedService<MainService>();
                 } )
                 .UseSerilog()
@@ -60,22 +66,43 @@ internal class Program
     {
         return new Dictionary<string, string>()
         {
-            {%- if cookiecutter.database == "Postgresql" -%}
-             // short names
-            { "-c", "{{cookiecutter.database}}:ConnectionString" },
-            { "-r", "Runner:HardReset" },
-
-            // aliases
-            { "--connection", "{{cookiecutter.database}}:ConnectionString" },
-            { "--reset", "Runner:HardReset" },
-            {%- elif cookiecutter.database == "Mongo" -%}
+            {% if cookiecutter.database == "Postgresql" %}
             // short names
-            { "-c", "{{cookiecutter.database}}:ConnectionString" },
+            { "-f", "[Migrations:FromPaths]" },
+            { "-a", "[Migrations:FromAssemblies]" },
+            { "-p", "[Migrations:Profiles]" },
+            { "-s", "Migrations:SchemaName" },
+            { "-t", "Migrations:TableName" },
+
+            { "-cs", "Postgresql:ConnectionString" },
 
             // aliases
-            { "--connection", "{{cookiecutter.database}}:ConnectionString" }
+            { "--file", "[Migrations:FromPaths]" },
+            { "--assembly", "[Migrations:FromAssemblies]" },
+            { "--profile", "[Migrations:Profiles]" },
+            { "--schema", "Migrations:SchemaName" },
+            { "--table", "Migrations:TableName" },
+
+            { "--connection", "Postgresql:ConnectionString" }
+            {% elif cookiecutter.database == "MongoDb" %}
+            // short names
+            { "-f", "[Migrations:FromPaths]" },
+            { "-a", "[Migrations:FromAssemblies]" },
+            { "-p", "[Migrations:Profiles]" },
+            { "-d", "Migrations:DatabaseName" },
+            { "-v", "Migrations:CollectionName" },
+
+            { "-cs", "MongoDb:ConnectionString" },
+
+            // aliases
+            { "--file", "[Migrations:FromPaths]" },
+            { "--assembly", "[Migrations:FromAssemblies]" },
+            { "--profile", "[Migrations:Profiles]" },
+            { "--database", "Migrations:DatabaseName" },
+            { "--collection", "Migrations:CollectionName" },
+
+            { "--connection", "MongoDb:ConnectionString" }
             {% endif %}
-           
         };
     }
 }

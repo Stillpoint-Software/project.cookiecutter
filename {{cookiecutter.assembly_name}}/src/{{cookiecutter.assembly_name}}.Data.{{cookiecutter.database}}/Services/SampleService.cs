@@ -2,20 +2,26 @@ using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
-{%- if cookiecutter.database == "Postgresql" -%}
+{% if cookiecutter.database == "Postgresql" %}
 using Microsoft.EntityFrameworkCore;
-{%- elif cookiecutter.database == "Mongo" -%}
+{% elif cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 {% endif %}
 
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
 
-{%- if cookiecutter.database == "Postgresql" -%}
-public class SampleService( SampleContext sampleContext, ILogger<SampleService> logger ) : ISampleService
+{% if cookiecutter.database == "Postgresql" %}
+public class SampleService : ISampleService
 {
-    private readonly SampleContext _sampleContext = sampleContext;
-    private readonly ILogger _logger = logger;
+    private readonly SampleContext _sampleContext;
+    private readonly ILogger _logger;
+
+    public SampleService( SampleContext sampleContext, ILogger<Sample> logger )
+    {
+        _sampleContext = sampleContext;
+        _logger = logger;
+    }
 
     public async Task<int> CreateSampleAsync( Sample sample )
     {
@@ -72,14 +78,14 @@ public class SampleService( SampleContext sampleContext, ILogger<SampleService> 
         }
     }
 }
- {%- elif cookiecutter.database == "Mongo" -%}
- 
+{% elif cookiecutter.database == "MongoDb" %}
+
 public class SampleService : ISampleService
 {
     protected IMongoCollection<Sample> _sampleService;
     private readonly ILogger _logger;
 
-    public SampleService( IMongoDbService context, ILogger<Sample> logger )
+     public SampleService( IMongoDbService context, ILogger<Sample> logger )
     {
         _sampleService = context.GetCollection<Sample>( "Sample" );
         _logger = logger;
@@ -95,7 +101,6 @@ public class SampleService : ISampleService
             {
                 await _sampleService.InsertOneAsync( sample );
             }
-
         }
         catch ( Exception ex )
         {
@@ -128,12 +133,10 @@ public class SampleService : ISampleService
             if ( sample != null )
             {
                 return new SampleDefinition(
-
                     sample.Id,
                     sample.Name,
                     sample.Description
               );
-
             }
 
             return new SampleDefinition( null, null, null );
@@ -145,5 +148,4 @@ public class SampleService : ISampleService
     }
 
 }
-
 {% endif %}

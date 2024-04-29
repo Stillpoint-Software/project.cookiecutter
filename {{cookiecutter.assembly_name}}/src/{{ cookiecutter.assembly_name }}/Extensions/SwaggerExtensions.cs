@@ -8,14 +8,14 @@ public static class SwaggerExtensions
     public static IServiceCollection AddSwagger( this IServiceCollection services, IConfiguration config )
     {
         //https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/test/WebSites/OAuth2Integration/Startup.cs
-        {%- if cookiecutter.include_oauth == "yes" -%}
+        {% if cookiecutter.include_oauth == "yes" %}
         var authorizationUrl = $"https://{config["OAuth:Domain"]}/authorize?audience={config["OAuth:Audience"]}";
         var tokenUrl = $"https://{config["OAuth:Domain"]}/oauth/token";
         {% endif %}
         services.AddSwaggerGen( c =>
         {
             c.SwaggerDoc( "v1", new OpenApiInfo { Title = "API", Version = "v1" } );
-            {%- if cookiecutter.include_oauth == "yes" -%}
+            {% if cookiecutter.include_oauth == "yes" %}
             c.AddSecurityDefinition( "oauth2", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.OAuth2,

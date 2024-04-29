@@ -24,8 +24,11 @@
     <None Remove="appsettings.json" />
     <None Remove="appsettings.Production.json" />
     <None Remove="appsettings.Staging.json" />
-    <None Remove="Scripts\HardReset.sql" />
-    <None Remove="Scripts\Script0001-Initial.sql" />
+    {% if cookiecutter.database == "Postgresql" %}
+    <None Remove="Resources\1000-Initial\CreateUsers.sql" />
+    {% elif cookiecutter.database == "MongoDb" %}
+    <None Remove="Resources\1000-Initial\administration\users\user.json" />
+    {% endif %}
   </ItemGroup>
 
   <ItemGroup>
@@ -45,14 +48,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    {%- if cookiecutter.database == "Postgresql" -%}
-    <EmbeddedResource Include="Scripts\HardReset.sql" />
-    <EmbeddedResource Include="Scripts\Script0001-Initial.sql" />
+    {% if cookiecutter.database == "Postgresql" %}
+    <EmbeddedResource Include="Resources\1000-Initial\CreateUsers.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    {% elif cookiecutter.database == "MongoDb" %}
+    <EmbeddedResource Include="Resources\1000-Initial\administration\users\user.json" />    
     {% endif %}
   </ItemGroup>
 
   <ItemGroup>
-    {%- if cookiecutter.include_azure == "yes" -%}
+    {% if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.3.1" />
     <PackageReference Include="Azure.Identity" Version="1.11.0" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
@@ -65,12 +71,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
-    {%- if cookiecutter.database == "Postgresql" -%}
-    <PackageReference Include="dbup-core" Version="5.0.87" />
-    <PackageReference Include="dbup-postgresql" Version="5.0.40" />
+    <PackageReference Include="Hyperbee.Migrations" Version="1.2.6" />
+    {% if cookiecutter.database == "Postgresql" %}
     <PackageReference Include="Npgsql" Version="8.0.2" />
-    {%- elif cookiecutter.database == "Mongo" -%}
+    <PackageReference Include="Hyperbee.Migrations.Providers.Postgresql" Version="1.2.6" />
+    {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="MongoDb.Driver" Version="2.25.0" />
+    <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" Version="1.2.6" />
     {% endif %}
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />

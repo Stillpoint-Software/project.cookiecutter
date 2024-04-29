@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
 // Enhancement to microsoft's CommandLineConfigurationProvider with array support
-
 namespace {{cookiecutter.assembly_name}}.Migrations;
 
 public static class CommandLineConfigurationExtensions

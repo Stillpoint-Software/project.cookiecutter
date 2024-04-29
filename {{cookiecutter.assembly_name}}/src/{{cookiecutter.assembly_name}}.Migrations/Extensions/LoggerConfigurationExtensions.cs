@@ -7,7 +7,7 @@ namespace {{cookiecutter.assembly_name}}.Migrations.Extensions;
 
 internal static class LoggerConfigurationExtensions
 {
-    internal static LoggerConfiguration WithDefaults( this LoggerConfiguration loggerConfiguration,
+       internal static LoggerConfiguration WithDefaults( this LoggerConfiguration loggerConfiguration,
         IConfiguration config )
     {
         loggerConfiguration
