@@ -50,8 +50,8 @@
    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
    {% endif %}
-   <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.1.14" />
-   <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.1.14" />
+   <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="1.0.0" />
+   <PackageReference Include="Hyperbee.Extensions.Lamar" Version="1.0.0" />
    <PackageReference Include="Lamar" Version="13.0.3" />
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="13.0.3" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />

@@ -8,8 +8,8 @@
     {% if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Azure.ResourceManager" Version="1.11.0" />
     {% endif %}
-    <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.1.14" />
-    <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.1.14" />
+    <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="1.0.0" />
+    <PackageReference Include="Hyperbee.Extensions.Lamar" Version="1.0.0" />
     <PackageReference Include="Hyperbee.Pipeline" Version="1.1.5" />
     <PackageReference Include="Hyperbee.Resources" Version="1.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
