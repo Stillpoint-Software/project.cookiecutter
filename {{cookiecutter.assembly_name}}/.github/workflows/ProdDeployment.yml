@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  DOTNET_VERSION: "8.0.x" # set this to the dot net core version to use
+  DOTNET_VERSION: "9.0.x" # set this to the dot net core version to use
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   LPOINT_URL: ${{secrets.LPOINT}}
   NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
