@@ -2,11 +2,12 @@
   "assembly_name": "Project Name",
   "root_namespace": "{{ cookiecutter.assembly_name|lower  }}",
   "api_app_name": "{{ cookiecutter.assembly_name|lower }}",
-  "api_web_url": "https://www.{{ cookiecutter.assembly_name|lower  }}.com/",
+  "api_web_url": "https://wwww.{{ cookiecutter.assembly_name|lower  }}.com/",
   "database": ["Postgresql", "MongoDb"],
   "_copy_without_render": [".github/workflows/*.yml", ".github/README.md"],
   "include_oauth": ["yes", "no"],
   "include_azure": ["yes", "no"],
+  "use_dotnet_aspire": ["yes", "no"],
 
   "__prompts__": {
     "assembly_name": "Enter the name of the project.",
