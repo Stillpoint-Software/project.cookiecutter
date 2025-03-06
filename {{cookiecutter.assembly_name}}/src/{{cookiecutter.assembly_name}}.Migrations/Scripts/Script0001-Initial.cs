@@ -1,5 +1,5 @@
 ﻿using Hyperbee.Migrations;
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres.Resources;
 {% elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB.Resources;
@@ -8,7 +8,7 @@ using Hyperbee.Migrations.Providers.MongoDB.Resources;
 
 namespace {{cookiecutter.assembly_name}}.Migrations.Scripts;
 [Migration( 1000 )]
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 public class Initial( PostgresResourceRunner<Initial> resourceRunner ) : Migration
 {
      public override async Task UpAsync( CancellationToken cancellationToken = default )

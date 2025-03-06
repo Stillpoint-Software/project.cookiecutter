@@ -18,7 +18,7 @@ def is_docker_installed() -> bool:
     except Exception:
         return False
 
-use_aspire ='{{cookiecutter.use_dotnet_aspire}}' =='yes'
+use_aspire ='{{cookiecutter.use_aspire}}' =='yes'
 
 if not use_aspire:
     if not is_docker_installed():
@@ -36,10 +36,17 @@ if not azure:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 
-if not use_aspire:
+if not use_aspire: # Remove Aspire files/folders 
     shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.AppHost'))
     shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.ServiceDefaults'))
+    shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Extensions'))
+    shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Infrastructure'))
+    shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Middleware'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/Startup.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/SerilogSetup.cs'))
+
 else:
+    shutil.rmtree(os.path.join('src/{{cookiecutter.assembly_name}}'))
     remove(os.path.join('.dockerignore'))
     remove(os.path.join('Directory.Build.props'))
     remove(os.path.join('Directory.Build.targets'))
@@ -49,18 +56,35 @@ else:
     remove(os.path.join('src/{{cookiecutter.assembly_name}}', 'Dockerfile'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Dockerfile'))
     remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
-   
- 
-databasePostgres = '{{cookiecutter.database}}' =='Postgresql'
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Settings.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/BsonCollectionAttribute.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/DbConnectionProvider.cs'))  
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/Services/MongoDbService.cs')) 
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/Extensions/MongoExtensions.cs')) 
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/Startup.cs'))
+    shutil.rmtree(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/Scripts'))
 
-if databasePostgres:
+if '{{cookiecutter.database}}'== 'PostgreSql':
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Extensions\MongoExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Services\MongoDbService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'BsonCollectionAttribute.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions', 'Services\IMongoDbService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations', 'Resources\\1000-Initial\\administration\\users\\user.json'))
 
-if not databasePostgres:
+if data '{{cookiecutter.database}}' =='MongoDb':
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'DbConnectionProvider.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'SampleContext.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations', 'Resources\\1000-Initial\\CreateUsers.sql'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'SecurityHelper.cs'))
+
+if {{cookiecutter.use_audit == "no"}}
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/AuditSetup.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditEvent.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditModel.cs'))
+
+# Remove setup files and directories
+remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/aspire_appsettings.json'))
+remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/aspire_program.json'))
+remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/aspire_program.json'))
+remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/docker_appsettings.json'))
+remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations/docker_program.json'))

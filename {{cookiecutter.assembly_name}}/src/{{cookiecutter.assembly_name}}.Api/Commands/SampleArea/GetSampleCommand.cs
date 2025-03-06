@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 public interface IGetSampleCommand : ICommandFunction<int, SampleDefinition>;
 
 public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, IGetSampleCommand
@@ -36,6 +36,17 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
     }
     private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, int sampleId )
     {
+        {% if cookiecutter.use_audit == "Yes" %}
+           var sample = await _sampleService.GetAllPatientsAsync();
+
+         var newSample = await AuditScope.CreateAsync( c => c
+            .EventType( "Sample:GetSample" )
+            .AuditEvent( new ListAuditEvent( patients ) )
+            .IsCreateAndSave() );
+
+        return sample;
+
+        {% else %}  
         var sample = await _sampleService.GetSampleAsync( sampleId );
 
         if ( sample != null )
@@ -44,6 +55,7 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
         context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
         context.CancelAfter();
         return null;
+        {% endif %}
     }
 }
 {% elif cookiecutter.database == "MongoDb" %}

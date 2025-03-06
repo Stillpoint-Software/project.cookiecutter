@@ -19,7 +19,7 @@ public class SampleController : ServiceControllerBase
         var result = await command.ExecuteAsync( request.ToCommand(), cancellationToken );
         return CommandResponse( result );
     }
-   {% if cookiecutter.database == "Postgresql" %}
+   {% if cookiecutter.database == "PostgreSql" %}
     [HttpGet( "sample/{sampleId:int}" )]
     public async Task<IActionResult> GetSampleAsync(
         [FromServices] IGetSampleCommand command,
@@ -67,7 +67,7 @@ public class SampleController : ServiceControllerBase
 public record SampleRequest( string Name, string Description )
 {
     public CreateSample ToCommand() => new( Name, Description );
-    {% if cookiecutter.database == "Postgresql" %}
+    {% if cookiecutter.database == "PostgreSql" %}
     public UpdateSample ToCommand( int sampleId ) => new( sampleId, Name, Description );
     {% elif cookiecutter.database == "MongoDb" %}
     public UpdateSample ToCommand( string sampleId ) => new( sampleId, Name, Description );

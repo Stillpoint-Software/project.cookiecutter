@@ -3,15 +3,17 @@
   "root_namespace": "{{ cookiecutter.assembly_name|lower  }}",
   "api_app_name": "{{ cookiecutter.assembly_name|lower }}",
   "api_web_url": "https://wwww.{{ cookiecutter.assembly_name|lower  }}.com/",
-  "database": ["Postgresql", "MongoDb"],
-  "_copy_without_render": [".github/workflows/*.yml", ".github/README.md"],
+  "database": ["PostgreSql", "MongoDb"],
+  "_copy_without_render": [".github/workflows/*.yml",".github/README.md"  ],
   "include_oauth": ["yes", "no"],
   "include_azure": ["yes", "no"],
-  "use_dotnet_aspire": ["yes", "no"],
+  "use_aspire": ["yes", "no"],
+  "use_audit": ["yes", "no"],
 
   "__prompts__": {
     "assembly_name": "Enter the name of the project.",
     "api_app_name": "Enter the name of the project api",
-    "api_web_url": "Enter the full Uri"
+    "api_web_url": "Enter the full Uri",
+    "use_audit": "Do you want to include auditing?"
   }
 }

@@ -8,7 +8,7 @@ using Hyperbee.Pipeline.Context;
 using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 public record UpdateSample( int sampleId, string Name, string Description );
 
 public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;

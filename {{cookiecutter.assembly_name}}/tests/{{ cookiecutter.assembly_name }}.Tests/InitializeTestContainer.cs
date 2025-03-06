@@ -1,8 +1,8 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-{% if cookiecutter.database == "Postgresql" %}
-using {{cookiecutter.assembly_name}}.Data.Postgresql;
+{% if cookiecutter.database == "PostgreSql" %}
+using {{cookiecutter.assembly_name}}.Data.PostgreSql;
 using Testcontainers.PostgreSql;
 {% elif cookiecutter.database == "MongoDb" %}
 using Testcontainers.MongoDb;
@@ -13,7 +13,7 @@ namespace {{cookiecutter.assembly_name}}.Tests;
 [TestClass]
 public class InitializeTestContainer
 {
-    {% if cookiecutter.database == "Postgresql" %}
+    {% if cookiecutter.database == "PostgreSql" %}
     public static IDbConnectionProvider ConnectionProvider { get; set; }
 
     [AssemblyInitialize]

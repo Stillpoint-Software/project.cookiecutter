@@ -55,7 +55,7 @@
    <PackageReference Include="Lamar" Version="14.0.1" />
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
-   {% if cookiecutter.database == "Postgresql" %}
+   {% if cookiecutter.database == "PostgreSql" %}
    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
    <PackageReference Include="Npgsql" Version="9.0.2" />
    {% elif cookiecutter.database == "MongoDb" %}

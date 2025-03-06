@@ -4,7 +4,7 @@ using Lamar;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 using Microsoft.EntityFrameworkCore;
 {% elif cookiecutter.database == "MongoDb" %}
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
@@ -30,7 +30,7 @@ public class Startup( IConfiguration configuration ) : IStartupRegistry
         // explicit registrations
 
         services.AddSingleton( typeof( IResourceProvider<> ), typeof( ResourceProvider<> ) );
-        {% if cookiecutter.database == "Postgresql" %}
+        {% if cookiecutter.database == "PostgreSql" %}
         services.AddSingleton<IDbConnectionProvider, NpgsqlConnectionProvider>( c => new NpgsqlConnectionProvider( Configuration["{{cookiecutter.database}}:ConnectionString"] ) );
         services.AddDbContext<SampleContext>( options =>
         {

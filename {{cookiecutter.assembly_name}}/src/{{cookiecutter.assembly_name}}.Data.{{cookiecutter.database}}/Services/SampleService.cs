@@ -2,7 +2,7 @@ using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 using Microsoft.EntityFrameworkCore;
 {% elif cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
@@ -11,7 +11,7 @@ using MongoDB.Driver.Linq;
 
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
 
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 public class SampleService : ISampleService
 {
     private readonly SampleContext _sampleContext;

@@ -1,4 +1,4 @@
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 version: '3.8'
 
 services:
@@ -27,7 +27,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
+      PostgreSql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
 
   {{cookiecutter.assembly_name|lower}}:
     image: ${DOCKER_REGISTRY-}{{cookiecutter.assembly_name|lower}}
@@ -40,7 +40,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      Postgresql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
+      PostgreSql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
   {% if cookiecutter.include_azure == "yes" %}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite

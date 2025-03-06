@@ -4,7 +4,7 @@ using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 public interface ISampleService
 {
-   {% if cookiecutter.database == "Postgresql" %}
+   {% if cookiecutter.database == "PostgreSql" %}
     Task<int> CreateSampleAsync( Sample sample );
     Task UpdateSampleAsync( int sampleId, string name, string description );
     Task<SampleDefinition> GetSampleAsync(int sampleId );

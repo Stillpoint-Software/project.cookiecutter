@@ -1,0 +1,36 @@
+{
+  "{{cookiecutter.database}}": {
+    {% if cookiecutter.database == "MongoDb" %}
+    "Database": "{{cookiecutter.assembly_name|lower}}-container",
+    {% endif %}
+    "ConnectionString": "__SECRET_PLACEHOLDER__"
+  },
+    "Migrations": {
+      {% if cookiecutter.database == "PostgreSql" %}
+      "SchemaName": "migration",
+      "TableName": "ledger",
+      {% elif cookiecutter.database =="MongoDB" %}
+      "DatabaseName": "migration",
+      "CollectionName": "ledger",
+      {% endif %}
+    "Lock": {
+      "Enabled": false,
+      "Name": "ledger_lock",
+      "MaxLifetime": 3600
+    },
+    // All providers - Set path to migration dll
+    "FromPaths": [  ],
+    "FromAssemblies": [   ]
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Couchbase": "Warning",
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information",
+        "System": "Warning"
+      }
+    }
+  }
+}

@@ -43,7 +43,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             .Build();
     }
 
-   {% if cookiecutter.database == "Postgresql" %}
+   {% if cookiecutter.database == "PostgreSql" %}
    private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
     {
 
@@ -56,6 +56,16 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
 
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {
+        {% if cookiecutter.use_audit == "Yes" %}
+        using (AuditScope.Create( "Sample:Create", () => sample ))
+          sample.Id = await _sampleService.CreateSampleAsync( sample );
+          var sampleDefinition = new SampleDefinition(
+            sample.Id,
+            sample.Name,
+            sample.Description
+        );
+        return sampleDefinition;
+        {% else %}
         sample.Id = await _sampleService.CreateSampleAsync( sample );
 
         return new SampleDefinition(
@@ -63,6 +73,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             sample.Name,
             sample.Description
         );
+        {% endif %}
     }
 
    {% elif cookiecutter.database == "MongoDb" %}

@@ -26,7 +26,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    {% if cookiecutter.database == "Postgresql" %}
+    {% if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
     <PackageReference Include="Testcontainers" Version="4.2.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.2.0" />

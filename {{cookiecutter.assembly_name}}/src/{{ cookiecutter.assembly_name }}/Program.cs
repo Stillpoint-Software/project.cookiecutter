@@ -3,11 +3,9 @@ using Lamar.Microsoft.DependencyInjection;
 using Serilog;
 
 namespace {{ cookiecutter.assembly_name}};
-
 internal class Program
 {
-    public static async Task<int> Main( string[] args )
-    {
+    public static async Task<int> Main( string[] args )    {
         var bootstrapConfig = BootstrapExtensions.CreateBootstrapConfiguration<Program>(); // basic config without cloud secrets
         var bootstrapLogger = BootstrapExtensions.CreateBootstrapLogger<Program>( bootstrapConfig );
 
@@ -25,6 +23,7 @@ internal class Program
                         .WithDefaults( context.Configuration )
                         .WithConsole()
                         .WithFileWriter( context.Configuration );
+                       
                          {% if cookiecutter.include_azure == "yes" %}
                         .WithAzureApplicationInsights( services );
                         {% endif %}
@@ -44,9 +43,11 @@ internal class Program
                     builder
                         .AddAppSettingsFile()
                         .AddAppSettingsEnvironmentFile()
+                      
                         {% if cookiecutter.include_azure == "yes" %}
                         .AddAzureSecrets( context.HostingEnvironment, vaultName )
                         {% endif %}
+                      
                         .AddUserSecrets<Program>( optional: true ) // secrets won't exist in non-local environments
                         .AddEnvironmentVariables();
                 } )

@@ -1,11 +1,13 @@
 #define CONTAINER_DIAGNOSTICS
 
 using System.Globalization;
+
 {% if cookiecutter.include_oauth == "yes" %}
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 {% endif %}
+
 using Microsoft.IdentityModel.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,9 +18,11 @@ using {{cookiecutter.assembly_name}}.Middleware;
 using Hyperbee.Extensions.Lamar;
 using Hyperbee.Pipeline;
 using Lamar;
+
 {% if cookiecutter.include_azure == "yes" %}
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 {% endif %}
+
 using Microsoft.AspNetCore.Http.Json;
 
 using Serilog;
@@ -95,7 +99,7 @@ public class Startup : IStartupRegistry
             x.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         } );
 
-        {% if cookiecutter.database == "Postgresql" %}
+        {% if cookiecutter.database == "PostgreSql" %}
         services.AddHealthChecks()
             .AddNpgSql( Configuration["{{cookiecutter.database}}:ConnectionString"]! );
         {% elif cookiecutter.database == "MongoDb" %}
@@ -183,9 +187,8 @@ public class Startup : IStartupRegistry
 
         app.UseAuthentication();
         app.UseAuthorization();
-        {% if cookiecutter.include_azure == "yes" %}
-        //app.UseHttpsRedirection();  // Not needed for Azure container app as it already redirects to https
-        {% else %}
+
+        {% if cookiecutter.include_azure == "no" %}
         app.UseHttpsRedirection();
         {% endif %}
 
@@ -221,12 +224,15 @@ public class Startup : IStartupRegistry
             {
                 c.RoutePrefix = string.Empty; // serve the Swagger UI at the app root (http://localhost:<port>/)
                 c.SwaggerEndpoint( "/swagger/v1/swagger.json", "{{cookiecutter.assembly_name}} API V1" );
+             
                 {% if cookiecutter.include_oauth == "yes" %}
                 c.OAuthAppName( Configuration["Api:AppName"] );
                 c.OAuthScopeSeparator( " " );
                 c.OAuthUsePkce();
                 {% endif %}
+             
                 if ( !env.IsDevelopment() ) return;
+             
                 {% if cookiecutter.include_oauth == "yes" %}
                 // preset id and secret in dev
                 c.OAuthClientId( Configuration["OAuth:Swagger:ClientId"] );

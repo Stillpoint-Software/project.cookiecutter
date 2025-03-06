@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.1.0" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,21 +11,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NewAspireAppAudit.ApiService\NewAspireAppAudit.ApiService.csproj" />
-    <ProjectReference Include="..\NewAspireAppAudit.MigrationService\NewAspireAppAudit.MigrationService.csproj" />
-    <ProjectReference Include="..\NewAspireAppAudit.Web\NewAspireAppAudit.Web.csproj" />
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Api\{{cookiecutter.assembly_name}}.Api.csproj" />
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Migrations\{{cookiecutter.assembly_name}}.Migrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-    {% if cookiecutter.database == "MongoDb" %}
+
+    {% if cookiecutter.database == "PostgreSql" %}
+    <PackageReference Include="Aspire.Hosting.PostgreSql" Version="9.0.0" />
+    <PackageReference Include="Npgsql" Version="9.0.2" />
+    {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.2.0" />
-    {% elif cookiecutter.database == "PostgreSQL" %}
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0" />
-    <PackageReference Include="Npgsql" Version="9.0.2" />
     {% endif %}
+
     <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
+
+    {% if cookiecutter.include_azure=="yes" %}
+    <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="9.1.0" />
+    {% endif %}
+
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 public record Sample
 {
-   {% if cookiecutter.database == "Postgresql" %}
+   {% if cookiecutter.database == "PostgreSql" %}
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
@@ -21,10 +21,10 @@ internal static class StartupExtensions
             .AddJsonFile( ConfigurationHelper.EnvironmentAppSettingsName, optional: true );
     }
 
-{% if cookiecutter.database == "Postgresql" %}
+{% if cookiecutter.database == "PostgreSql" %}
   public static IServiceCollection AddProvider( this IServiceCollection services, IConfiguration config, ILogger logger = null )
     {
-        var connectionString = config["Postgresql:ConnectionString"]; // from appsettings.<ENV>.json
+        var connectionString = config["PostgreSql:ConnectionString"]; // from appsettings.<ENV>.json
 
         //Note: do not log sensitive data
         //logger?.Information( $"Connecting to `{connectionString}`." );
