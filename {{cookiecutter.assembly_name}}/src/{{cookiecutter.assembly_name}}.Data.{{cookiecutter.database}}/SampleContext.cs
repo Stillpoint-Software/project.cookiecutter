@@ -1,6 +1,5 @@
 using System.Text.Json;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -12,11 +11,10 @@ public class SampleContext : DbContext
 
     public DbSet<Sample> Sample { get; set; }
 
-    public SampleContext( DbContextOptions<SampleContext> options, IOptions<JsonOptions> jsonOptions ) : base( options )
+     public SampleContext( DbContextOptions<SampleContext> options, IOptions<CustomJsonOptions> jsonOptions ) : base( options )
     {
-        _jsonOptions = jsonOptions?.Value.SerializerOptions;
+        _jsonOptions = jsonOptions?.Value?.SerializerOptions ?? new JsonSerializerOptions();
     }
-
     protected override void OnModelCreating( ModelBuilder modelBuilder )
     {
         modelBuilder.HasDefaultSchema( "sample" );
@@ -33,4 +31,9 @@ public class SampleContext : DbContext
         sampleTableBuilder.Property( x => x.CreatedBy ).HasColumnName( "created_by" );
         sampleTableBuilder.Property( x => x.CreatedDate ).HasColumnName( "created_date" );
     }
+}
+
+public class CustomJsonOptions
+{
+    public JsonSerializerOptions SerializerOptions { get; set; } = new JsonSerializerOptions();
 }

@@ -5,7 +5,7 @@ using {{cookiecutter.assembly_name}}.Data.Abstractions;
 using {{cookiecutter.assembly_name}}.Data.Postgres;
 using System.Reflection;
 
-namespace {{cookiecutter.assembly_name}}.Api.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public static class AuditSetup
 {
@@ -20,10 +20,10 @@ public static class AuditSetup
         _dbContext = new {{cookiecutter.assembly_name}}Context( optionsBuilder.Options );
 
         {% if cookiecutter.database =="PostgreSql" %}
-            {% include '/template/audit/api_postgresql.cs' %}
+            {% include '/templates/audit/api_postgresql.cs' %}
         {% endif %}
         {% if cookiecutter.database =="MongoDb" %}
-            {% include '/template/audit/api_mongodb.cs' %}
+            {% include '/templates/audit/api_mongodb.cs' %}
         {% endif %}
 
         Configuration.AddOnSavingAction( scope =>
@@ -60,10 +60,10 @@ public static class AuditSetup
             foreach (var property in secureProperties)
             {
                 {%if cookiecutter.database =='PostgreSql' %}
-                    {% include '/template/audit/api_security_postgresql.cs' %}
+                    {% include '/templates/audit/api_security_postgresql.cs' %}
                 {% endif %}
                 {%if cookiecutter.database =='MongoDb' %}
-                    {% include '/template/audit/api_security_mongodb.cs' %}
+                    {% include '/templates/audit/api_security_mongodb.cs' %}
                 {% endif %}
             }
         }

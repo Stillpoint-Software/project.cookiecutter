@@ -38,4 +38,7 @@ public static class LoggerConfigurationExtensions
         return loggerConfiguration;
     }
 
-}
+    {% if cookiecutter.include_azure =='yes' %}
+    {% include  '/templates/azure/main_log.cs'%}
+    {% endif %}
+    }

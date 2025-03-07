@@ -1,4 +1,5 @@
-using {{cookiecutter.assembly_name}}.Api.Infrastucture;
+
+using {{cookiecutter.assembly_name}}.Api.Infrastructure;
 using {{cookiecutter.assembly_name}}.Data.Postgres;
 using {{cookiecutter.assembly_name}}.ServiceDefaults;
 

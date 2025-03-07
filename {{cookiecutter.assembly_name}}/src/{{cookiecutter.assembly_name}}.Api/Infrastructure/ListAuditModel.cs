@@ -1,4 +1,4 @@
-﻿namespace {{cookiecutter.assembly_name}}.Api.Infrastucture;
+﻿namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public class ListAuditModel
 {

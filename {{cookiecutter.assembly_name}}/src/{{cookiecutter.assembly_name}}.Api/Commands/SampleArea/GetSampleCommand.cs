@@ -1,4 +1,7 @@
-﻿using FluentValidation.Results;
+﻿{% if cookiecutter.include_audit =='yes'%}
+using Audit.Core;
+{% endif %}
+using FluentValidation.Results;
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
@@ -34,13 +37,28 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
     }
     private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, int sampleId )
     {
-        var sample = await _sampleService.GetSampleAsync( sampleId );
+        {% if cookiecutter.include_audit =='yes'%}
+        var sample = await _sampleService.GetSampleAsync(sampleId);
 
         if (sample != null)
-            return sample;
+            return null;
+
+        var test = await AuditScope.CreateAsync( c => c
+        .EventType( "Sample:Get" )
+           .AuditEvent( new ListAuditEvent( sample ) )
+           .IsCreateAndSave() );
+
+        return sample;
+        {% else %}
+
+        var sample = await _sampleService.GetSampleAsync( sampleId );
+
+        if (sample == null)
+            return null;
 
         context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
         context.CancelAfter();
         return null;
+        {% endif %}
     }
 }

@@ -6,7 +6,7 @@ using Serilog;
 namespace {{ cookiecutter.assembly_name}};
 
  {% if cookiecutter.include_azure == "yes" %}
-   {% include '/templates/azure/main_program.cs' % }
+   {% include '/templates/azure/main_program.cs' %}
 {% else %}
 internal class Program
 {
@@ -19,7 +19,7 @@ internal class Program
             bootstrapLogger.Information( "Starting host..." );
             bootstrapLogger.Information( $"Using environment settings '{EnvironmentHelper.EnvironmentAppSettingsName}'." );
 
-            // build host
+          // build host
             var host = Host.CreateDefaultBuilder( args )
                 .UseLamar()
                 .UseSerilog( ( context, services, builder ) =>
@@ -28,6 +28,7 @@ internal class Program
                         .WithDefaults( context.Configuration )
                         .WithConsole()
                         .WithFileWriter( context.Configuration );
+                } )
                 .ConfigureWebHostDefaults( builder =>
                 {
                     builder
@@ -35,6 +36,9 @@ internal class Program
                 } )
                 .ConfigureAppConfiguration( ( context, builder ) =>
                 {
+                    // WARNING: Use the pre-built bootstrapConfig instead of context.Configuration
+                    var vaultName = bootstrapConfig["Azure:KeyVault:VaultName"];
+
                     builder
                         .AddAppSettingsFile()
                         .AddAppSettingsEnvironmentFile()

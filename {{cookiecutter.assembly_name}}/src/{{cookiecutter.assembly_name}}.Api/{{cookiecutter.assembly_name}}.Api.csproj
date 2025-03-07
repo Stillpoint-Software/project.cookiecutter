@@ -10,7 +10,7 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-{% if cookiecutter.use_aspire == "no" %}
+{% if cookiecutter.include_aspire == "no" %}
   {% include '/templates/docker/api_docker_project.cs' %}
 {% else %}
   {% include '/templates/aspire/api_aspire_project.cs' %}

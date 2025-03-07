@@ -12,7 +12,7 @@ using {{cookiecutter.assembly_name}}.Data.Postgres.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace {{cookiecutter.assembly_name}}.Api.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public class LamarSetup
 {
@@ -22,7 +22,7 @@ public class LamarSetup
         {
             //register services using Lamar
             registry.AddSingleton<IPatientService, PatientService>();
-            {% if cookiecutter.use_audit == "yes" %}
+            {% if cookiecutter.include_audit == "yes" %}
             registry.AddSingleton<IAuditScopeFactory, AuditScopeFactory>();
             {% endif %}
             registry.AddSingleton<ICreateSampleCommand, CreateSampleCommand>();

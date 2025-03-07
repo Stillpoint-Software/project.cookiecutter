@@ -1,4 +1,7 @@
-﻿using Hyperbee.Pipeline;
+﻿{% if cookiecutter.include_audit =='yes'%}
+using Audit.Core;
+{% endif %}
+using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
 using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
@@ -54,6 +57,20 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
 
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {
+        {% if cookiecutter.include_audit =='yes'%}
+         using (AuditScope.Create( "Sample:Create", () => sample ))
+        {
+            sample.Id = await _sampleService.CreateSampleAsync( sample );
+
+            var sDefinition = new SampleDefinition
+            (
+                sample.Id,
+                sample.Name,
+                sample.Description
+            );
+            return sDefinition;
+        }
+        {% else %}
         sample.Id = await _sampleService.CreateSampleAsync( sample );
 
         return new SampleDefinition(
@@ -61,5 +78,6 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             sample.Name,
             sample.Description
         );
+        {% endif %}
     }
 }

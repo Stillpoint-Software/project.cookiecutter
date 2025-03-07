@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using Microsoft.AspNetCore.Http;
 
 namespace {{cookiecutter.assembly_name}}.Api.Identity;

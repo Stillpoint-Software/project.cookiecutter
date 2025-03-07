@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace {{cookiecutter.assembly_name}}.Api.Infrastucture
+namespace {{cookiecutter.assembly_name}}.Api.Infrastructure
 {
     public class JsonBoolConverter : JsonConverter<bool>
     {

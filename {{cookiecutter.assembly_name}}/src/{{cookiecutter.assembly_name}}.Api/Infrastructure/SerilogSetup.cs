@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace {{cookiecutter.assembly_name}}.Api.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public static class SerilogSetup
 {

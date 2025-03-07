@@ -1,5 +1,5 @@
 ﻿--Create the administration schema
-{% if cookiecutter.use_audit == 'yes' %}
+{% if cookiecutter.include_audit == 'yes' %}
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS {{cookiecutter.assembly_name}}.audit_event

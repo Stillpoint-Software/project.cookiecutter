@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using {{cookiecutter.assembly_name}}.Api.Validators;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;

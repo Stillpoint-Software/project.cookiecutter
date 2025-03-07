@@ -1,4 +1,7 @@
-﻿using Hyperbee.Pipeline;
+﻿{% if cookiecutter.include_audit =='yes'%}
+using Audit.Core;
+{% endif %}
+using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
 using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
@@ -37,6 +40,19 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
 
     private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
     {
+            {% if cookiecutter.include_audit =='yes'%}
+            var sampleOriginal = await _patientService.GetSampleAsync(update.sampleId);
+
+        if (sample == null)
+            return null;
+
+        var updatedSample = await AuditScope.CreateAsync( c => c
+        .EventType( "Sample:Update" )
+           .AuditEvent( new ListAuditEvent( sampleOriginal ) )
+           .IsCreateAndSave() );
+
+        return updatedSample;
+        {% else %}
         await _sampleService.UpdateSampleAsync( update.sampleId, update.Name, update.Description );
 
         return new SampleDefinition(
@@ -44,5 +60,6 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
             update.Name,
             update.Description
         );
+        {% endif %}
     }
 }

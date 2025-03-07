@@ -1,13 +1,11 @@
 #define CONTAINER_DIAGNOSTICS
 
 using System.Globalization;
-
 {% if cookiecutter.include_oauth == "yes" %}
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 {% endif %}
-
 using Microsoft.IdentityModel.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -18,14 +16,11 @@ using {{cookiecutter.assembly_name}}.Middleware;
 using Hyperbee.Extensions.Lamar;
 using Hyperbee.Pipeline;
 using Lamar;
-
 {% if cookiecutter.include_azure == "yes" %}
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 {% endif %}
-
 using Microsoft.AspNetCore.Http.Json;
 using Serilog;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace {{cookiecutter.assembly_name}};
 
@@ -105,7 +100,6 @@ public class Startup : IStartupRegistry
           .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
         {% endif %}
        
-
         services.AddApiVersioning( options =>
         {
             options.AssumeDefaultVersionWhenUnspecified = true;
@@ -122,8 +116,7 @@ public class Startup : IStartupRegistry
         services.AddSwagger( Configuration );
 
         services.AddDataProtection();
-
-        
+       
         {% if cookiecutter.include_oauth == "yes" %}
         // security
         services.AddAuthentication( options => //BF review hyperbee AddSecurity implementation
@@ -149,7 +142,6 @@ public class Startup : IStartupRegistry
             factoryServices.ProxyService<Api.Identity.IPrincipalProvider>( rootProvider );
             factoryServices.ProxyService<IValidatorProvider>( rootProvider );
         } );
-
 
         // include implementation registries
         services.IncludeStartupRegistry<Api.Startup>( Configuration );

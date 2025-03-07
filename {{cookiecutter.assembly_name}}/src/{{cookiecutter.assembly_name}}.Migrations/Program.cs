@@ -1,5 +1,5 @@
 ﻿
-{% if cookiecutter.use_aspire == "no" %}
+{% if cookiecutter.include_aspire == "no" %}
  {% include '/templates/docker/migration_docker_program.cs' %}
 {% else %}
  {% include '/templates/aspire/migration_aspire_program.cs' %}
