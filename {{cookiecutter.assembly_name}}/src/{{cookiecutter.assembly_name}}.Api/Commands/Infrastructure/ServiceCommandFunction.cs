@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
-using {{cookiecutter.assembly_name}}.Api.Validators;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.Logging;
+using {{cookiecutter.assembly_name}}.Api.Validators;
 
-namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 
 public abstract class ServiceCommandFunction<TInput, TOutput>(
     IPipelineContextFactory pipelineContextFactory,

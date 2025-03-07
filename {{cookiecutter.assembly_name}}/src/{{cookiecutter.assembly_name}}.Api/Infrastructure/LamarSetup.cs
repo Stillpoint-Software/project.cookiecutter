@@ -3,7 +3,12 @@ using Hyperbee.Pipeline.Context;
 using Lamar.Microsoft.DependencyInjection;
 using {{cookiecutter.assembly_name}}.Api.Commands.Patient;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
+{% if cookiecutter.database == "PostgreSql" %}
 using {{cookiecutter.assembly_name}}.Data.Postgres.Services;
+{% elif cookiecutter.database == "MongoDb" %}
+//TODO
+{% endif %}
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -17,15 +22,13 @@ public class LamarSetup
         {
             //register services using Lamar
             registry.AddSingleton<IPatientService, PatientService>();
+            {% if cookiecutter.use_audit == "yes" %}
             registry.AddSingleton<IAuditScopeFactory, AuditScopeFactory>();
-            registry.AddSingleton<IGetAllPatientsCommand, GetAllPatientCommand>();
-            registry.AddSingleton<IGetPatientByFilterCommand, GetPatientByFilterCommand>();
-            registry.AddSingleton<IGetPatientByIdCommand, GetPatientByIdCommand>();
-            registry.AddSingleton<ICreatePatientCommand, CreatePatientCommand>();
-            registry.AddSingleton<IUpdatePatientCommand, UpdatePatientCommand>();
-            registry.AddSingleton<IDeletePatientCommand, DeletePatientCommand>();
+            {% endif %}
+            registry.AddSingleton<ICreateSampleCommand, CreateSampleCommand>();
+            registry.AddSingleton<IGetSampleCommand, GetSampleCommand>();
+            registry.AddSingleton<IUpdateSampleCommand, UpdateSampleCommand>();
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
-
 
             // Add your own Lamar ServiceRegistry collections
             // of registrations

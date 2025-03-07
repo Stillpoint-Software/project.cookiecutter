@@ -29,7 +29,6 @@
     <None Remove="Resources\1000-Initial\administration\users\user.json" />
     {% endif %}
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -45,7 +44,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     {% if cookiecutter.database == "PostgreSql" %}
     <EmbeddedResource Include="Resources\1000-Initial\CreateUsers.sql">
@@ -55,7 +53,6 @@
     <EmbeddedResource Include="Resources\1000-Initial\administration\users\user.json" />    
     {% endif %}
   </ItemGroup>
-
   <ItemGroup>
     {% if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.3.2" />
@@ -72,10 +69,9 @@
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="9.0.0" />
     <PackageReference Include="Hyperbee.Migrations" Version="2.0.0" />
     {% if cookiecutter.database == "PostgreSql" %}
-    {% if cookiecutter.use_aspire == "yes" %}
-        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSql" Version="9.0.0" />
-    {% endif %}
-
+      {% if cookiecutter.use_aspire == "yes" %}
+          <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.Postgresql" Version="9.0.0" />
+      {% endif %}
     <PackageReference Include="Npgsql" Version="9.0.1" />
     <PackageReference Include="Hyperbee.Migrations.Providers.PostgreSql" Version="2.0.0" />
     {% elif cookiecutter.database == "MongoDb" %}

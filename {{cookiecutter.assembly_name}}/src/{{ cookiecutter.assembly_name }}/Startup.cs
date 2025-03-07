@@ -24,7 +24,6 @@ using Microsoft.ApplicationInsights.Extensibility.Implementation;
 {% endif %}
 
 using Microsoft.AspNetCore.Http.Json;
-
 using Serilog;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -53,7 +52,6 @@ public class Startup : IStartupRegistry
 
         {% if cookiecutter.include_azure == "yes" %}
         // IOptions<T>
-
             services.Configure<AzureDetailSettings>( options =>
             {
                 options.TenantId = Configuration.GetValue( "Azure:TenantId", "" );

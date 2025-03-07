@@ -1,13 +1,4 @@
 
-using {{ cookiecutter.assembly_name}}.Extensions;
-using Lamar.Microsoft.DependencyInjection;
-using Serilog;
-
-namespace {{ cookiecutter.assembly_name}};
-
- {% if cookiecutter.include_azure == "yes" %}
-   {% include '/templates/azure/main_program.cs' % }
-{% else %}
 internal class Program
 {
     public static async Task<int> Main( string[] args )    {
@@ -28,6 +19,9 @@ internal class Program
                         .WithDefaults( context.Configuration )
                         .WithConsole()
                         .WithFileWriter( context.Configuration );
+
+                        .WithAzureApplicationInsights( services );
+                } )
                 .ConfigureWebHostDefaults( builder =>
                 {
                     builder
@@ -35,9 +29,13 @@ internal class Program
                 } )
                 .ConfigureAppConfiguration( ( context, builder ) =>
                 {
+                    // WARNING: Use the pre-built bootstrapConfig instead of context.Configuration
+                    var vaultName = bootstrapConfig["Azure:KeyVault:VaultName"];
+
                     builder
                         .AddAppSettingsFile()
-                        .AddAppSettingsEnvironmentFile()
+                        .AddAppSettingsEnvironmentFile()                     
+                        .AddAzureSecrets( context.HostingEnvironment, vaultName )
                         .AddUserSecrets<Program>( optional: true ) // secrets won't exist in non-local environments
                         .AddEnvironmentVariables();
                 } )
@@ -59,4 +57,3 @@ internal class Program
         return 0;
     }
 }
-{% endif %}

@@ -1,8 +1,7 @@
 ﻿using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.Logging;
 
-namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Infrastucture;
 
 public abstract class ServiceCommandProcedure<TOutput>(
     IPipelineContextFactory pipelineContextFactory,

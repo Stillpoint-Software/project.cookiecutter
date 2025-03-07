@@ -1,12 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
-using {{cookiecutter.assembly_name}}.Api.Validators;
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.DependencyInjection;
+using {{cookiecutter.assembly_name}}.Api.Validators;
+using System.Runtime.CompilerServices;
 
-namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 
 public enum ValidationAction
 {
@@ -16,7 +15,7 @@ public enum ValidationAction
 
 public static class Validation
 {
-    public static ValidationFailure Failure( string propertyName, string errorMessage, string errorCode = null ) => new( propertyName, errorMessage ) { ErrorCode = errorCode };
+    public static ValidationFailure Failure( string propertyName, string errorMessage, string? errorCode = null ) => new( propertyName, errorMessage ) { ErrorCode = errorCode };
 }
 
 public static class PipelineValidationExtensions
@@ -50,7 +49,7 @@ public static class PipelineValidationExtensions
     {
         context.Items.SetValue( ValidationResultKey, validationResult );
 
-        if ( validationAction == ValidationAction.CancelAfter )
+        if (validationAction == ValidationAction.CancelAfter)
             context.CancelAfter();
     }
 
@@ -68,7 +67,7 @@ public static class PipelineValidationExtensions
 
     public static void AddValidationResult( this IPipelineContext context, ValidationFailure validationFailure, ValidationAction validationAction = ValidationAction.ContinueAfter )
     {
-        if ( context.Items.TryGetValue<ValidationResult>( ValidationResultKey, out var validationResult ) )
+        if (context.Items.TryGetValue<ValidationResult>( ValidationResultKey, out var validationResult ))
         {
             validationResult.Errors.Add( validationFailure );
             return;
@@ -87,10 +86,11 @@ public static class PipelineValidationExtensions
         => context.GetValidationResult()?.Errors ?? Enumerable.Empty<ValidationFailure>();
 
     // pipeline builder extensions
+
     public static IPipelineBuilder<TInput, TOutput> IfValidAsync<TInput, TOutput>(
         this IPipelineBuilder<TInput, TOutput> pipeline,
         IValidator validator,
-        Func<IPipelineStartBuilder<TOutput, TOutput>, IPipelineBuilder> builder )
+        Func<IPipelineBuilder<TOutput, TOutput>, IPipelineBuilder> builder )
     {
         async Task<TOutput> ValidateAsync( IPipelineContext context, TOutput argument )
         {
@@ -125,7 +125,7 @@ public static class PipelineValidationExtensions
             .PipeAsync( ValidateAsync )
             .Pipe( ( c, a ) =>
             {
-                if ( !c.IsValid() )
+                if (!c.IsValid())
                     c.CancelAfter();
 
                 return a;
@@ -153,7 +153,7 @@ public static class PipelineValidationExtensions
             .PipeAsync( ValidateAsync )
             .Pipe( ( c, a ) =>
             {
-                if ( !c.IsValid() )
+                if (!c.IsValid())
                     c.CancelAfter();
 
                 return a;
@@ -168,7 +168,7 @@ public static class PipelineValidationExtensions
         return pipeline
             .Pipe( ( c, a ) =>
             {
-                c.SetValidationResult( new List<ValidationFailure> { validationFailure }, ValidationAction.CancelAfter );
+                c.SetValidationResult( [validationFailure], ValidationAction.CancelAfter );
                 return a;
             } );
     }

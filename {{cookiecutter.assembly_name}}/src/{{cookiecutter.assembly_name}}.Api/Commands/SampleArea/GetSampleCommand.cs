@@ -1,16 +1,14 @@
 ﻿using FluentValidation.Results;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
-using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.Logging;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
+using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
+using {{cookiecutter.assembly_name}}.Data.Abstractions;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
-{% if cookiecutter.database == "PostgreSql" %}
 public interface IGetSampleCommand : ICommandFunction<int, SampleDefinition>;
 
 public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, IGetSampleCommand
@@ -36,57 +34,9 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
     }
     private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, int sampleId )
     {
-        {% if cookiecutter.use_audit == "Yes" %}
-           var sample = await _sampleService.GetAllPatientsAsync();
-
-         var newSample = await AuditScope.CreateAsync( c => c
-            .EventType( "Sample:GetSample" )
-            .AuditEvent( new ListAuditEvent( patients ) )
-            .IsCreateAndSave() );
-
-        return sample;
-
-        {% else %}  
         var sample = await _sampleService.GetSampleAsync( sampleId );
 
-        if ( sample != null )
-            return sample;
-
-        context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
-        context.CancelAfter();
-        return null;
-        {% endif %}
-    }
-}
-{% elif cookiecutter.database == "MongoDb" %}
-public interface IGetSampleCommand : ICommandFunction<string, SampleDefinition>;
-
-public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>, IGetSampleCommand
-{
-    private readonly ISampleService _sampleService;
-
-    public GetSampleCommand(
-        ISampleService sampleService,
-        IPipelineContextFactory pipelineContextFactory,
-        ILogger<GetSampleCommand> logger )
-        : base( pipelineContextFactory, logger )
-    {
-        _sampleService = sampleService;
-    }
-
-    protected override FunctionAsync<string, SampleDefinition> CreatePipeline()
-    {
-        return PipelineFactory
-            .Start<string>()
-            .WithLogging()
-            .PipeAsync( GetSampleAsync )
-            .Build();
-    }
-    private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, string sampleId )
-    {
-        var sample = await _sampleService.GetSampleAsync( sampleId );
-
-        if ( sample != null )
+        if (sample != null)
             return sample;
 
         context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
@@ -94,4 +44,3 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
         return null;
     }
 }
-{% endif %}

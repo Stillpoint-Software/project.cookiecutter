@@ -19,25 +19,13 @@ public static class AuditSetup
         optionsBuilder.UseNpgsql( connectionString );
         _dbContext = new {{cookiecutter.assembly_name}}Context( optionsBuilder.Options );
 
-        {% if cookiecutter.database =="PostgreSql"%}
-        Configuration
-        .Setup()
-        .UsePostgreSql( config => config
-            .ConnectionString( connectionString )
-            .Schema( {{cookiecutter.assembly_name}} )
-            .TableName( "audit_event" )
-            .IdColumnName( "event_id" )
-            .LastUpdatedColumnName( "last_updated" )
-            .DataColumn( "data", DataType.JSONB, ev => ev.ToJson() )
-            .CustomColumn( "event_type", ev => ev.EventType ) );
-        {% elif cookiecutter.database =="MongoDb"%}
-          Configuration
-        .Setup()
-        .UseMongoDB( config => config
-            .ConnectionString( connectionString )
-            .Database( "mongoDb" )
-            .Collection( "audit_event" ) );
+        {% if cookiecutter.database =="PostgreSql" %}
+            {% include '/template/audit/api_postgresql.cs' %}
         {% endif %}
+        {% if cookiecutter.database =="MongoDb" %}
+            {% include '/template/audit/api_mongodb.cs' %}
+        {% endif %}
+
         Configuration.AddOnSavingAction( scope =>
         {
             if (scope.Event is ListAuditEvent auditEvent)
@@ -71,29 +59,12 @@ public static class AuditSetup
         {
             foreach (var property in secureProperties)
             {
-                if (auditEvent.Target.Old != null)
-                {
-                    var propValue = property.GetValue( auditEvent.Target.Old );
-                    if (propValue != null)
-                    {
-                        {% if cookiecutter.database =="PostgreSql"%}
-                        var oldData = Convert.ToBase64String( _dbContext.EncryptData( propValue.ToString() ?? string.Empty ) );
-                        property.SetValue( auditEvent.Target.Old, oldData );
-                        {% elif cookiecutter.database =="MongoDb"%}
-                        property.SetValue( auditEvent.Target.Old, SecurityHelper.EncryptValue( propValue.ToString() ?? string.Empty ) );
-                        {% endif %
-                    }
-                }
-                var newValue = property.GetValue( auditEvent.Target.New );
-                if (newValue != null)
-                {
-                     {% if cookiecutter.database =="PostgreSql"%}
-                    var newData = Convert.ToBase64String( _dbContext.EncryptData( newValue.ToString() ?? string.Empty ) );
-                    property.SetValue( auditEvent.Target.New, newData );
-                    {% elif cookiecutter.database =="MongoDb"%}
-                    property.SetValue( auditEvent.Target.New, SecurityHelper.DecryptValue( newValue.ToString() ?? string.Empty ) );
-                    {% endif %
-                }
+                {%if cookiecutter.database =='PostgreSql' %}
+                    {% include '/template/audit/api_security_postgresql.cs' %}
+                {% endif %}
+                {%if cookiecutter.database =='MongoDb' %}
+                    {% include '/template/audit/api_security_mongodb.cs' %}
+                {% endif %}
             }
         }
     }

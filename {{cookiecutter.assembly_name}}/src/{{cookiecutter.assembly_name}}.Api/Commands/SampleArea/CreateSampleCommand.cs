@@ -1,13 +1,12 @@
-﻿using {{cookiecutter.assembly_name}}.Api.Identity;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
-using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
-using Hyperbee.Pipeline;
+﻿using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.Logging;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
+using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
+using {{cookiecutter.assembly_name}}.Api.Identity;
+using {{cookiecutter.assembly_name}}.Data.Abstractions;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
@@ -43,8 +42,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             .Build();
     }
 
-   {% if cookiecutter.database == "PostgreSql" %}
-   private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
+    private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
     {
 
         return await Task.FromResult( new Sample
@@ -56,16 +54,6 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
 
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {
-        {% if cookiecutter.use_audit == "Yes" %}
-        using (AuditScope.Create( "Sample:Create", () => sample ))
-          sample.Id = await _sampleService.CreateSampleAsync( sample );
-          var sampleDefinition = new SampleDefinition(
-            sample.Id,
-            sample.Name,
-            sample.Description
-        );
-        return sampleDefinition;
-        {% else %}
         sample.Id = await _sampleService.CreateSampleAsync( sample );
 
         return new SampleDefinition(
@@ -73,29 +61,5 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             sample.Name,
             sample.Description
         );
-        {% endif %}
     }
-
-   {% elif cookiecutter.database == "MongoDb" %}
-    private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
-    {
-        return await Task.FromResult( new Sample
-        {
-            Name = sample.Name,
-            Description = sample.Description,
-            CreatedBy = _user
-        } );
-    }
-
-    private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
-    {
-        await _sampleService.CreateSampleAsync( sample );
-
-        return new SampleDefinition(
-            sample.Id,
-            sample.Name,
-            sample.Description
-        );
-    }
-   {% endif %}
 }

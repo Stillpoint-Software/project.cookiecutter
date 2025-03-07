@@ -11,9 +11,9 @@
   </ItemGroup>
 
 {% if cookiecutter.use_aspire == "no" %}
- {% include 'src/{{ cookiecutter.assembly_name }}.Api/docker_program.cs' %}
+  {% include '/templates/docker/api_docker_project.cs' %}
 {% else %}
- {% include 'src/{{ cookiecutter.assembly_name }}.Api/aspire_program.cs' %}
+  {% include '/templates/aspire/api_aspire_project.cs' %}
 {% endif %}
 
 </Project>

@@ -20,7 +20,6 @@ var storage = builder.AddAzureStorage( "storage" )
 {% endif %}
 
 {% if cookiecutter.database == "PostgreSql" %}
-
 var dbPassword = builder.AddParameter("DbPassword", "postgres", true);
 var dbUser = builder.AddParameter("DbUser", "postgres", true);
 
@@ -28,7 +27,6 @@ var dbServer = builder.AddPostgres("postgres", userName: dbUser, password: dbPas
     .PublishAsConnectionString()
     .WithDataVolume()
     .WithPgAdmin(x => x.WithImageTag("8.14"));
-
 
 {% elif cookiecutter.database == "MongoDb" %}
 

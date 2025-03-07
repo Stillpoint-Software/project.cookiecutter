@@ -1,7 +1,7 @@
 ﻿
 {% if cookiecutter.use_aspire == "no" %}
- {% include 'src/{{ cookiecutter.assembly_name }}.Migrations/docker_main_service.cs' %}
+ {% include '/templates/docker/migration_docker_main_service.cs' %}
 {% else %}
- {% include 'src/{{ cookiecutter.assembly_name }}.Migrations/aspire_main_service.cs' %}
+ {% include '/templates/aspire/migration_aspire_main_service.cs' %}
 {% endif %}
 

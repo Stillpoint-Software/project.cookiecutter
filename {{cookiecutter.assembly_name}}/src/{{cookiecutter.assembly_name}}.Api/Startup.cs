@@ -1,7 +1,5 @@
-
-
 {% if cookiecutter.use_aspire == "no" %}
- {% include 'src/{{ cookiecutter.assembly_name }}/docker_program.cs' %}
+    {% include '/templates/docker/api_docker_startup.cs' %}
 {% else %}
- {% include 'src/{{ cookiecutter.assembly_name }}/aspire_program.cs' %}
+    {% include '/template/aspire/api_aspire_startup.cs' %}
 {% endif %}

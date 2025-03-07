@@ -1,8 +1,7 @@
 ﻿using FluentValidation.Results;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
-using {{cookiecutter.assembly_name}}.Api.Identity;
 using Hyperbee.Pipeline.Context;
-using Microsoft.Extensions.DependencyInjection;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
+using {{cookiecutter.assembly_name}}.Api.Identity;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 
@@ -13,7 +12,7 @@ public static class PipelineContextUserExtensions
         var principalProvider = context.ServiceProvider.GetService<IPrincipalProvider>();
 
         var email = principalProvider.GetEmail();
-        if ( email != null )
+        if (email != null)
             return email;
 
         context.AddValidationResult( new ValidationFailure( "User", "Invalid User" ) );

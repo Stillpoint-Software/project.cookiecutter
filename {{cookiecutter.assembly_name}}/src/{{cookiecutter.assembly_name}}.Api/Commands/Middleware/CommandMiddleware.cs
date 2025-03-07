@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+﻿using Hyperbee.Pipeline;
+using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using Hyperbee.Pipeline;
-using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 
@@ -42,7 +41,7 @@ public static class PipelineMiddleware
                 var result = await next( context, argument ).ConfigureAwait( false );
                 return result;
             }
-            catch ( ServiceException ex )
+            catch (ServiceException ex)
             {
                 var message = string.Empty; // ErrorCodes.GetCommandErrorMessage( errorcode ); // lookup message string for provided errorcode
                 context.Logger?.LogError( ex, message );

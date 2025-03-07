@@ -1,4 +1,4 @@
-﻿namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+﻿namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 
 public static class AuthConstants
 {

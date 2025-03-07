@@ -4,7 +4,7 @@
   "api_app_name": "{{ cookiecutter.assembly_name|lower }}",
   "api_web_url": "https://wwww.{{ cookiecutter.assembly_name|lower  }}.com/",
   "database": ["PostgreSql", "MongoDb"],
-  "_copy_without_render": [".github/workflows/*.yml",".github/README.md"  ],
+  "_copy_without_render": [".github/workflows/*.yml",".github/README.md","{{cookiecutter.assembly_name}}.Api/templates/*.cs"  ],
   "include_oauth": ["yes", "no"],
   "include_azure": ["yes", "no"],
   "use_aspire": ["yes", "no"],
