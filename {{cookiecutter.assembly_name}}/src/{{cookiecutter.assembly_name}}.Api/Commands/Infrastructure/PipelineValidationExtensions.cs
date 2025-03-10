@@ -4,6 +4,7 @@ using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Context;
 using {{cookiecutter.assembly_name}}.Api.Validators;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 

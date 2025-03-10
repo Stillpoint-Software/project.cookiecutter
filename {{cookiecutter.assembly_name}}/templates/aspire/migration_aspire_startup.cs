@@ -1,7 +1,7 @@
-using Hyperbee.Migrations;
+﻿using Hyperbee.Migrations;
 using {{cookiecutter.assembly_name}}.ServiceDefaults;
 
-namespace {{cookiecutter.assembly_name}}.Migrations;
+namespace {{cookiecutter.assembly_name}}.MigrationService;
 
 public class Startup
 {

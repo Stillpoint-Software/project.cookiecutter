@@ -8,9 +8,10 @@ using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 using {{cookiecutter.assembly_name}}.Api.Identity;
 using {{cookiecutter.assembly_name}}.Data.Abstractions;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
-
+using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 

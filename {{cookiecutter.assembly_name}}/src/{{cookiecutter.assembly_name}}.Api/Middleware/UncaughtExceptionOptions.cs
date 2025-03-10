@@ -1,4 +1,4 @@
-﻿namespace  {{cookiecutter.assembly_name}}.Middleware;
+﻿namespace  {{cookiecutter.assembly_name}}.Api.Middleware;
 
 public class UncaughtExceptionOptions
 {

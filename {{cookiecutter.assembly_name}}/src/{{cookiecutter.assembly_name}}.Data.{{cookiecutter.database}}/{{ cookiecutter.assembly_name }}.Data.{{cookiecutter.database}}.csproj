@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Debug;Release;Debug_api;Release_api;Debug_migration;Release_migration</Configurations>
   </PropertyGroup>
 {% if cookiecutter.include_aspire == "no" %}
- {% include '/templates/docker/data_docker_project.cs' %}
+{% include '/templates/docker/data_docker_project.cs' %}
 {% else %}
- {% include '/templates/docker/data_aspire_project.cs' %}
+{% include '/templates/aspire/data_aspire_project.cs' %}
 {% endif %}
-
 </Project>

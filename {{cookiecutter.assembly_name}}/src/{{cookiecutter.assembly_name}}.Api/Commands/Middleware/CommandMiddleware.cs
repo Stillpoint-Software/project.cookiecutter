@@ -2,6 +2,7 @@
 using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 

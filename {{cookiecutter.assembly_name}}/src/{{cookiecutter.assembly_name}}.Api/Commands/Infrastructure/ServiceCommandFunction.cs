@@ -2,6 +2,7 @@
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
 using {{cookiecutter.assembly_name}}.Api.Validators;
+using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 

@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace  {{cookiecutter.assembly_name}}.Middleware;
+namespace  {{cookiecutter.assembly_name}}.Api.Middleware;
 
 public class UncaughtExceptionMiddleware
 {

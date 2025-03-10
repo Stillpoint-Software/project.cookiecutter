@@ -1,56 +1,56 @@
-﻿using Hyperbee.Migrations;
-using {{cookiecutter.assembly_name}}.ServiceDefaults;
+﻿using Hyperbee.Migrations.Providers.Postgres;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+using  {{cookiecutter.assembly_name}}.ServiceDefaults;
 
-namespace {{cookiecutter.assembly_name}}.MigrationService;
-
-public class Startup
+namespace  {{cookiecutter.assembly_name}}.Migrations;
+public class Program
 {
-    public IConfiguration Configuration { get; }
-
-    public Startup(IConfiguration configuration)
+    public static void Main( string[] args )
     {
-        Configuration = configuration;
-    }
-    public void ConfigureServices(IServiceCollection services)
-    {
+        var builder = WebApplication.CreateBuilder( args );
 
-        services.AddCors(c => c.AddPolicy("CorsAllowAll", build =>
+        // Add service defaults & Aspire components.
+        builder.AddServiceDefaults();
+
+
+        // Manually invoke Startup's ConfigureServices
+        var startupInstance = new Startup( builder.Configuration );
+        startupInstance.ConfigureServices( builder.Services );
+
+
+        builder.AddNpgsqlDbContext<MedstarContext>( "medstardb" ); // this allows for telemetry
+
+        //Setup OpenTelemetry
+        builder.Services.AddOpenTelemetry()
+            .WithTracing( tracing => tracing.AddSource( MainService.ActivitySourceName ) );
+
+        // Add environment variables and user secrets to configuration
+        builder.Configuration
+                .AddEnvironmentVariables()
+                .AddUserSecrets<Program>( optional: true );
+
+        //Connection string for medstarDb from aspire
+        var connectionString = builder.Configuration["ConnectionStrings:medstarDb"];
+
+        if (string.IsNullOrEmpty( connectionString ))
         {
-            build.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        }));
-
-
-        services.AddHttpContextAccessor();
-
-        services.AddHttpClient();
-    }
-
-    public void Configure(WebApplication app, IWebHostEnvironment env)
-    {
-        // Use appropriate middleware based on the environment
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
-        else
-        {
-            app.UseHsts();
+            throw new ArgumentNullException( nameof( connectionString ), "Connection string for 'medstarDb' is not configured." );
         }
 
-        // General middleware setup
-        app.UseRouting();
-        app.UseCors(c => // must be called before UseResponseCaching
-        {
-            c.AllowAnyOrigin();
-            c.AllowAnyMethod();
-            c.AllowAnyHeader();
-        });
+        //This line is needed to run migrations.  However, this doesn't allow for telemetry
+        builder.Services.AddNpgsqlDataSource( connectionString );
+        builder.Services.AddPostgresMigrations();
+        builder.Services.AddHostedService<MainService>();
+        builder.Services.AddDataProtection();
 
-        app.MapDefaultEndpoints();
+        // Build the application
+        var app = builder.Build();
 
-        var migrationService = app.Services.GetRequiredService<MigrationRunner>();
-        migrationService.RunAsync().GetAwaiter().GetResult();
+        // Call Startup's Configure method to configure the middleware pipeline
+        startupInstance.Configure( app, app.Environment );
+
+
+        // Run the application
+        app.Run();
     }
 }

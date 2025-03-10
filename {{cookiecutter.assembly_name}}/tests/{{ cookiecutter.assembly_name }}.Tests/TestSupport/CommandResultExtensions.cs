@@ -1,4 +1,4 @@
-﻿using {{cookiecutter.assembly_name}}.Api.Commands.Infrastucture;
+﻿using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using Hyperbee.Pipeline.Commands;
 
 namespace  {{cookiecutter.assembly_name}}.Tests.TestSupport;

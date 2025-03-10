@@ -1,4 +1,5 @@
-﻿using {{cookiecutter.assembly_name}}.Migrations.Extensions;
+﻿
+using {{cookiecutter.assembly_name}}.Migrations.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +40,7 @@ internal class Program
                 .ConfigureServices( ( context, services ) =>
                 {
                     services
+                        .AddHostedService<MainService>()
                     {% if cookiecutter.database == "PostgreSql" %}
                         .AddProvider( context.Configuration, bootstrapLogger )
                         .AddMigrations( context.Configuration )
@@ -46,7 +48,7 @@ internal class Program
                         .AddMongoDbProvider( context.Configuration, bootstrapLogger )
                         .AddMongoDbMigrations( context.Configuration )
                     {% endif %}
-                        .AddHostedService<MainService>();
+                        ;
                 } )
                 .UseSerilog()
                 .RunConsoleAsync();

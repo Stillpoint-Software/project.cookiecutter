@@ -2,6 +2,8 @@
 using Hyperbee.Pipeline.Context;
 using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
 using {{cookiecutter.assembly_name}}.Api.Identity;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 

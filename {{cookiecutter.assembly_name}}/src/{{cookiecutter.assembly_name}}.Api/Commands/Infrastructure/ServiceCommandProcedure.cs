@@ -1,5 +1,6 @@
 ﻿using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
+using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 

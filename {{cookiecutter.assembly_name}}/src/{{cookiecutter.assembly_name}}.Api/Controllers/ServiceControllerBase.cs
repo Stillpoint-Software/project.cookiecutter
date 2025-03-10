@@ -45,7 +45,7 @@ public class ServiceControllerBase : ControllerBase
         {
             errorResult = new ObjectResult( "" );
 
-            if ( context.ValidationFailures().OfType<Commands.Infrastucture.ForbiddenValidationFailure>().Any() )
+            if ( context.ValidationFailures().OfType<Commands.Infrastructure.ForbiddenValidationFailure>().Any() )
             {
                 errorResult = Forbid();
 

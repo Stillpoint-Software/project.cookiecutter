@@ -1,9 +1,8 @@
 {
   "_copy_without_render": [
     ".github/workflows/*.yml",
-    ".github/README.md",
-    "{{cookiecutter.assembly_name}}.Api/templates/*.cs"
-  ],
+    ".github/README.md"
+   ],
   "assembly_name": "Project Name",
   "root_namespace": "{{ cookiecutter.assembly_name|lower  }}",
   "api_app_name": "{{ cookiecutter.assembly_name|lower }}",

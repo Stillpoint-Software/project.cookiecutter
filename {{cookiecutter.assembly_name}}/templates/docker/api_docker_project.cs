@@ -13,6 +13,8 @@
     <PackageReference Include="Hyperbee.Pipeline" Version="2.0.1" />
     <PackageReference Include="Lamar" Version="14.0.1" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
     {% if cookiecutter.include_oauth == "yes" %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     {% endif %}

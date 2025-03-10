@@ -4,6 +4,10 @@ using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 {% endif %}
+using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace {{cookiecutter.assembly_name}}.Migrations.Extensions;
 
