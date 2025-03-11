@@ -28,27 +28,18 @@ if not aspire:
         sys.exit(1)
    
 azure = '{{cookiecutter.include_azure}}'=='yes'
-print(f'Azure: {azure}')
 database = '{{cookiecutter.database}}' =='PostgreSql'
-print(f'Database: {database}')
 audit = '{{cookiecutter.include_audit}}'=='yes'
-print(f'Audit: {audit}')
 auth = '{{cookiecutter.include_oauth}}'=='yes'
-print(f'Auth: {auth}')  
 
 if not azure:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\AzureSecretsExtensions.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\AuthService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IAuthService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
-
+    
 if not aspire: # Remove Aspire files/folders 
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.AppHost'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.ServiceDefaults'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extensions'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Startup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\LamarSetup.cs'))
@@ -93,8 +84,11 @@ if audit == False:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\ListAuditModel.cs'))
 
 if auth == False:
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Identity\AuthService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Identity\CryptoRandom.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\AuthService.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs')
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Extensions\AuthPolicyExtensions.cs')))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IAuthService.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 
 # Remove templates
 remove(os.path.join('templates'))

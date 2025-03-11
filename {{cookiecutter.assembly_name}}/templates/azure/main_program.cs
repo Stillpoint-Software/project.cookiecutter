@@ -18,8 +18,7 @@ internal class Program
                     builder
                         .WithDefaults( context.Configuration )
                         .WithConsole()
-                        .WithFileWriter( context.Configuration );
-
+                        .WithFileWriter( context.Configuration )
                         .WithAzureApplicationInsights( services );
                 } )
                 .ConfigureWebHostDefaults( builder =>
