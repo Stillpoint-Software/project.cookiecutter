@@ -1,5 +1,9 @@
 ﻿using Hyperbee.Migrations;
 using {{cookiecutter.assembly_name}}.ServiceDefaults;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 
 namespace {{cookiecutter.assembly_name}}.MigrationService;
 

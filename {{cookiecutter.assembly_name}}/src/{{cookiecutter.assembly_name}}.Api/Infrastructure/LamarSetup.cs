@@ -1,14 +1,17 @@
-﻿using Audit.Core;
+﻿{% if cookiecutter.include_audit == "yes" %}
+using Audit.Core;
+{% endif %} 
 using Hyperbee.Pipeline.Context;
 using Lamar.Microsoft.DependencyInjection;
-using {{cookiecutter.assembly_name}}.Api.Commands.Patient;
+using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 {% if cookiecutter.database == "PostgreSql" %}
-using {{cookiecutter.assembly_name}}.Data.Postgres.Services;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
 {% elif cookiecutter.database == "MongoDb" %}
 //TODO
 {% endif %}
-
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,10 +21,10 @@ public class LamarSetup
 {
     public static void ConfigureLamar( WebApplicationBuilder builder )
     {
-        builder.Host.UseLamar( ( context, registry ) =>
+        builder.Host.UseLamar( ( registry ) =>
         {
             //register services using Lamar
-            registry.AddSingleton<IPatientService, PatientService>();
+            registry.AddSingleton<ISampleService, SampleService>();
             {% if cookiecutter.include_audit == "yes" %}
             registry.AddSingleton<IAuditScopeFactory, AuditScopeFactory>();
             {% endif %}

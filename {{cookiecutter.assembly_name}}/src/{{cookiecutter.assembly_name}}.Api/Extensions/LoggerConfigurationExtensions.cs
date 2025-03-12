@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Microsoft.Extensions.Configuration;
 
 namespace {{cookiecutter.assembly_name}}.Api.Extensions;
 public static class LoggerConfigurationExtensions

@@ -2,7 +2,6 @@
  <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Configurations>Debug;Release;Debug_api;Release_api;Debug_migration;Release_migration</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

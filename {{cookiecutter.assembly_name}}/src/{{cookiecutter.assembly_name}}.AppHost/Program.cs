@@ -41,7 +41,7 @@ var dbServer = builder.AddMongoDB( "mongo", userName: dbUsername, password: dbPa
 
 var projectdb = dbServer.AddDatabase("projectdb");
 
-var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>({{cookiecutter.assembly_name}}"-api")
+var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name}}-api")
     .WithReference(projectdb)
     {% if cookiecutter.include_azure == "yes" %}
         .WithReference( keyVault )
@@ -50,7 +50,7 @@ var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>
     {% endif %}
     .WithSwaggerUI();
 
-builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>({{cookiecutter.assembly_name}}"-migrations")
+builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name}}-migrations")
     .WaitFor(projectdb)
     .WithReference(projectdb)
      {% if cookiecutter.include_azure == "yes" %}

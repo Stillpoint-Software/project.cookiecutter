@@ -1,7 +1,11 @@
 
 using {{cookiecutter.assembly_name}}.Api.Infrastructure;
-using {{cookiecutter.assembly_name}}.Data.Postgres;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using {{cookiecutter.assembly_name}}.ServiceDefaults;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
 
 namespace {{cookiecutter.assembly_name}}.Api;
 
@@ -17,23 +21,28 @@ public class Program
         // Add services to the container.
         LamarSetup.ConfigureLamar( builder );
 
+        {% if cookiecutter.include_azure =="yes" %}
         var connectionString = builder.Configuration["ConnectionStrings:secrets"];
 
         if (!string.IsNullOrEmpty( connectionString ))
         {
+           
             //Add Azure Key Vault secret values to app configuration
             builder.Configuration.AddAzureKeyVaultSecrets( "secrets" );
 
             //add Azure Key Vault 'SecretClient' to DI Container
             builder.AddAzureKeyVaultClient( "secrets" );
         }
+        {% endif %}
 
         // Manually invoke Startup's ConfigureServices
         var startupInstance = new Startup( builder.Configuration );
         startupInstance.ConfigureServices( builder.Services );
 
+        {% if cookiecutter.database == "PostgreSql" %}
         // Add database context
-        builder.AddNpgsqlDbContext<ProjectContext>( "projectdb" );
+        builder.AddNpgsqlDbContext<SampleContext>( "projectdb" );
+        {% endif %}
 
         // Add environment variables
         builder.Configuration
@@ -41,10 +50,10 @@ public class Program
 
         // Configure Serilog setup
         SerilogSetup.ConfigureSerilog( builder );
-
+        {% if cookiecutter.include_audit == "yes" %}
         // Configure audit setup
         AuditSetup.ConfigureAudit( builder );
-
+        {% endif %}
         // Build the application
         var app = builder.Build();
 

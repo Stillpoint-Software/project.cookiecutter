@@ -4,11 +4,11 @@
     <RootNamespace>{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Configurations>Debug;Release;Debug_api;Release_api;Debug_migration;Release_migration</Configurations>
   </PropertyGroup>
-{% if cookiecutter.include_aspire == "no" %}
-{% include '/templates/docker/data_docker_project.cs' %}
+{% if cookiecutter.include_aspire == "yes" %}
+  {% include '/templates/aspire/data_aspire_project.cs' %}
 {% else %}
-{% include '/templates/aspire/data_aspire_project.cs' %}
+  {% include '/templates/docker/data_docker_project.cs' %}
 {% endif %}
+
 </Project>

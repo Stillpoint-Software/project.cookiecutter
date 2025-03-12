@@ -18,7 +18,7 @@ public class Program
         startupInstance.ConfigureServices( builder.Services );
 
 
-        builder.AddNpgsqlDbContext<MedstarContext>( "medstardb" ); // this allows for telemetry
+        builder.AddNpgsqlDbContext<SampleContext>( "projectdb" ); // this allows for telemetry
 
         //Setup OpenTelemetry
         builder.Services.AddOpenTelemetry()
@@ -29,12 +29,12 @@ public class Program
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>( optional: true );
 
-        //Connection string for medstarDb from aspire
-        var connectionString = builder.Configuration["ConnectionStrings:medstarDb"];
+        //Connection string for projectDb from aspire
+        var connectionString = builder.Configuration["ConnectionStrings:projectDb"];
 
         if (string.IsNullOrEmpty( connectionString ))
         {
-            throw new ArgumentNullException( nameof( connectionString ), "Connection string for 'medstarDb' is not configured." );
+            throw new ArgumentNullException( nameof( connectionString ), "Connection string for 'projectDb' is not configured." );
         }
 
         //This line is needed to run migrations.  However, this doesn't allow for telemetry

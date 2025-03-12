@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Microsoft.AspNetCore.Builder;
 
 namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 

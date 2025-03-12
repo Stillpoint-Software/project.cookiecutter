@@ -1,12 +1,4 @@
   <ItemGroup>
-    <Compile Remove="logs\**" />
-    <Compile Remove="Properties\**" />
-    <EmbeddedResource Remove="logs\**" />
-    <EmbeddedResource Remove="Properties\**" />
-    <None Remove="logs\**" />
-    <None Remove="Properties\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="appsettings.Production.json" />
     <None Remove="appsettings.Staging.json" />
@@ -79,9 +71,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj" />
-{% if cookiecutter.include_aspire == "yes" %}
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.ServiceDefaults\{{cookiecutter.assembly_name}}.ServiceDefaults.csproj" />
-{% endif %}
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">

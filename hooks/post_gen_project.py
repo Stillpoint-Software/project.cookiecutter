@@ -21,6 +21,7 @@ def is_docker_installed() -> bool:
         return False
 
 aspire ='{{cookiecutter.include_aspire}}' =='yes'
+print(f'aspire: {aspire}')
 
 if not aspire:
     if not is_docker_installed():
@@ -28,11 +29,16 @@ if not aspire:
         sys.exit(1)
    
 azure = '{{cookiecutter.include_azure}}'=='yes'
+print(f'azure: {azure}')
 database = '{{cookiecutter.database}}' =='PostgreSql'
+print(f'database: {database}')
 audit = '{{cookiecutter.include_audit}}'=='yes'
+print(f'audit: {audit}')
 auth = '{{cookiecutter.include_oauth}}'=='yes'
+print(f'auth: {auth}')
 
-if not azure:
+
+if not azure and not aspire:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\AzureSecretsExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
@@ -45,7 +51,7 @@ if not aspire: # Remove Aspire files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\LamarSetup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Program.cs'))
 
-else: # Remove docker files/folders
+if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}'))
     remove(os.path.join('.dockerignore'))
     remove(os.path.join('Directory.Build.props'))
@@ -55,6 +61,12 @@ else: # Remove docker files/folders
     remove(os.path.join('docker-compose.dcproj'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}', 'Dockerfile'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Dockerfile'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.json'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Production.json'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Staging.json'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/BootstrapExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/AzureSecretsExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/StartupExtensions.cs'))
     remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Settings.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','BsonCollectionAttribute.cs'))
@@ -85,8 +97,8 @@ if audit == False:
 
 if auth == False:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\AuthService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs')
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Extensions\AuthPolicyExtensions.cs')))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Extensions\AuthPolicyExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IAuthService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 

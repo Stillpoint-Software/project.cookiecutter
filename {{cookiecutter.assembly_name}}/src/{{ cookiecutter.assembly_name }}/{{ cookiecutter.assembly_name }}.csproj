@@ -5,7 +5,6 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
-    <Configurations>Debug;Release;Debug_api;Release_api;Debug_migration;Release_migration</Configurations>
     <Authors>Stillpoint Software, Inc.</Authors>
     <Copyright>Stillpoint Software, Inc.</Copyright>
     <Title>{{cookiecutter.assembly_name}}</Title>

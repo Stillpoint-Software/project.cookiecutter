@@ -13,7 +13,9 @@ namespace {{cookiecutter.assembly_name}}.Tests;
 [TestClass]
 public class InitializeTestContainer
 {
+    {% if cookiecutter.include_aspire == "no" %}
     {% if cookiecutter.database == "PostgreSql" %}
+   
     public static IDbConnectionProvider ConnectionProvider { get; set; }
 
     [AssemblyInitialize]
@@ -41,6 +43,7 @@ public class InitializeTestContainer
             .Build();
 
         var location = CommonDirectoryPath.GetSolutionDirectory();
+        {% if cookiecutter.include_aspire == "no" %}
         var image = new ImageFromDockerfileBuilder()
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
@@ -48,6 +51,7 @@ public class InitializeTestContainer
             .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();
+        {% endif %}
 
         await image.CreateAsync( cancellationToken )
             .ConfigureAwait( false );
@@ -103,6 +107,7 @@ public class InitializeTestContainer
             .Build();
 
         var location = CommonDirectoryPath.GetSolutionDirectory();
+        {% if cookiecutter.include_aspire == "no" %}
         var image = new ImageFromDockerfileBuilder()
             .WithDeleteIfExists( true )
             .WithCleanUp( true )
@@ -110,6 +115,7 @@ public class InitializeTestContainer
             .WithDockerfile( "src/{{cookiecutter.assembly_name}}.Migrations/Dockerfile" )
             .WithDockerfileDirectory( location.DirectoryPath )
             .Build();
+        {% endif %}
 
         await image.CreateAsync( cancellationToken )
             .ConfigureAwait( false );
@@ -139,4 +145,6 @@ public class InitializeTestContainer
         }
     }
     {% endif %}
+    {% endif %}
+
 }

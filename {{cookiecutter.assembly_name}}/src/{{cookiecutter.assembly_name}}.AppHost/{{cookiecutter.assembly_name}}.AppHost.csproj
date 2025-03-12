@@ -16,18 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.1.0" />
     {% if cookiecutter.database == "PostgreSql" %}
-    <PackageReference Include="Aspire.Hosting.PostgreSql" Version="9.0.0" />
-    <PackageReference Include="Npgsql" Version="9.0.2" />
+    <PackageReference Include="Aspire.Hosting.PostgreSql" Version="9.1.0" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
     {% elif cookiecutter.database == "MongoDb" %}
-    <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.0.0" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.1.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.2.0" />
     {% endif %}
-
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
-
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     {% if cookiecutter.include_azure=="yes" %}
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.1.0" />
     <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="9.1.0" />

@@ -1,10 +1,18 @@
 using Asp.Versioning;
 using Hyperbee.Pipeline;
+{% if cookiecutter.include_oauth == "yes" %}
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using {{cookiecutter.assembly_name}}.Api.Validators;
 using System.Security.Claims;
+{% endif %}
+using {{cookiecutter.assembly_name}}.Api.Validators;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace {{cookiecutter.assembly_name}}.Api;
 
@@ -82,7 +90,7 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI( c =>
             {
-                c.SwaggerEndpoint( "/swagger/v1/swagger.json", {{cookiecutter.assembly_name}}"" API v1" );
+                c.SwaggerEndpoint( "/swagger/v1/swagger.json", "{{cookiecutter.assembly_name}} API v1" );
                 c.RoutePrefix = string.Empty;  // Makes Swagger UI available at the root ("/")
 
             } );
@@ -123,7 +131,7 @@ public static class StartupExtensions
          */
     }
 }
-
+{% if cookiecutter.include_oauth == "yes" %}
 public class AuthenticationHttpMessageHandler : DelegatingHandler
 {
     private readonly IHttpContextAccessor _contextAccessor;
@@ -147,6 +155,7 @@ public class AuthenticationHttpMessageHandler : DelegatingHandler
             : null;
     }
 }
+{% endif %}
 
 
 
