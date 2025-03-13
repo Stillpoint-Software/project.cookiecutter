@@ -1,6 +1,11 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    {%if cookiecutter.include_audit == "yes"%}
+    <PackageReference Include="Audit.NET" Version="27.5.0" />
+    <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
+    {% endif %} 
     <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.1.0" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
     {% if cookiecutter.database =="PostgreSql" %}

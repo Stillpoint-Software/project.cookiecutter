@@ -1,7 +1,7 @@
 import sys
 import cookiecutter.prompt
 
-if "{{ cookiecutter.include_oauth }}" =="yes":
+if "{{ cookiecutter.include_oauth }}" == "yes":
     cookiecutter.prompt.read_user_variable("oauth_app_name","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
     cookiecutter.prompt.read_user_variable("oauth_audience","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
     cookiecutter.prompt.read_user_variable("oauth_api_audience_dev","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
@@ -21,7 +21,7 @@ else:
         }
     )}}"""
 
-if "{{ cookiecutter.include_azure }}" =="yes":
+if "{{ cookiecutter.include_azure }}" == "yes" and "{{cookiecutter.include_aspire}}" == "no":
     cookiecutter.prompt.read_user_variable("azure_tenant_id", "Enter the Azure tenantId")
     cookiecutter.prompt.read_user_variable("azure_subscription_id", "Enter the Azure subscriptionId")
     cookiecutter.prompt.read_user_variable("azure_location", "Enter the Azure region, ex:(eastus)")

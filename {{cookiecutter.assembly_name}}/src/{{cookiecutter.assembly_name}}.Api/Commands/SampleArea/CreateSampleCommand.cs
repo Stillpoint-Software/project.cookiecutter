@@ -55,22 +55,12 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         } );
     }
 
+    {%if cookiecutter.include_audit =='yes'%}
+    {% include 'templates/audit/api_sample_create.cs' %} 
+    {%else%}
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {
-        {% if cookiecutter.include_audit =='yes'%}
-         using (AuditScope.Create( "Sample:Create", () => sample ))
-        {
-            sample.Id = await _sampleService.CreateSampleAsync( sample );
-
-            var sDefinition = new SampleDefinition
-            (
-                sample.Id,
-                sample.Name,
-                sample.Description
-            );
-            return sDefinition;
-        }
-        {% else %}
+       
         sample.Id = await _sampleService.CreateSampleAsync( sample );
 
         return new SampleDefinition(
@@ -78,6 +68,6 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
             sample.Name,
             sample.Description
         );
-        {% endif %}
-    }
+    } 
+    {%endif%}
 }

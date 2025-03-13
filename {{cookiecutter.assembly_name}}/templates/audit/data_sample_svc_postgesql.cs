@@ -14,35 +14,22 @@ public class SampleService : ISampleService
     {
         try
         {
-            await _sampleContext.Sample.AddAsync( sample );
+            _sampleContext.Sample.Add( sample );
             await _sampleContext.SaveChangesAsync();
             return sample.Id;
         }
-        catch ( Exception ex )
+        catch (Exception ex)
         {
             throw new ServiceException( nameof( CreateSampleAsync ), "Error saving sample.", ex );
         }
     }
 
-
-    {% if cookiecutter.include_audit == 'yes' %}
-    public async Task UpdateSampleAsync( Sample existing, int sampleId, string name, string description )
-    {% else %}
-       public async Task UpdateSampleAsync( int sampleId, string name, string description )
-    {% endif %}
+   public async Task<SampleDefinition> UpdateSampleAsync( Sample existing, int sampleId, string name, string description )
     {
         try
         {
-            {% if cookiecutter.include_audit == 'yes' %}
-            if (existing is null)
-            {
-                throw new ServiceException( nameof( UpdateSampleAsync ), "Sample not found." );
-            }
-            {% else %}
-            var existing = await _sampleContext.Sample.FirstOrDefaultAsync( x => x.Id == sampleId );
-            if ( existing == null )
-                return ;
-            {% endif %}
+            if (existing == null)
+                throw new ServiceException( nameof( UpdateSampleAsync ), "Sample cannot be null." );
 
             _sampleContext.Entry( existing ).CurrentValues.SetValues( new
             {
@@ -52,27 +39,31 @@ public class SampleService : ISampleService
 
             await _sampleContext.SaveChangesAsync();
 
+            return new SampleDefinition(
+                existing.Id,
+                existing.Name ?? string.Empty,
+                existing.Description ?? string.Empty
+            );
         }
-        catch ( Exception ex )
+        catch (Exception ex)
         {
             throw new ServiceException( nameof( UpdateSampleAsync ), "Error updating Sample.", ex );
         }
     }
-
     public async Task<SampleDefinition> GetSampleAsync( int sampleId )
     {
         try
         {
             return await _sampleContext.Sample
-                .Where( x => x.Id == sampleId )
-                .Select( x => new SampleDefinition(
-                    x.Id,
-                    x.Name,
-                    x.Description
-                ) )
-                .FirstOrDefaultAsync();
+                  .Where( x => x.Id == sampleId )
+                  .Select( x => new SampleDefinition(
+                      x.Id,
+                      x.Name ?? string.Empty,
+                      x.Description ?? string.Empty
+                  ) )
+                  .FirstOrDefaultAsync() ?? throw new ServiceException( nameof( GetSampleAsync ), "Sample not found." );
         }
-        catch ( Exception ex )
+        catch (Exception ex)
         {
             throw new ServiceException( nameof( GetSampleAsync ), "Error getting sample.", ex );
         }

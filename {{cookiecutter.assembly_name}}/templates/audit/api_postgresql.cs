@@ -1,8 +1,11 @@
+  optionsBuilder.UseNpgsql( connectionString );
+  _dbContext = new SampleContext( optionsBuilder.Options ); 
+ 
  Configuration
         .Setup()
         .UsePostgreSql( config => config
             .ConnectionString( connectionString )
-            .Schema( {{cookiecutter.assembly_name}} )
+            .Schema( "sample"  )
             .TableName( "audit_event" )
             .IdColumnName( "event_id" )
             .LastUpdatedColumnName( "last_updated" )

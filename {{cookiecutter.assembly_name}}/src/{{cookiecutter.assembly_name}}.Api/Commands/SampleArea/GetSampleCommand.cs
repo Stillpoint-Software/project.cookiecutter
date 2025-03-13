@@ -10,6 +10,7 @@ using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
+using {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
@@ -39,27 +40,14 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
     private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, int sampleId )
     {
         {% if cookiecutter.include_audit =='yes'%}
-        var sample = await _sampleService.GetSampleAsync(sampleId);
-
-        if (sample != null)
-            return null;
-
-        var test = await AuditScope.CreateAsync( c => c
-        .EventType( "Sample:Get" )
-           .AuditEvent( new ListAuditEvent( sample ) )
-           .IsCreateAndSave() );
-
-        return sample;
+        {% include 'templates/audit/api_sample_get.cs' %}
         {% else %}
-
         var sample = await _sampleService.GetSampleAsync( sampleId );
-
-        if (sample == null)
-            return null;
 
         context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
         context.CancelAfter();
         return null;
+
         {% endif %}
     }
 }

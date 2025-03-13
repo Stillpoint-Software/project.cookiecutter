@@ -14,8 +14,13 @@ var appInsights = builder.ExecutionContext.IsPublishMode
     : builder.AddConnectionString( "appInsights", "APPLICATIONINSIGHTS_CONNECTION_STRING" );
 
 //Azure Storage
-var storage = builder.AddAzureStorage( "storage" )
-                     .RunAsEmulator();
+var blobs = builder.AddAzureStorage( "storage" )
+                     .RunAsEmulator(
+                     azurite =>
+                     {
+                         azurite.WithDataBindMount("../Azurite/Data");
+                     })
+                     .AddBlobs("blobs");
 
 {% endif %}
 
@@ -44,9 +49,10 @@ var projectdb = dbServer.AddDatabase("projectdb");
 var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name}}-api")
     .WithReference(projectdb)
     {% if cookiecutter.include_azure == "yes" %}
-        .WithReference( keyVault )
+        .WithReference( secrets )
         .WithReference( appInsights )
-        .WithReference( storage )
+        .WaitFor( blobs )
+        .WithReference( blobs )
     {% endif %}
     .WithSwaggerUI();
 

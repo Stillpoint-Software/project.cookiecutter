@@ -2,6 +2,7 @@
 using Serilog.Events;
 using Serilog.Formatting.Compact;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace {{cookiecutter.assembly_name}}.Api.Extensions;
 public static class LoggerConfigurationExtensions
@@ -39,7 +40,7 @@ public static class LoggerConfigurationExtensions
         return loggerConfiguration;
     }
 
-    {% if cookiecutter.include_azure =='yes' %}
+    {% if cookiecutter.include_azure =='yes' and cookiecutter.include_aspire == "no" %}
     {% include  '/templates/azure/main_log.cs'%}
     {% endif %}
     }

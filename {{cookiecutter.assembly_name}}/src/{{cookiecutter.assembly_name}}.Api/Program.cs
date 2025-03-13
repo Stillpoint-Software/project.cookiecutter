@@ -33,6 +33,9 @@ public class Program
             //add Azure Key Vault 'SecretClient' to DI Container
             builder.AddAzureKeyVaultClient( "secrets" );
         }
+
+        //Add Azure Blob Storage to DI Container
+        builder.AddAzureBlobClient( "blobs" );
         {% endif %}
 
         // Manually invoke Startup's ConfigureServices

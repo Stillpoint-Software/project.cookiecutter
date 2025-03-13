@@ -1,19 +1,21 @@
-using System.Text.Json;
+using System.Data;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+
 
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 
 public class SampleContext : DbContext
 {
-    private readonly JsonSerializerOptions _jsonOptions;
 
-    public DbSet<Sample> Sample { get; set; }
+    {% if cookiecutter.include_audit == 'yes' %}
+    private readonly string encryptionKey = "mysecretkey"; // use azure key vault for this
+    {% endif %}
 
-     public SampleContext( DbContextOptions<SampleContext> options, IOptions<CustomJsonOptions> jsonOptions ) : base( options )
+     public DbSet<Sample> Sample { get; set; }
+
+     public SampleContext( DbContextOptions<SampleContext> options ) : base( options )
     {
-        _jsonOptions = jsonOptions?.Value?.SerializerOptions ?? new JsonSerializerOptions();
     }
     protected override void OnModelCreating( ModelBuilder modelBuilder )
     {
@@ -27,13 +29,19 @@ public class SampleContext : DbContext
             .UseIdentityAlwaysColumn()
             .HasColumnName( "id" );
         sampleTableBuilder.Property( x => x.Name ).HasColumnName( "name" );
+        {% if cookiecutter.include_audit == 'yes' %}
+                sampleTableBuilder.Property( x => x.Description ).HasColumnName( "description" )
+          .HasColumnType( "bytea" )
+            .HasConversion(
+                val => EncryptData( val ?? string.Empty ),
+                val => DecryptData( val ) ); 
+        {% else %}
         sampleTableBuilder.Property( x => x.Description ).HasColumnName( "description" );
+        {% endif %}
         sampleTableBuilder.Property( x => x.CreatedBy ).HasColumnName( "created_by" );
         sampleTableBuilder.Property( x => x.CreatedDate ).HasColumnName( "created_date" );
     }
-}
-
-public class CustomJsonOptions
-{
-    public JsonSerializerOptions SerializerOptions { get; set; } = new JsonSerializerOptions();
+    {% if cookiecutter.include_audit == 'yes' and cookiecutter.database == 'PostgreSql' %}
+     {% include '/templates/audit/data.postgresql.encryption.cs' %}
+    {% endif %}
 }

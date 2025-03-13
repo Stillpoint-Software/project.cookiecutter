@@ -1,21 +1,5 @@
-﻿{% if cookiecutter.include_audit =='yes'%}
-using Audit.Core;
-using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
-{% endif %}
-using Hyperbee.Pipeline;
-using Hyperbee.Pipeline.Commands;
-using Hyperbee.Pipeline.Context;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
-using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
-using Microsoft.Extensions.Logging;
 
-namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
-{% if cookiecutter.include_audit =='yes'%}
-{% include 'templates/audit/api_sample_update.cs' %}
-{% else %}
 public record UpdateSample( int sampleId, string Name, string Description );
 
 public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;
@@ -23,14 +7,17 @@ public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDef
 public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDefinition>, IUpdateSampleCommand
 {
     private readonly ISampleService _sampleService;
+     private readonly SampleContext _sampleContext;
 
     public UpdateSampleCommand(
         ISampleService sampleService,
+        SampleContext sampleContext,
         IPipelineContextFactory pipelineContextFactory,
         ILogger<UpdateSampleCommand> logger )
         : base( pipelineContextFactory, logger )
     {
         _sampleService = sampleService;
+        _sampleContext = sampleContext;
     }
 
     protected override FunctionAsync<UpdateSample, SampleDefinition> CreatePipeline()
@@ -45,13 +32,20 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
 
     private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
     {
-        await _sampleService.UpdateSampleAsync( update.sampleId, update.Name, update.Description );
+       
+  
+    var original = await _sampleContext.Sample.FindAsync( update.sampleId ) ?? throw new Exception( "Sample not found" );
 
-        return new SampleDefinition(
-            update.sampleId,s
-            update.Name,
-            update.Description
-        );
+      //var original = await _sampleService.GetSampleAsync( update.Id );  // This is an issue with updating in the service as it is not being tracked by the context
+
+      using (AuditScope.Create( "Patients:Update", () => original ))
+      {
+          var updatedSample = await _sampleService.UpdateSampleAsync( original, update.sampleId, update.Name, update.Description );
+
+          return updatedSample;
+      }
     }
 }
-{% endif %}
+  
+  
+  

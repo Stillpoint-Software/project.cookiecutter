@@ -1,4 +1,6 @@
-﻿namespace {{cookiecutter.assembly_name}}.Api.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace {{cookiecutter.assembly_name}}.Api.Extensions;
 
 internal static class AuthPolicyExtensions
 {

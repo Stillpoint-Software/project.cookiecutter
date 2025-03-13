@@ -1,24 +1,23 @@
+using System.Reflection;
 using Audit.Core;
 using Audit.PostgreSql.Configuration;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using {{cookiecutter.assembly_name}}.Data.Abstractions;
-using {{cookiecutter.assembly_name}}.Data.Postgres;
-using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using NewAspireAppAudit.Data.Abstractions;
 
 namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public static class AuditSetup
 {
-    private static {{cookiecutter.assembly_name}}Context _dbContext;
+    private static SampleContext _dbContext;
 
     public static void ConfigureAudit( WebApplicationBuilder builder )
     {
         var connectionString = builder.Configuration.GetConnectionString( "projectdb" );
 
-        var optionsBuilder = new DbContextOptionsBuilder<MedstarContext>();
-        optionsBuilder.UseNpgsql( connectionString );
-        _dbContext = new {{cookiecutter.assembly_name}}Context( optionsBuilder.Options );
-
+        var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
         {% if cookiecutter.database =="PostgreSql" %}
             {% include '/templates/audit/api_postgresql.cs' %}
         {% endif %}
@@ -50,7 +49,7 @@ public static class AuditSetup
         } );
     }
 
-    private static void SetSecuredProperties( AuditEvent auditEvent, MedstarContext _dbContext )
+    private static void SetSecuredProperties( AuditEvent auditEvent, SampleContext _dbContext )
     {
         var secureProperties = auditEvent.Target.New?.GetType()
             .GetProperties( BindingFlags.Public | BindingFlags.Instance )
