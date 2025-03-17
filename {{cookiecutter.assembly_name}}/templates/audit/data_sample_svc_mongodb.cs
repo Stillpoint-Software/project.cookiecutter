@@ -28,22 +28,16 @@ public class SampleService : ISampleService
     }
 
 
-  {% if cookiecutter.include_audit == 'yes' %}
+
     public async Task UpdateSampleAsync( Sample existing, int sampleId, string name, string description )
-    {% else %}
-       public async Task UpdateSampleAsync( int sampleId, string name, string description )
-    {% endif %}
     {
         try
         {
-             {% if cookiecutter.include_audit == 'yes' %}
             if (existing is null)
             {
                 throw new ServiceException( nameof( UpdateSampleAsync ), "Sample not found." );
             }
-            {% else %}
-            var filter = Builders<Sample>.Filter.Eq( "Id", sampleId );
-            {% endif %}
+
             var update = Builders<Sample>.Update.Set( x => x.Name, name ).Set( x => x.Description, description );
 
             await _sampleService.UpdateOneAsync( filter, update );

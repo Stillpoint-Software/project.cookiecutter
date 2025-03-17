@@ -13,7 +13,7 @@ using MongoDB.Driver.Linq;
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
 
 {% if cookiecutter.database == "PostgreSql" %}
-    {% include 'templates/audit/data_sample_svc_postgesql.cs' %}
+    {% include "/templates/audit/data_sample_svc_postgesql.cs" %}
 {% elif cookiecutter.database == "MongoDb" %}
-    {% include 'templates/audit/data_sample_svc_mondodb.cs' %}
+    {% include "/templates/audit/data_sample_svc_mongodb.cs" %}
 {% endif %}
