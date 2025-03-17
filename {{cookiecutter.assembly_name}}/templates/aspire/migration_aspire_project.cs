@@ -1,3 +1,7 @@
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 <ItemGroup>
 {% if cookiecutter.database == "PostgreSql" %}
     <None Remove="Resources\1000-Initial\CreateUsers.sql" />
@@ -5,7 +9,6 @@
     <None Remove="Resources\1000-Initial\administration\users\user.json" />
 {% endif %}
   </ItemGroup>
-
   <ItemGroup>
 {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.1.0" />

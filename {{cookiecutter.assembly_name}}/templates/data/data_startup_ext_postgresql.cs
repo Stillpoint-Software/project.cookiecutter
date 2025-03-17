@@ -1,4 +1,4 @@
-  public static IServiceCollection AddProvider( this IServiceCollection services, IConfiguration config, ILogger logger = null )
+  public static IServiceCollection AddProvider( this IServiceCollection services, IConfiguration config, Serilog.ILogger logger = null )
     {
         var connectionString = config["PostgreSql:ConnectionString"]; // from appsettings.<ENV>.json
 

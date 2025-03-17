@@ -7,7 +7,7 @@ namespace {{cookiecutter.assembly_name}}.Migrations.Extensions;
 
 internal static class AzureSecretsExtensions
 {
-    internal static IConfigurationBuilder AddAzureSecrets( this IConfigurationBuilder builder, IHostEnvironment hostingEnvironment, string vaultName, ILogger logger )
+    internal static IConfigurationBuilder AddAzureSecrets( this IConfigurationBuilder builder, IHostEnvironment hostingEnvironment, string vaultName,  Serilog.ILogger logger )
     {
         logger.Information( $"entering Azure Secrets with params host: {hostingEnvironment.EnvironmentName} vault: {vaultName}" );
 

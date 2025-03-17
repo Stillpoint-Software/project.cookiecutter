@@ -42,6 +42,6 @@ public class SampleContext : DbContext
         sampleTableBuilder.Property( x => x.CreatedDate ).HasColumnName( "created_date" );
     }
     {% if cookiecutter.include_audit == 'yes' and cookiecutter.database == 'PostgreSql' %}
-     {% include '/templates/audit/data.postgresql.encryption.cs' %}
+    {% include '/templates/audit/data.postgresql.encryption.cs' %}
     {% endif %}
 }

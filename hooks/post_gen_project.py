@@ -38,7 +38,7 @@ auth = '{{cookiecutter.include_oauth}}'=='yes'
 print(f'auth: {auth}')
 
 
-if not azure and not aspire:
+if not azure:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\AzureSecretsExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
@@ -48,7 +48,8 @@ if not aspire: # Remove Aspire files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.ServiceDefaults'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Startup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\LamarSetup.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extensions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Program.cs'))
 
 if aspire: # Remove docker files/folders
@@ -69,6 +70,7 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/StartupExtensions.cs'))
     remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Settings.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extentions/LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','BsonCollectionAttribute.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','DbConnectionProvider.cs'))  
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Services\MongoDbService.cs')) 

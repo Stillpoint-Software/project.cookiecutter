@@ -7,5 +7,5 @@ public class ApiSettings
     public string WebUrl { get; set; }
 }
 {% if cookiecutter.include_azure == "yes" %}
-    {% include '/templates/azure/main_settings.cs' %}
+    {% include '/templates/docker/main_settings.cs' %}
 {% endif %}

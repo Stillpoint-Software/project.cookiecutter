@@ -12,7 +12,6 @@ public static class LoggerConfigurationExtensions
         loggerConfiguration
             .MinimumLevel.Debug()
             .ReadFrom.Configuration( config )
-            .Enrich.WithCorrelationId()
             .Enrich.FromLogContext();
 
         return loggerConfiguration;
@@ -40,6 +39,6 @@ public static class LoggerConfigurationExtensions
     }
 
   {% if cookiecutter.include_azure == "yes" %}
-   {% include "/templates/azure/main_log.cs"%}
+  {% include "/templates/docker/main_extensions_log.cs"%}
   {% endif %}
 }
