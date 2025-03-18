@@ -12,7 +12,6 @@ public class MongoDbService : IMongoDbService
      public MongoDbService( string connectionString, string databaseName, string? keyVaultNameSpace )
     {
         var clientSettings = MongoClientSettings.FromConnectionString( connectionString );
-        clientSettings.LinqProvider = LinqProvider.V3;
 
         var client = new MongoClient( clientSettings );
         _database = client.GetDatabase( databaseName );

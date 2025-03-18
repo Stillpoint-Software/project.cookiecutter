@@ -1,6 +1,12 @@
 using System.Reflection;
 using Audit.Core;
+{% if cookiecutter.database =="PostgreSql" %}
 using Audit.PostgreSql.Configuration;
+{% elif cookiecutter.database =="MongoDb" %}
+using Audit.MongoDB.Providers;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+{% endif %}
+
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;

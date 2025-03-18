@@ -1,6 +1,4 @@
-
-
-public record UpdateSample( int sampleId, string Name, string Description );
+public record UpdateSample( string sampleId, string Name, string Description );
 
 public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;
 
@@ -32,18 +30,13 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
 
     private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
     {
-       
-  
-    var original = await _sampleContext.Sample.FindAsync( update.sampleId ) ?? throw new Exception( "Sample not found" );
+        var original = Builders<Sample>.Filter.Eq( "Id", update.sampleId ) ?? throw new Exception( "Sample not found" );
+        using (AuditScope.Create( "Sample:Update", () => original ))
+        {
+            var updatedSample =  await _sampleService.UpdateSampleAsync( original, update.sampleId, update.Name, update.Description );
 
-      //var original = await _sampleService.GetSampleAsync( update.Id );  // This is an issue with updating in the service as it is not being tracked by the context
-
-      using (AuditScope.Create( "Patients:Update", () => original ))
-      {
-          var updatedSample = await _sampleService.UpdateSampleAsync( original, update.sampleId, update.Name, update.Description );
-
-          return updatedSample;
-      }
+            return updatedSample;
+        }
     }
 }
   

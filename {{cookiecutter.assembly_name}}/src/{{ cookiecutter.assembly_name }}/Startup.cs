@@ -21,6 +21,11 @@ using Microsoft.ApplicationInsights.Extensibility.Implementation;
 {% endif %}
 using Microsoft.AspNetCore.Http.Json;
 using Serilog;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
+{% if cookiecutter.database == "MongoDb" %}
+using MongoDB.Driver;
+{% endif %}
 
 namespace {{cookiecutter.assembly_name}};
 

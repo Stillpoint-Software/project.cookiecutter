@@ -1,13 +1,14 @@
 #nullable disable
 
 using Hyperbee.Migrations;
-using Hyperbee.Migrations.Providers.{{cookiecutter.database}};
+using Hyperbee.Migrations.Providers.Postgres;
+using Hyperbee.Migrations.Providers.Postgres.Resources;
 
 namespace {{cookiecutter.assembly_name}}.Migrations.Migrations;
 
 
 [Migration(1000)]
-public class Initial({{cookiecutter.database}}ResourceRunner<Initial> resourceRunner) : Migration
+public class Initial(PostgresResourceRunner<Initial> resourceRunner) : Migration
 {
     public override async Task UpAsync(CancellationToken cancellationToken = default)
     {

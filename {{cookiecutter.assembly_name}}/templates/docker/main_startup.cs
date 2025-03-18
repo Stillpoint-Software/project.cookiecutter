@@ -54,7 +54,11 @@ public class Startup : IStartupRegistry
             .AddNpgSql( Configuration["{{cookiecutter.database}}:ConnectionString"]! );
         {% elif cookiecutter.database == "MongoDb" %}
         services.AddHealthChecks()
-          .AddMongoDb( Configuration["MongoDb:ConnectionString"], "MongoDb Health", HealthStatus.Degraded );
+            .AddMongoDb(
+                sp => new MongoClient( Configuration["MongoDb:ConnectionString"] ),
+                name: "MongoDb Health",
+                failureStatus: HealthStatus.Degraded
+            );
         {% endif %}
        
         services.AddApiVersioning( options =>

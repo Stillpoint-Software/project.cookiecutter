@@ -1,4 +1,6 @@
-  var sample = await _sampleService.GetSampleAsync( sampleId );
+    private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, int sampleId )
+    {
+       var sample = await _sampleService.GetSampleAsync( sampleId );
 
         if ( sample == null )
         {
@@ -9,3 +11,4 @@
         using var auditScope = AuditScope.Create( "Sample:Read", () => sample );       
 
         return sample;
+    }

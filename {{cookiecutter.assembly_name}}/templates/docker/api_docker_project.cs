@@ -2,12 +2,12 @@
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     {% if cookiecutter.include_audit == "yes" %}
     <PackageReference Include="Audit.NET" Version="27.5.0" />
-    {% if cookiecutter.database == "PostgreSql" %}
-    <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
-    {% elif cookiecutter.database =="mongoddb" %}
-    <PackageReference Include="Audit.MongoClient" Version="27.4.1" />
-    <PackageReference Include="Audit.NET.MongoDB" Version="27.4.1" />
-    {% endif %}
+      {% if cookiecutter.database == "PostgreSql" %}
+      <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
+      {% elif cookiecutter.database =="MongoDb" %}
+      <PackageReference Include="Audit.MongoClient" Version="27.5.0" />
+      <PackageReference Include="Audit.NET.MongoDB" Version="27.5.0" />
+      {% endif %}
     {% endif %}
     {% if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Azure.Security.KeyVault.Keys" Version="4.7.0" />
@@ -31,7 +31,7 @@
     <PackageReference Include="Lamar" Version="14.0.1" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.2" />
     {% if cookiecutter.include_oauth == "yes" %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     {% endif %}

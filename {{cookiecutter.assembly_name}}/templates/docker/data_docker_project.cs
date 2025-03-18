@@ -15,7 +15,7 @@
     <PackageReference Include="Lamar" Version="14.0.1" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.2" />
     {% if cookiecutter.include_oauth == "yes" %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     {% endif %}
@@ -23,8 +23,9 @@
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     {% elif cookiecutter.database == "MongoDb" %}
-    <PackageReference Include="MongoDb.Driver" Version="3.0.0" />
-    <PackageReference Include="MongoDb.Driver.Core" Version="3.0.0" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.2.3" />
+    <PackageReference Include="MongoDB.Bson" Version="3.2.1" />
+    <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
     {% endif %}
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />

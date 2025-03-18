@@ -5,11 +5,7 @@ using Hyperbee.Pipeline.Context;
 using Lamar.Microsoft.DependencyInjection;
 using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-{% if cookiecutter.database == "PostgreSql" %}
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
-{% elif cookiecutter.database == "MongoDb" %}
-//TODO
-{% endif %}
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;

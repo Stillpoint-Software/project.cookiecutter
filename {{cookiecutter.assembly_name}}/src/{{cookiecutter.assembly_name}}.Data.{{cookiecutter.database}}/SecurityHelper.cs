@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace {{cookiecutter.assembly_name}}.Data.Mongo;
+namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 
 public static class SecurityHelper
 {

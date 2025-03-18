@@ -2,6 +2,9 @@
 using Audit.Core;
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 {% endif %}
+{% if cookiecutter.database =="MongoDb" %}
+using MongoDB.Driver;
+{% endif %}
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
@@ -10,48 +13,11 @@ using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
+using  {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
-
-{% if cookiecutter.include_audit =='yes'%}
-{% include 'templates/audit/api_sample_update.cs' %}
-{% else %}
-public record UpdateSample( int sampleId, string Name, string Description );
-
-public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;
-
-public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDefinition>, IUpdateSampleCommand
-{
-    private readonly ISampleService _sampleService;
-
-    public UpdateSampleCommand(
-        ISampleService sampleService,
-        IPipelineContextFactory pipelineContextFactory,
-        ILogger<UpdateSampleCommand> logger )
-        : base( pipelineContextFactory, logger )
-    {
-        _sampleService = sampleService;
-    }
-
-    protected override FunctionAsync<UpdateSample, SampleDefinition> CreatePipeline()
-    {
-        return PipelineFactory
-            .Start<UpdateSample>()
-            .WithLogging()
-            .CancelOnFailure( Validate<UpdateSample> )
-            .PipeAsync( UpdateSampleAsync )
-            .Build();
-    }
-
-    private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
-    {
-        await _sampleService.UpdateSampleAsync( update.sampleId, update.Name, update.Description );
-
-        return new SampleDefinition(
-            update.sampleId,s
-            update.Name,
-            update.Description
-        );
-    }
-}
+{% if cookiecutter.database =="PostgreSql" %}
+{% include "/templates/docker/api_update_sample_postgresql.cs" %}
+{% elif cookiecutter.database =="MongoDb" %}
+{% include "/templates/docker/api_update_sample_mongodb.cs" %}
 {% endif %}

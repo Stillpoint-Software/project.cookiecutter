@@ -2,6 +2,7 @@
 {% if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
+using Hyperbee.Migrations.Providers.MongoDB;
 using MongoDB.Driver;
 {% endif %}
 using Microsoft.Extensions.DependencyInjection;
@@ -26,11 +27,11 @@ internal static class StartupExtensions
     }
 
 {% if cookiecutter.database == "PostgreSql" %}
-    {% include '/templates/data/data_startup_ext_postgresql.cs' %}
+    {% include '/templates/docker/data_startup_ext_postgresql.cs' %}
 {% endif %}
 
 {% if cookiecutter.database == "MongoDb" %}
-    {% include '/templates/data/data_startup_ext_mongodb.cs' %}
+    {% include '/templates/docker/data_startup_ext_mongodb.cs' %}
 {% endif %}
 }
 

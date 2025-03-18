@@ -1,15 +1,4 @@
 
-public class SampleService : ISampleService
-{
-    private readonly SampleContext _sampleContext;
-    private readonly ILogger _logger;
-
-    public SampleService( SampleContext sampleContext, ILogger<Sample> logger )
-    {
-        _sampleContext = sampleContext;
-        _logger = logger;
-    }
-
     public async Task<int> CreateSampleAsync( Sample sample )
     {
         try
@@ -50,22 +39,3 @@ public class SampleService : ISampleService
             throw new ServiceException( nameof( UpdateSampleAsync ), "Error updating Sample.", ex );
         }
     }
-    public async Task<SampleDefinition> GetSampleAsync( int sampleId )
-    {
-        try
-        {
-            return await _sampleContext.Sample
-                  .Where( x => x.Id == sampleId )
-                  .Select( x => new SampleDefinition(
-                      x.Id,
-                      x.Name ?? string.Empty,
-                      x.Description ?? string.Empty
-                  ) )
-                  .FirstOrDefaultAsync() ?? throw new ServiceException( nameof( GetSampleAsync ), "Sample not found." );
-        }
-        catch (Exception ex)
-        {
-            throw new ServiceException( nameof( GetSampleAsync ), "Error getting sample.", ex );
-        }
-    }
-}

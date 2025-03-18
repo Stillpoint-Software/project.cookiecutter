@@ -37,13 +37,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="9.0.3" />
-    <PackageReference Include="Hyperbee.Migrations" Version="2.0.1" />
+    <PackageReference Include="Hyperbee.Migrations" Version="2.0.2" />
 {% if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Npgsql" Version="9.0.3" />
-    <PackageReference Include="Hyperbee.Migrations.Providers.Postgres" Version="2.0.1" />
+    <PackageReference Include="Hyperbee.Migrations.Providers.Postgres" Version="2.0.2" />
 {% elif cookiecutter.database == "MongoDb" %}
-    <PackageReference Include="MongoDb.Driver" Version="3.0.0" />
-    <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" Version="2.0.0" />
+    <PackageReference Include="MongoDb.Driver" Version="3.2.1" />
+    <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" Version="2.0.2" />
 {% endif %}
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.3" />

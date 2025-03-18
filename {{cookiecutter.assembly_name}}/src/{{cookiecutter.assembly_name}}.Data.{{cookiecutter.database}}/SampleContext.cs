@@ -1,6 +1,9 @@
 using System.Data;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using Microsoft.EntityFrameworkCore;
+{% if cookiecutter.database == "MongoDb" %}
+using MongoDB.EntityFrameworkCore.Extensions;
+{% endif %}
 
 
 namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
@@ -17,6 +20,8 @@ public class SampleContext : DbContext
      public SampleContext( DbContextOptions<SampleContext> options ) : base( options )
     {
     }
+
+    {% if cookiecutter.database =="PostgreSql" %}
     protected override void OnModelCreating( ModelBuilder modelBuilder )
     {
         modelBuilder.HasDefaultSchema( "sample" );
@@ -30,8 +35,8 @@ public class SampleContext : DbContext
             .HasColumnName( "id" );
         sampleTableBuilder.Property( x => x.Name ).HasColumnName( "name" );
         {% if cookiecutter.include_audit == 'yes' %}
-                sampleTableBuilder.Property( x => x.Description ).HasColumnName( "description" )
-          .HasColumnType( "bytea" )
+            sampleTableBuilder.Property( x => x.Description ).HasColumnName( "description" )
+            .HasColumnType( "bytea" )
             .HasConversion(
                 val => EncryptData( val ?? string.Empty ),
                 val => DecryptData( val ) ); 
@@ -42,6 +47,15 @@ public class SampleContext : DbContext
         sampleTableBuilder.Property( x => x.CreatedDate ).HasColumnName( "created_date" );
     }
     {% if cookiecutter.include_audit == 'yes' and cookiecutter.database == 'PostgreSql' %}
-    {% include '/templates/audit/data.postgresql.encryption.cs' %}
+    {% include '/templates/audit/data_postgresql_encryption.cs' %}
+    {% endif %}
+
+    {% elif cookiecutter.database =="MongoDb" %}
+        protected override void OnModelCreating( ModelBuilder modelBuilder )
+        {
+        base.OnModelCreating( modelBuilder );
+        modelBuilder.Entity<Sample>().ToCollection( "Sample" );
+        }
+    
     {% endif %}
 }

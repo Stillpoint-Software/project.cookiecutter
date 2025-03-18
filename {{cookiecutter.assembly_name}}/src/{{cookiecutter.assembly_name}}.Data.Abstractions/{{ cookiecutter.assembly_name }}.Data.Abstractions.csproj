@@ -11,8 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
     {% if cookiecutter.database == "MongoDb" %}
-    <PackageReference Include="MongoDB.Bson" Version="3.2.0" />
-    <PackageReference Include="MongoDB.Driver" Version="3.2.0" />
+    <PackageReference Include="MongoDB.Bson" Version="3.2.1" />
+    <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
     {% endif %}
   </ItemGroup>
   <ItemGroup>

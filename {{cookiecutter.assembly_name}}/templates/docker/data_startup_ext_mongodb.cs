@@ -1,4 +1,4 @@
-  public static IServiceCollection AddMongoDbProvider( this IServiceCollection services, IConfiguration config, ILogger logger = null )
+  public static IServiceCollection AddMongoDbProvider( this IServiceCollection services, IConfiguration config, Serilog.ILogger logger = null )
     {
         var connectionString = config["{{cookiecutter.assembly_name}}:ConnectionString"]; // from appsettings.<ENV>.json
 
