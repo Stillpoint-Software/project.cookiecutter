@@ -39,6 +39,6 @@ public static class LoggerConfigurationExtensions
     }
 
   {% if cookiecutter.include_azure == "yes" %}
-  {% include "/templates/docker/main_extensions_log.cs"%}
+  {% include "/templates/docker/main/main_extensions_log.cs"%}
   {% endif %}
 }

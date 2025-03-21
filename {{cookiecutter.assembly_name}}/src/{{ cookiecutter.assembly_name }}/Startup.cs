@@ -30,7 +30,7 @@ using MongoDB.Driver;
 namespace {{cookiecutter.assembly_name}};
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include '/templates/docker/main_startup_azure.cs' %}
+{% include '/templates/docker/main/main_startup_azure.cs' %}
 {% else %}
-{% include '/templates/docker/main_startup.cs' %}
+{% include '/templates/docker/main/main_startup.cs' %}
 {% endif %}

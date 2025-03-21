@@ -14,7 +14,7 @@ namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services
 
 
 {% if cookiecutter.database == "PostgreSql" %}
-   {% include "/templates/docker/data_sample_svc_postgresql.cs" %}
+   {% include "/templates/docker/data/data_sample_svc_postgresql.cs" %}
 {% elif cookiecutter.database == "MongoDb" %}
-   {% include "/templates/docker/data_sample_svc_mongodb.cs" %}
+   {% include "/templates/docker/data/data_sample_svc_mongodb.cs" %}
 {% endif %}

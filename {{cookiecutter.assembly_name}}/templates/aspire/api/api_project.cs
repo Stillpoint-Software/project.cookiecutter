@@ -2,7 +2,10 @@
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     {%if cookiecutter.include_audit == "yes"%}
     <PackageReference Include="Audit.NET" Version="27.5.0" />
+     {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
+    {% elif cookiecutter.database == "MongoDb" %}
+    <PackageReference Include="Audit.NET.MongoDB" Version="27.5.0" />
     {% endif %} 
     <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.1.0" />
     <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.1.0" />
@@ -10,6 +13,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
     {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Npgsql" Version="9.0.3" />
+    {% elif cookiecutter.database =="MongoDb" %}
+    <PackageReference Include="MongoDB.Driver" Version="9.0.3" />
     {% endif %}
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />

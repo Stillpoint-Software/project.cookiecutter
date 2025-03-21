@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+namespace {{cookiecutter.assembly_name}}.Data.Abstractions;
 
 public static class SecurityHelper
 {
-    private static readonly string _encryptionKey = "mysecretkey";
+    private static readonly string _encryptionKey = "mysecretkey12345";
     public static string EncryptValue( string value )
     {
         if (string.IsNullOrEmpty( value ))

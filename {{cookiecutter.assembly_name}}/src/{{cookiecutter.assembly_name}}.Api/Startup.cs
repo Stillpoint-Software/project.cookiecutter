@@ -1,5 +1,5 @@
 {% if cookiecutter.include_aspire == "no" %}
-{% include '/templates/docker/api_docker_startup.cs' %}
+{% include '/templates/docker/api/api_startup.cs' %}
 {% else %}
-{% include '/templates/aspire/api_aspire_startup.cs' %}
+{% include '/templates/aspire/api/api_startup.cs' %}
 {% endif %}

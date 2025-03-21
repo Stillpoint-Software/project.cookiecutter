@@ -67,7 +67,6 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Staging.json'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/BootstrapExtensions.cs'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/AzureSecretsExtensions.cs'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/StartupExtensions.cs'))
     remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Settings.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extentions/LoggerConfigurationExtensions.cs'))
@@ -78,12 +77,15 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Startup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','/Scripts'))
 
+if aspire and not database: # Remove aspire files if postgesql
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/StartupExtensions.cs'))
+
 if database: # delete mongo files
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Extensions\MongoExtensions.cs')) 
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Services\MongoDbService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'BsonCollectionAttribute.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Services\MongoDbService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'SecurityHelper.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}.Data.Abstractions', 'SecurityHelper.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations', 'Resources\\1000-Initial\\administration\\users\\user.json'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IMongoDbService.cs'))
 

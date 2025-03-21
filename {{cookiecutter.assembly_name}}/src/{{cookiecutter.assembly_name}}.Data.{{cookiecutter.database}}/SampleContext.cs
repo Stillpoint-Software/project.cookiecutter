@@ -2,6 +2,7 @@ using System.Data;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using Microsoft.EntityFrameworkCore;
 {% if cookiecutter.database == "MongoDb" %}
+using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 {% endif %}
 
@@ -11,7 +12,7 @@ namespace {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 public class SampleContext : DbContext
 {
 
-    {% if cookiecutter.include_audit == 'yes' %}
+    {% if cookiecutter.include_audit == 'yes' and cookiecutter.database =="PostgreSql" %}
     private readonly string encryptionKey = "mysecretkey"; // use azure key vault for this
     {% endif %}
 
@@ -51,6 +52,12 @@ public class SampleContext : DbContext
     {% endif %}
 
     {% elif cookiecutter.database =="MongoDb" %}
+
+    public static SampleContext Create( IMongoDatabase database ) =>
+        new( new DbContextOptionsBuilder<SampleContext>()
+                                        .UseMongoDB( database.Client, database.DatabaseNamespace.DatabaseName )
+                                        .Options );
+
         protected override void OnModelCreating( ModelBuilder modelBuilder )
         {
         base.OnModelCreating( modelBuilder );

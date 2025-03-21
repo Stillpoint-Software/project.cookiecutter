@@ -44,7 +44,7 @@
    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
    <PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="9.0.0" />
    {% if cookiecutter.include_azure == "yes" %}
-   {% include '/templates/docker/main_project.cs' %}
+   {% include '/templates/docker/main/main_project.cs' %}
    {% endif %}
    <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.1" />
    <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.1" />
@@ -52,9 +52,9 @@
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
    {% if cookiecutter.database == "PostgreSql" %}
-   {% include '/templates/docker/main_postgresql.cs' %}
+   {% include '/templates/docker/main/main_postgresql.cs' %}
    {% elif cookiecutter.database == "MongoDb" %}
-   {% include '/templates/docker/main_mongodb.cs' %}
+   {% include '/templates/docker/main/main_mongodb.cs' %}
    {% endif %}
    <PackageReference Include="Serilog" Version="4.2.0" />
    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />

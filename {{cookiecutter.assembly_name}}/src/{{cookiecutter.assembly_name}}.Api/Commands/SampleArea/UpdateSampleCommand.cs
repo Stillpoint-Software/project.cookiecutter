@@ -17,7 +17,7 @@ using  {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 {% if cookiecutter.database =="PostgreSql" %}
-{% include "/templates/docker/api_update_sample_postgresql.cs" %}
+{% include "/templates/docker/api/api_update_sample_postgresql.cs" %}
 {% elif cookiecutter.database =="MongoDb" %}
-{% include "/templates/docker/api_update_sample_mongodb.cs" %}
+{% include "/templates/docker/api/api_update_sample_mongodb.cs" %}
 {% endif %}

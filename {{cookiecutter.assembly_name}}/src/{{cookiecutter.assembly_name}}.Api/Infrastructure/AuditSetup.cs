@@ -4,14 +4,14 @@ using Audit.Core;
 using Audit.PostgreSql.Configuration;
 {% elif cookiecutter.database =="MongoDb" %}
 using Audit.MongoDB.Providers;
-using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+using {{cookiecutter.assembly_name}}.Data.Abstractions;
 {% endif %}
 
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using NewAspireAppAudit.Data.Abstractions;
+using {{cookiecutter.assembly_name}}.Data.Abstractions;
 
 namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
@@ -39,7 +39,12 @@ public static class AuditSetup
                     .Cast<object>()
                     .Select( item => new ListAuditModel
                     {
+
+                       {% if cookiecutter.database =="PostgreSql" %}
                         Id = (int) item.GetType().GetProperty( "Id" )!.GetValue( item )!
+                        {% elif cookiecutter.database =="MongoDb" %}
+                        Id = (string) item.GetType().GetProperty( "Id" )!.GetValue( item )!
+                        {% endif %}
                     } )
                     .ToList();
 

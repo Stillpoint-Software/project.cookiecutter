@@ -6,9 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 {% if cookiecutter.include_aspire == "yes" %}
-  {% include '/templates/aspire/data_aspire_project.cs' %}
+  {% include '/templates/aspire/data/data_project.cs' %}
 {% else %}
-  {% include '/templates/docker/data_docker_project.cs' %}
+  {% include '/templates/docker/data/data_project.cs' %}
 {% endif %}
 
 </Project>

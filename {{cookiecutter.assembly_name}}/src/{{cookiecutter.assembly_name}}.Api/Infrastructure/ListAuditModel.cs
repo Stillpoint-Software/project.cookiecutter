@@ -2,6 +2,9 @@
 
 public class ListAuditModel
 {
+    {% if cookiecutter.database =="MongoDb" %}
+    public string Id { get; set; }
+    {% else %}
     public int Id { get; set; }
-
+   {% endif %} 
 }

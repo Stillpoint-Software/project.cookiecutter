@@ -5,6 +5,10 @@ using {{cookiecutter.assembly_name}}.ServiceDefaults;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+{% if cookiecutter.database == "MongoDb" %}
+using MongoDB.Driver;
+{% endif %}
+
 
 
 namespace {{cookiecutter.assembly_name}}.Api;
@@ -45,6 +49,14 @@ public class Program
         {% if cookiecutter.database == "PostgreSql" %}
         // Add database context
         builder.AddNpgsqlDbContext<SampleContext>( "projectdb" );
+        {% elif cookiecutter.database == "MongoDb" %}
+        //mongodb context here
+        builder.AddMongoDBClient( "mongoDb" );
+        builder.Services.AddScoped<SampleContext>( svc =>
+        {
+            var scope = svc.CreateScope();
+            return SampleContext.Create( scope.ServiceProvider.GetRequiredService<IMongoDatabase>() );
+        } );
         {% endif %}
 
         // Add environment variables

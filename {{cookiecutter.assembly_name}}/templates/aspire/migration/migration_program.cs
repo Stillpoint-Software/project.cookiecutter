@@ -1,6 +1,12 @@
 ﻿using Hyperbee.Migrations.Providers.Postgres;
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using  {{cookiecutter.assembly_name}}.ServiceDefaults;
+{% if cookiecutter.database =="PostgreSql" %}
+using Hyperbee.Migrations.Providers.Postgres;
+{% elif cookiecutter.database =="MongoDb" %}
+using Hyperbee.Migrations.Providers.MongoDB;
+{% endif %}
+
 
 namespace  {{cookiecutter.assembly_name}}.Migrations;
 public class Program
@@ -17,8 +23,12 @@ public class Program
         var startupInstance = new Startup( builder.Configuration );
         startupInstance.ConfigureServices( builder.Services );
 
-
+        {% if cookiecutter.database== "PostgreSql"%}
         builder.AddNpgsqlDbContext<SampleContext>( "projectdb" ); // this allows for telemetry
+        {% elif cookiecutter.database== "MongoDb"%}
+         //mongodb here
+        builder.AddMongoDBClient( "mongoDb" );
+        {% endif %}
 
         //Setup OpenTelemetry
         builder.Services.AddOpenTelemetry()
@@ -38,8 +48,12 @@ public class Program
         }
 
         //This line is needed to run migrations.  However, this doesn't allow for telemetry
+        {% if cookiecutter.database =="PostgreSql" %}
         builder.Services.AddNpgsqlDataSource( connectionString );
         builder.Services.AddPostgresMigrations();
+        {% elif cookiecutter.database =="MongoDb" %}
+        builder.Services.AddMongoDbMigrations( builder.Configuration );
+        {% endif %}
         builder.Services.AddHostedService<MainService>();
         builder.Services.AddDataProtection();
 
@@ -48,7 +62,6 @@ public class Program
 
         // Call Startup's Configure method to configure the middleware pipeline
         startupInstance.Configure( app, app.Environment );
-
 
         // Run the application
         app.Run();
