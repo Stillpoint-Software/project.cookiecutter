@@ -2,6 +2,7 @@
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     {%if cookiecutter.include_audit == "yes"%}
     <PackageReference Include="Audit.NET" Version="27.5.0" />
+    {% endif %}
      {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
     {% elif cookiecutter.database == "MongoDb" %}

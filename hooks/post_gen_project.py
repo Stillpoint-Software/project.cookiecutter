@@ -65,11 +65,11 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.json'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Production.json'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Staging.json'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/BootstrapExtensions.cs'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/AzureSecretsExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\BootstrapExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\AzureSecretsExtensions.cs'))
     remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Settings.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extentions/LoggerConfigurationExtensions.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extentions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','BsonCollectionAttribute.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','DbConnectionProvider.cs'))  
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Services\MongoDbService.cs')) 
@@ -78,7 +78,7 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','/Scripts'))
 
 if aspire and not database: # Remove aspire files if postgesql
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions/StartupExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\StartupExtensions.cs'))
 
 if database: # delete mongo files
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Extensions\MongoExtensions.cs')) 

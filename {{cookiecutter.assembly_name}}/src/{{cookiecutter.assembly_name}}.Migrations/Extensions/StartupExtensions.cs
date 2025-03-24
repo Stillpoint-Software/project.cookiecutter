@@ -26,17 +26,16 @@ internal static class StartupExtensions
             .AddJsonFile( ConfigurationHelper.EnvironmentAppSettingsName, optional: true );
     }
 
-{%if cookiecutter.include_aspire =="yes" && cookiecutter.database =="MongoDb"}
-{% include '/templates/aspire/migration/migration_startup_ext.cs' %}
-{% else % }
+{% if cookiecutter.include_aspire == "yes" and cookiecutter.database =="MongoDb" %}
+    {% include '/templates/aspire/migration/migration_startup_ext.cs' %}
+{% elif cookiecutter.include_aspire == "no" %}
 
     {% if cookiecutter.database == "PostgreSql" %}
-    {% include '/templates/docker/migration/data_startup_ext_postgresql.cs' %}
+    {% include '/templates/docker/migration/migration_startup_ext_postgresql.cs' %}
+    {% elif cookiecutter.database == "MongoDb" %}
+    {% include '/templates/docker/migration/migration_startup_ext_mongodb.cs' %}
     {% endif %}
 
-    {% if cookiecutter.database == "MongoDb" %}
-        {% include '/templates/docker/migration/data_startup_ext_mongodb.cs' %}
-    {% endif %}
 {% endif %}
 }
 
