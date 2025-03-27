@@ -1,18 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
- <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
 {% if cookiecutter.include_aspire == "no" %}
   {% include '/templates/docker/api/api_project.cs' %}
 {% else %}
   {% include '/templates/aspire/api/api_project.cs' %}
 {% endif %}
-
-</Project>

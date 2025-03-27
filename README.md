@@ -4,7 +4,7 @@ This is our basic project setup that includes, OAuth and Azure parameters.
 
 The solution includes the following projects:
 
-- Base Project
+- Base Project (docker only)
 - Api
 - Abstractions
 - Database
@@ -23,6 +23,7 @@ Install cookiecutter at the command line: python3 -m pip install --user cookiecu
 2. Go to the project folder
 3. At the command line: cookiecutter {Uri to github project.cookiecutter}
 4. Open the solution in VS, and run "docker-compose" in "Debug" mode
+5. if using oAuth, get the oauth information and enter in the information into "Manage User Secrets"
 
 **Cloning Usage**
 
@@ -30,3 +31,4 @@ Install cookiecutter at the command line: python3 -m pip install --user cookiecu
 2.  Create a project folder
 3.  At the command line: cookiecutter {path to the cookiecutter.json file}
 4.  Open the solution in VS, and run "docker-compose" in "Debug" mode
+5.  if using oAuth, get the oauth information and enter in the information into "Manage User Secrets"

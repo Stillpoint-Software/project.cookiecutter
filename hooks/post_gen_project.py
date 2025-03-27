@@ -51,6 +51,7 @@ if not aspire: # Remove Aspire files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extensions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Program.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\LamarSetup.cs'))
 
 if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}'))
@@ -62,12 +63,9 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('docker-compose.dcproj'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}', 'Dockerfile'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Dockerfile'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.json'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Production.json'))
-    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'appsettings.Staging.json'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\BootstrapExtensions.cs'))
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\AzureSecretsExtensions.cs'))
-    remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Settings.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extentions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','BsonCollectionAttribute.cs'))
@@ -76,9 +74,14 @@ if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Extensions\MongoExtensions.cs')) 
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Startup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','/Scripts'))
+    remove(os.path.join('tests/{{cookiecutter.assembly_name}}.Tests', 'Dockerfile'))
 
-if aspire and not database: # Remove aspire files if postgesql
+if aspire and database: # Remove aspire files if postgesql
     remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Extensions\StartupExtensions.cs'))
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Migration'))
+
+if aspire and not database: # Remove aspire files if mongo
+    remove(os.path.join('src/{{cookiecutter.assembly_name}}.Migrations', 'Scripts'))
 
 if database: # delete mongo files
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Extensions\MongoExtensions.cs')) 
@@ -103,6 +106,7 @@ if auth == False:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\AuthService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Extensions\AuthPolicyExtensions.cs'))
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SecurityRequirementsOperationFilter.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IAuthService.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 

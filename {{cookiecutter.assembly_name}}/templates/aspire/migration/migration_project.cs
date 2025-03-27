@@ -10,13 +10,17 @@
 {% endif %}
   </ItemGroup>
   <ItemGroup>
+
 {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.1.0" />
     <PackageReference Include="Hyperbee.Migrations.Providers.Postgres" Version="2.0.2" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
-    {%elif cookiecutter.database =="MongoDb" %}
+{% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" Version="2.0.2" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.1.0" />
+    <PackageReference Include="Aspire.MongoDB.Driver.v3" Version="9.1.0" />
 {% endif %}
+
 {% if cookiecutter.include_azure == 'yes'%}
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
 {% endif %}

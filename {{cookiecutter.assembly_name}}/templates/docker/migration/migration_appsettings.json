@@ -19,7 +19,7 @@
       "MaxLifetime": 3600
     },
     // All providers - Set path to migration dll
-    "FromPaths": [  ],
+    "FromPaths": ["..\\..\\src\\{{cookiecutter.assembly_name}}.Migrations\\bin\\Debug\\net9.0\\{{cookiecutter.assembly_name}}.Migrations.dll" ],
     "FromAssemblies": [   ]
   },
   "Serilog": {

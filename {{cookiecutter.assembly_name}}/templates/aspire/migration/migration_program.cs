@@ -1,10 +1,11 @@
-﻿using Hyperbee.Migrations.Providers.Postgres;
-using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
+﻿using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using  {{cookiecutter.assembly_name}}.ServiceDefaults;
 {% if cookiecutter.database =="PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database =="MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
+using cookieAspire.Migrations.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 
 
@@ -27,7 +28,7 @@ public class Program
         builder.AddNpgsqlDbContext<SampleContext>( "projectdb" ); // this allows for telemetry
         {% elif cookiecutter.database== "MongoDb"%}
          //mongodb here
-        builder.AddMongoDBClient( "mongoDb" );
+        builder.AddMongoDBClient(  "{{cookiecutter.database_name}}" );
         {% endif %}
 
         //Setup OpenTelemetry
@@ -39,12 +40,12 @@ public class Program
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>( optional: true );
 
-        //Connection string for projectDb from aspire
-        var connectionString = builder.Configuration["ConnectionStrings:projectDb"];
+        //Connection string for projectdb from aspire
+        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
 
         if (string.IsNullOrEmpty( connectionString ))
         {
-            throw new ArgumentNullException( nameof( connectionString ), "Connection string for 'projectDb' is not configured." );
+            throw new ArgumentNullException( nameof( connectionString ), "Connection string for '{{cookiecutter.database_name}}' is not configured." );
         }
 
         //This line is needed to run migrations.  However, this doesn't allow for telemetry

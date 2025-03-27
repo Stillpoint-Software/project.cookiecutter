@@ -1,12 +1,12 @@
 using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Asp.Versioning;
 namespace {{cookiecutter.assembly_name}}.Api.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
-[Asp.Versioning.ApiVersion( "1.0" )]
+[ApiVersion( "1.0" )]
 [Authorize]
 public class SampleController : ServiceControllerBase
 {
@@ -41,7 +41,7 @@ public class SampleController : ServiceControllerBase
         return CommandResponse( result );
     }
     {% elif cookiecutter.database == "MongoDb" %}
-     [HttpGet( "sample/{sampleId:string}" )]
+     [HttpGet( "sample/{sampleId}" )]
     public async Task<IActionResult> GetSampleAsync(
         [FromServices] IGetSampleCommand command,
         [FromRoute] string sampleId,
@@ -51,7 +51,7 @@ public class SampleController : ServiceControllerBase
         return CommandResponse( result );
     }
 
-    [HttpPut( "sample/{sampleId:string}" )]
+    [HttpPut( "sample/{sampleId}" )]
     public async Task<IActionResult> UpdateSampleAsync(
         [FromServices] IUpdateSampleCommand command,
         [FromRoute] string sampleId,

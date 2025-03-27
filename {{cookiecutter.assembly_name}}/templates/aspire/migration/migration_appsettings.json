@@ -1,4 +1,3 @@
-{
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -23,7 +22,7 @@
   {% if cookiecutter.database == "PostgreSql" %}
     "SchemaName": "migration",
     "TableName": "ledger",
-    {% elif cookiecutter.database =="MongoDB" %}
+    {% elif cookiecutter.database =="MongoDb" %}
     "DatabaseName": "migration",
     "CollectionName": "ledger",
     {% endif %}
@@ -33,7 +32,7 @@
       "MaxLifetime": 3600
     },
     // All providers - Set path to migration dll
-    "FromPaths": [],
+    "FromPaths": ["..\\..\\src\\{{cookiecutter.assembly_name}}.Migrations\\bin\\Debug\\net9.0\\{{cookiecutter.assembly_name}}.Migrations.dll" ],
     "FromAssemblies": []
   }
-}
+

@@ -1,6 +1,8 @@
-﻿using Hyperbee.Migrations.Providers.MongoDB.Resources;
+using Hyperbee.Migrations;
+using Hyperbee.Migrations.Providers.MongoDB.Resources;
 
-namespace Hyperbee.Migrations.{{cookiecutter.database}}.Samples.Migrations;
+
+namespace {{cookiecutter.database}}.Migrations.Migrations;
 
 [Migration( 1000 )]
 public class Initial( MongoDBResourceRunner<Initial> resourceRunner ) : Migration
@@ -8,8 +10,9 @@ public class Initial( MongoDBResourceRunner<Initial> resourceRunner ) : Migratio
     public override async Task UpAsync( CancellationToken cancellationToken = default )
     {
         // run a `resource` migration to create initial state.
-        await resourceRunner.DocumentsFromAsync( [
-            "administration/users/user.json"
-        ], cancellationToken );
+        //Uncomment once the database is created.
+        // await resourceRunner.DocumentsFromAsync( [
+        //     "sample/sample.json"
+        // ], cancellationToken );
     }
 }

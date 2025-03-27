@@ -9,9 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Tests", "Solution Tests", "{D0C163AC-938E-4267-8B4F-A02ABF11D5DC}"
+	{% if cookiecutter.include_aspire == "no" %}
 	ProjectSection(SolutionItems) = preProject
 		tests\{{cookiecutter.assembly_name}}.Tests\Dockerfile = tests\{{cookiecutter.assembly_name}}.Tests\Dockerfile
 	EndProjectSection
+	{% endif %}
 EndProject
 {% if cookiecutter.include_aspire == "no" %}
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}", "src\{{cookiecutter.assembly_name}}\{{cookiecutter.assembly_name}}.csproj", "{8D57FD25-1FF6-4168-9C1A-01DB40726E86}"

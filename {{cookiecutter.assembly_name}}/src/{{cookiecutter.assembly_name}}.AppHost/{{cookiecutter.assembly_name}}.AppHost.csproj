@@ -22,7 +22,7 @@
     <PackageReference Include="Npgsql" Version="9.0.3" />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.1.0" />
-    <PackageReference Include="MongoDB.Driver" Version="3.2.0" />
+    <PackageReference Include="Aspire.MongoDB.Driver.v3" Version="9.1.0" />
     {% endif %}
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     {% if cookiecutter.include_azure=="yes" %}

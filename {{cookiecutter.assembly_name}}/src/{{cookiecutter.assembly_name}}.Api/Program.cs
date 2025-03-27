@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
+using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 
 
@@ -51,7 +52,7 @@ public class Program
         builder.AddNpgsqlDbContext<SampleContext>( "projectdb" );
         {% elif cookiecutter.database == "MongoDb" %}
         //mongodb context here
-        builder.AddMongoDBClient( "mongoDb" );
+        builder.AddMongoDBClient( "projectdb" );
         builder.Services.AddScoped<SampleContext>( svc =>
         {
             var scope = svc.CreateScope();
@@ -61,7 +62,8 @@ public class Program
 
         // Add environment variables
         builder.Configuration
-            .AddEnvironmentVariables();
+            .AddEnvironmentVariables()
+            .AddUserSecrets<Program>( optional: true );
 
         // Configure Serilog setup
         SerilogSetup.ConfigureSerilog( builder );

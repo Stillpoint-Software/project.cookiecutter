@@ -1,3 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+ <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     {%if cookiecutter.include_audit == "yes"%}
@@ -15,7 +25,7 @@
     {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Npgsql" Version="9.0.3" />
     {% elif cookiecutter.database =="MongoDb" %}
-    <PackageReference Include="MongoDB.Driver" Version="9.0.3" />
+    <PackageReference Include="Aspire.MongoDB.Driver.v3" Version="9.1.0" />
     {% endif %}
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -52,3 +62,4 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.13.0" />
   </ItemGroup>
+  </Project>

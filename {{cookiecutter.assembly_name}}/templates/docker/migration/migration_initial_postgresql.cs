@@ -13,7 +13,8 @@ public class Initial(PostgresResourceRunner<Initial> resourceRunner) : Migration
     public override async Task UpAsync(CancellationToken cancellationToken = default)
     {
         // run a `resource` migration to create initial state.
-        await resourceRunner.AllSqlFromAsync(cancellationToken);
+        //Uncomment once the database is created.
+        //await resourceRunner.AllSqlFromAsync(cancellationToken);
     }
 }
 

@@ -1,0 +1,6 @@
+default_context:
+    database: "MongoDb"
+    include_aspire: "yes"
+    include_azure: "yes"
+    include_oauth: "yes"
+    

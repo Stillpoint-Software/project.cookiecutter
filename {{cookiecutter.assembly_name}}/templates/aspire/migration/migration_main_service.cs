@@ -8,6 +8,7 @@ namespace {{cookiecutter.assembly_name}}.Migrations;
 
 public class MainService : BackgroundService
 {
+    private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<MainService> _logger;
     private readonly IServiceProvider _serviceProvider;
     public const string ActivitySourceName = "Migrations";
@@ -37,5 +38,7 @@ public class MainService : BackgroundService
         {
             _logger.LogCritical( ex, "Migrations encountered an unhandled exception." );
         }
+
+        // _applicationLifetime.StopApplication();
     }
 }
