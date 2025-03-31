@@ -1,6 +1,7 @@
 default_context:
-    database: "MongoDb"
-    include_aspire: "yes"
-    include_azure: "yes"
-    include_oauth: "yes"
+    database: "PostgreSql"
+    include_audit: "no"
+    include_aspire: "no"
+    include_azure: "no"
+    include_oauth: "no"
     

@@ -54,7 +54,7 @@ services:
   {% endif %}
 {% endif %}
 {% if cookiecutter.database == "MongoDb" %}
-version: '3.9'
+version: '3.8'
 
 services:
   db:

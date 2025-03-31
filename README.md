@@ -78,3 +78,8 @@ During setup, you’ll be asked whether you want to use Aspire. Selecting "No" d
 4.  Run the command
 5.  Open the solution in Visual Studio
 6.  Run the **Hosting** project
+
+---
+## Oauth, Azure, Migrations
+
+You will need to have the oAuth, Azure, and a database already setup.

@@ -46,26 +46,11 @@ public class SampleService : ISampleService
         }
     }
 
-   public async Task<SampleDefinition> UpdateSampleAsync( Sample existing, int sampleId, string name, string description )
+   public async Task UpdateSampleAsync( int sampleId, string name, string description )
     {
         try
         {
-            if (existing == null)
-                throw new ServiceException( nameof( UpdateSampleAsync ), "Sample cannot be null." );
-
-            _sampleContext.Entry( existing ).CurrentValues.SetValues( new
-            {
-                Name = name,
-                Description = description
-            } );
-
             await _sampleContext.SaveChangesAsync();
-
-            return new SampleDefinition(
-                existing.Id,
-                existing.Name ?? string.Empty,
-                existing.Description ?? string.Empty
-            );
         }
         catch (Exception ex)
         {
@@ -73,6 +58,4 @@ public class SampleService : ISampleService
         }
     }
        {% endif %}
-   
- 
 }
