@@ -21,7 +21,6 @@ def is_docker_installed() -> bool:
         return False
 
 aspire ='{{cookiecutter.include_aspire}}' =='yes'
-print(f'aspire: {aspire}')
 
 if not aspire:
     if not is_docker_installed():
@@ -29,20 +28,16 @@ if not aspire:
         sys.exit(1)
    
 azure = '{{cookiecutter.include_azure}}'=='yes'
-print(f'azure: {azure}')
 database = '{{cookiecutter.database}}' =='PostgreSql'
-print(f'database: {database}')
 audit = '{{cookiecutter.include_audit}}'=='yes'
-print(f'audit: {audit}')
 auth = '{{cookiecutter.include_oauth}}'=='yes'
-print(f'auth: {auth}')
-
 
 if not azure:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\AzureSecretsExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
-    
+    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Vault'))
+
 if not aspire: # Remove Aspire files/folders 
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.AppHost'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.ServiceDefaults'))
