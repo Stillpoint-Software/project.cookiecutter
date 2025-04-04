@@ -43,8 +43,12 @@ var dbPassword = builder.AddParameter( "DbPassword","mongodb", secret: true );
 var dbServer = builder.AddMongoDB( "mongo", userName: dbUsername, password: dbPassword )
                 .WithMongoExpress()
                 .PublishAsConnectionString()
-                .WithLifetime( ContainerLifetime.Persistent )
                 .WithDataVolume();
+
+if ( builder.Environment.IsDevelopment() )
+{
+  dbServer.WithLifetime( ContainerLifetime.Persistent );
+}                
 {% endif %}
 
 var projectdb = dbServer.AddDatabase("{{cookiecutter.database_name}}");
