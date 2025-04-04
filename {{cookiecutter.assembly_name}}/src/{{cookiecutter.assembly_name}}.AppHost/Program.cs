@@ -49,15 +49,16 @@ var dbServer = builder.AddMongoDB( "mongo", userName: dbUsername, password: dbPa
 
 var projectdb = dbServer.AddDatabase("{{cookiecutter.database_name}}");
 
-var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name}}-api")
+var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name|lower }}-api")
     .WithReference(projectdb)
+    .WithExternalHttpEndpoints()
     {% if cookiecutter.include_azure == "yes" %}
         .WithReference( secrets )
         .WithReference( appInsights )
     {% endif %}
     .WithSwaggerUI();
 
-builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name}}-migrations")
+builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name|lower }}-migrations")
     .WaitFor(projectdb)
      {% if cookiecutter.include_azure == "yes" %}
      .WithReference( appInsights )
