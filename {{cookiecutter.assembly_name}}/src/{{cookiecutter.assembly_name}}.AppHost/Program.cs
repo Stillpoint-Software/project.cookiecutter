@@ -5,8 +5,22 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 {% if cookiecutter.include_azure == "yes" %}
 // Conditionally update the app model with secrets.
+// Automatically provision Key Vault in Azure or use local secrets
 var secrets = builder.ExecutionContext.IsPublishMode
         ? builder.AddAzureKeyVault( "secrets" )
+    .ConfigureInfrastructure( infra =>
+    {
+        var keyVault = infra.GetProvisionableResources()
+                            .OfType<KeyVaultService>()
+                            .Single();
+
+        keyVault.Properties.Sku = new()
+        {
+            Family = KeyVaultSkuFamily.A,
+            Name = KeyVaultSkuName.Standard,
+        };
+        keyVault.Properties.EnableRbacAuthorization = true;
+    } )
         : builder.AddConnectionString( "secrets" );
 
 // Automatically provision an Application Insights resource
@@ -15,15 +29,20 @@ var appInsights = builder.ExecutionContext.IsPublishMode
     : builder.AddConnectionString( "appInsights", "APPLICATIONINSIGHTS_CONNECTION_STRING" );
 
 //Azure Storage
-var storage = builder.AddAzureStorage( "storage" );
-
-if ( builder.Environment.IsDevelopment() )
+//Azure Storage Deployment
+var storage = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureStorage( "storage" ).ConfigureInfrastructure( infra =>
 {
-    storage.RunAsEmulator( az =>
-    {
-        az.WithDataBindMount();
-    } );
-}
+    var storageAccount = infra.GetProvisionableResources()
+                              .OfType<StorageAccount>()
+                              .Single();
+
+    storageAccount.AccessTier = StorageAccountAccessTier.Cool;
+    storageAccount.Sku = new StorageSku { Name = StorageSkuName.StandardLrs };
+} ) : builder.AddAzureStorage( "storage" ).RunAsEmulator( az =>
+{
+    az.WithDataBindMount();
+} );
 {% endif %}
 
 {% if cookiecutter.database == "PostgreSql" %}

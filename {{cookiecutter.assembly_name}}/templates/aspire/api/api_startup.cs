@@ -46,6 +46,17 @@ public class Startup
             options.ApiVersionReader = new HeaderApiVersionReader( "X-Version" );
         } );
 
+        services.AddControllers()
+        .AddJsonOptions( x =>
+        {
+            // serialize enums as strings in api responses (e.g. Color)
+            x.JsonSerializerOptions.Converters.Add( new JsonStringEnumConverter() );
+            x.JsonSerializerOptions.Converters.Add( new JsonBoolConverter() );
+            x.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            x.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        } );
+        
         services.AddDataProtection();
 
     {% if cookiecutter.include_oauth == "yes" %}
@@ -112,9 +123,19 @@ public class Startup
         }
 
         app.MapControllers();
-
     }
+    public void ConfigureContainer( ServiceRegistry services )
+    {
+        IdentityModelEventSource.ShowPII = true; // show pii info in logs for debugging openid
 
+        // auto-registrations by convention
+
+        services.Scan( _ =>
+        {
+            _.TheCallingAssembly();
+            _.WithDefaultConventions();
+        } );
+    }
 }
 public static class StartupExtensions
 {

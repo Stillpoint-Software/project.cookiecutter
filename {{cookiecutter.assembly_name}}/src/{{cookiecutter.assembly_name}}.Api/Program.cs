@@ -10,8 +10,6 @@ using MongoDB.Driver;
 using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 
-
-
 namespace {{cookiecutter.assembly_name}}.Api;
 
 public class Program
@@ -23,8 +21,8 @@ public class Program
         // Add service defaults & Aspire components.
         builder.AddServiceDefaults();
 
-        // Add services to the container.
-        LamarSetup.ConfigureLamar( builder );
+        // Add Lamar 
+        builder.Host.UseLamar();
 
         {% if cookiecutter.include_azure =="yes" %}
         var connectionString = builder.Configuration["ConnectionStrings:secrets"];
@@ -59,6 +57,9 @@ public class Program
             return SampleContext.Create( scope.ServiceProvider.GetRequiredService<IMongoDatabase>() );
         } );
         {% endif %}
+
+        // Add services to the container before Build()
+        builder.Services.AddProblemDetails();
 
         // Add environment variables
         builder.Configuration
