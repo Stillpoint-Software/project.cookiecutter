@@ -79,7 +79,125 @@ During setup, you’ll be asked whether you want to use Aspire. Selecting "No" d
 5.  Open the solution in Visual Studio
 6.  Run the **Hosting** project
 
+**Deployment**
+
+You can use aspire for deployment.  However, you will need to manually create a bicep file when using MongoDb.
+
+1.  Open **Developer Powershell** in VS or open **Powershell**
+2.  Navigate to the folder where the solution file resides.
+3.  run `azd init`
+    1.  This will ask for the environment (develop, staging, production) you want to create.
+4.  run `azd pipeline config -e {environment-name}` which will setup Github
+    1.  Select the Azure subscription
+    2.  Select the location
+    3.  Enter in the DbPassword (if using a database)
+5.  If using MongoDb, DO NOT COMMIT AND PUSH
+6.  Continue with **Deployment - MongoDb**
+7.  If NOT using MongoDb, commit and push
+
+**Deployment - MongoDb**
+
+At this time (04/04/2025), aspire does not currently support **Azure Cosmos DB for MongoDB** deployment. Therefore; you will need to create a bicep file manually in order for aspire to create the database.
+
+1.  Navigate to the folder where the colution file resides.
+2.  run `azd infra synth`.  This will create an infra folder under the AppHost folder which will contain all the bicep files
+3.  Add the following to the **main.bicep** file
+    `module mongodb 'mongodb/mongodb.module.bicep' = {
+      name: 'mongodb'
+      scope: rg
+      params: {
+      location: location
+      }
+    }`
+
+4.  Navigate to the infra folder
+5.  Create a folder named **mongo**
+6.  Navigate to the new folder
+7.  Create a file called **mongo.module.bicep** 
+8.  Add the fillowing
+   * `*@description('The location for the resource(s) to be deployed.')
+    param location string = resourceGroup().location
+
+    @description('Cosmos DB for MongoDb account name')
+    param accountName string = 'mongodb-${uniqueString(resourceGroup().id)}'
+
+    resource mongoDb 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' = {
+      name: accountName
+      kind: 'MongoDB'
+      location: location
+      tags: {
+        defaultExperience: 'Azure Cosmos DB for MongoDB API'
+        'hidden-workload-type': 'Development/Testing'
+        'hidden-cosmos-mmspecial': ''
+      }
+      identity: {
+        type: 'None'
+      }
+      properties: {
+        publicNetworkAccess: 'Enabled'
+        enableAutomaticFailover: false
+        enableMultipleWriteLocations: false
+        isVirtualNetworkFilterEnabled: false
+        virtualNetworkRules: []
+        disableKeyBasedMetadataWriteAccess: false
+        enableFreeTier: false
+        enableAnalyticalStorage: false
+        analyticalStorageConfiguration: {
+          schemaType: 'FullFidelity'
+        }
+        databaseAccountOfferType: 'Standard'
+        capacityMode: 'Serverless'
+        defaultIdentity: 'FirstPartyIdentity'
+        networkAclBypass: 'None'
+        disableLocalAuth: false
+        enablePartitionMerge: false
+        enablePerRegionPerPartitionAutoscale: false
+        enableBurstCapacity: false
+        enablePriorityBasedExecution: false
+        minimalTlsVersion: 'Tls12'
+        consistencyPolicy: {
+          defaultConsistencyLevel: 'Session'
+          maxIntervalInSeconds: 5
+          maxStalenessPrefix: 100
+        }
+        apiProperties: {
+          serverVersion: '7.0'
+        }
+        locations: [
+          {
+            locationName: 'East US 2'
+            failoverPriority: 0
+            isZoneRedundant: false
+          }
+        ]
+        cors: []
+        capabilities: [
+          {
+            name: 'EnableMongo'
+          }
+        ]
+        ipRules: []
+        backupPolicy: {
+          type: 'Periodic'
+          periodicModeProperties: {
+            backupIntervalInMinutes: 240
+            backupRetentionIntervalInHours: 8
+            backupStorageRedundancy: 'Geo'
+          }
+        }
+        networkAclBypassResourceIds: []
+        diagnosticLogSettings: {
+          enableFullTextQuery: 'None'
+        }
+        capacity: {
+          totalThroughputLimit: 4000
+        }
+      }
+    }`
+9.  The **hidden-workload-type** options are 'Development/Testing' or 'Production'
+10. Commit and push
+   
 ---
 ## Oauth, Azure, Migrations
 
-You will need to have the oAuth, Azure, and a database already setup.
+If you are not using Aspire for deployment, you will need to have the oAuth, Azure, and a database already setup.
