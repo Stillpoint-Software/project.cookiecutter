@@ -81,7 +81,7 @@ During setup, you’ll be asked whether you want to use Aspire. Selecting "No" d
 
 **Deployment**
 
-You can use aspire for deployment.  However, you will need to manually create a bicep file when using MongoDb.
+You can use aspire for deployment.  However, you will need to manually create a bicep file when using MongoDb since CosmoDB for MongoDb is not integrated with Aspire.
 
 1.  Open **Developer Powershell** in VS or open **Powershell**
 2.  Navigate to the folder where the solution file resides.
@@ -115,12 +115,10 @@ At this time (04/04/2025), aspire does not currently support **Azure Cosmos DB f
 6.  Navigate to the new folder
 7.  Create a file called **mongo.module.bicep** 
 8.  Add the fillowing
-   * `*@description('The location for the resource(s) to be deployed.')
-    param location string = resourceGroup().location
-
+   >@description('The location for the resource(s) to be deployed.')
+    param location string = resourceGroup().location<br>
     @description('Cosmos DB for MongoDb account name')
-    param accountName string = 'mongodb-${uniqueString(resourceGroup().id)}'
-
+    param accountName string = 'mongodb-${uniqueString(resourceGroup().id)}' <br>
     resource mongoDb 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' = {
       name: accountName
       kind: 'MongoDB'
@@ -193,9 +191,11 @@ At this time (04/04/2025), aspire does not currently support **Azure Cosmos DB f
           totalThroughputLimit: 4000
         }
       }
-    }`
+    }
 9.  The **hidden-workload-type** options are 'Development/Testing' or 'Production'
-10. Commit and push
+10. The **location** is set for **East US 2**
+11. Update settings as needed
+12. Commit and push
    
 ---
 ## Oauth, Azure, Migrations
