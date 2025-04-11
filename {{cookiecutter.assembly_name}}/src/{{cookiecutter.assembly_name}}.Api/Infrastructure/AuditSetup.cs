@@ -17,7 +17,7 @@ namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
 public static class AuditSetup
 {
-    private static SampleContext _dbContext;
+    private static readonly SampleContext _dbContext;
 
     public static void ConfigureAudit( WebApplicationBuilder builder )
     {

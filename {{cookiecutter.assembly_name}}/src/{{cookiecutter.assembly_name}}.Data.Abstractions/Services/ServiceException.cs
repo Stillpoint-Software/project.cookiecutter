@@ -3,7 +3,7 @@
 [Serializable]
 public class ServiceException : Exception
 {
-    public string Name { get; init; }
+    public string? Name { get; init; }
     public int Code { get; init; }
 
     public ServiceException()

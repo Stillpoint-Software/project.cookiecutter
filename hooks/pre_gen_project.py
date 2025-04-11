@@ -2,7 +2,7 @@ import sys
 import cookiecutter.prompt
 
 if "{{ cookiecutter.include_oauth }}" == "yes":
-    cookiecutter.prompt.read_user_variable("oauth_app_name","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
+    cookiecutter.prompt.read_user_variable("oauth_app_name","Enter the OAuth application name for development, ex:(https://{project_dev_domain}/api/v2/)")
     cookiecutter.prompt.read_user_variable("oauth_audience","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
     cookiecutter.prompt.read_user_variable("oauth_api_audience_dev","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
     cookiecutter.prompt.read_user_variable("oauth_api_audience_prod","Enter the OAuth audience for production, ex:(https://{project_production_domain}/api/v2/)")

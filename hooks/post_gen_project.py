@@ -31,6 +31,10 @@ azure = '{{cookiecutter.include_azure}}'=='yes'
 database = '{{cookiecutter.database}}' =='PostgreSql'
 audit = '{{cookiecutter.include_audit}}'=='yes'
 auth = '{{cookiecutter.include_oauth}}'=='yes'
+deploy = '{{cookiecutter.aspire_deploy}}'=='yes'
+github = '{{cookiecutter.github_deployment}}'=='yes'
+project_path = '{{cookiecutter.project_path}}' 
+template_path = '{{cookiecutter.template_path}}'
 
 if not azure:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
@@ -43,10 +47,8 @@ if not aspire: # Remove Aspire files/folders
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.ServiceDefaults'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Startup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SerilogSetup.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Extensions\LoggerConfigurationExtensions.cs'))
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Program.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\LamarSetup.cs'))
 
 if aspire: # Remove docker files/folders
     remove(os.path.join('src/{{cookiecutter.assembly_name}}'))
@@ -107,3 +109,16 @@ if auth == False:
 
 # Remove templates
 remove(os.path.join('templates'))
+
+# if azure and aspire and github setup deployment
+if deploy and azure and aspire and project_path:
+    # Call Python script with variables to setup for deployment process
+    try:
+        script_path =  os.path.join('deployment.py')  
+
+        subprocess.run(["python", script_path, "{{cookiecutter.deployment_environment}}", "{{cookiecutter.assembly_name}}", str(github).lower(), "{{cookiecutter.database}}", project_path, template_path], check=True)
+        print(f"Successfully executed '{script_path}' with variables")
+    except subprocess.CalledProcessError as e:
+        print(f"Error running '{script_path}': {e}")
+        sys.exit(1)
+

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using Microsoft.Extensions.DependencyInjection;
 {% endif %}
+using Lamar.Microsoft.DependencyInjection;
 
 namespace {{cookiecutter.assembly_name}}.Api;
 

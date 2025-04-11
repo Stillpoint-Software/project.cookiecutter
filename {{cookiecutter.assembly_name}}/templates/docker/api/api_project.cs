@@ -11,17 +11,17 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     {% if cookiecutter.include_audit == "yes" %}
-    <PackageReference Include="Audit.NET" Version="27.5.0" />
+    <PackageReference Include="Audit.NET" Version="27.5.2" />
       {% if cookiecutter.database == "PostgreSql" %}
-      <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.0" />
+      <PackageReference Include="Audit.NET.PostgreSql" Version="27.5.2" />
       {% elif cookiecutter.database =="MongoDb" %}
-      <PackageReference Include="Audit.MongoClient" Version="27.5.0" />
-      <PackageReference Include="Audit.NET.MongoDB" Version="27.5.0" />
+      <PackageReference Include="Audit.MongoClient" Version="27.5.2" />
+      <PackageReference Include="Audit.NET.MongoDB" Version="27.5.2" />
       {% endif %}
     {% endif %}
     {% if cookiecutter.include_azure == "yes" %}
-    <PackageReference Include="Azure.Security.KeyVault.Keys" Version="4.7.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Keys" Version="9.2.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="9.2.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.AzureBlobStorage" Version="4.0.5" />
@@ -32,7 +32,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="Cronos" Version="0.9.0" />
+    <PackageReference Include="Cronos" Version="0.10.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.1" />
@@ -40,15 +40,15 @@
     <PackageReference Include="Hyperbee.Pipeline" Version="2.0.1" />
     <PackageReference Include="Lamar" Version="14.0.1" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.2" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.24" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.1" />
     {% if cookiecutter.include_oauth == "yes" %}
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     {% endif %}
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />

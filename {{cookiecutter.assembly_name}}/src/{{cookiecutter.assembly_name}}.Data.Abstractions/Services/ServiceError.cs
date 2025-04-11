@@ -2,9 +2,9 @@
 
 public class ServiceError
 {
-    public string Message { get; init; }
+    public string? Message { get; init; }
     public int Code { get; init; }
-    public string Name { get; init; }
+    public string? Name { get; init; }
     public SeverityLevel Severity { get; init; }
 
     public ServiceError()

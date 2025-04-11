@@ -1,6 +1,6 @@
 # project.cookiecutter
 
-**project.cookiecutter** provides a streamlined project setup, including OAuth, Azure, and Auditing configurations for both **Aspire** and **Docker**
+**project.cookiecutter** provides a streamlined process to setup a web API project with support for *OAuth*, *Azure*, and *Auditing* in both **Aspire** and **Docker** modes.
 
 ## Solution Structure
 
@@ -17,27 +17,114 @@ The solution consists of the following projects:
 
 ## Cookiecutter Setup
 
-install ``python3 -m pip install --user cookiecutter``
+install Cookiecutter using the following command:
 
-## Project Setup
+ ``python3 -m pip install --user cookiecutter``
 
-To setup your project, you can run the cookiecutter command setup in two ways.  The first, you can point to the **project.cookiecutter** GitHub Uri. Or, you can clone the `project.cookiecutter` Project and run the command from your machine.
+### Project Setup
 
-Here is an example:
+You can set up your project in two ways:
+
+**GitHub URI**: Point to the project.cookiecutter GitHub repository.
+**Local Clone**: Clone the project.cookiecutter repository locally and run the command from your machine.
+
+Example command:
+
 ``cookiecutter {uri/path to project.cookiecutter} ``
 
-*NOTE: You can't change the defaults if using the GitHub setup.*
+**Note: You cannot change the defaults if using the GitHub setup.**
 
-## Default settings
-If you cloned the repository, you can customize some of the default settings by editing the **.cookiecutterrc** file.
+### Default settings
+If you cloned the repository, you can customize the default settings by editing the **.cookiecutterrc** file located at the root of the cookiecutter project.
+
+Example command:
 
 ``cookiecutter {path to project.cookiecutter}   --overwrite-if-exists  --config-file={ path to the .cookiecutterrc file }``
 
-# Project Modes
-You can create a project in one of two modes: **Aspire** or **Docker**.
-During setup, you’ll be asked whether you want to use Aspire. Selecting "No" defaults to Docker.
 
-## Docker Mode
+## Project Modes
+You can create a project in one of two modes: **Aspire** or **Docker**. During setup, you’ll be asked whether you want to use Aspire. Selecting **"No"** defaults to Docker.
+
+### Aspire Mode
+
+When using Aspire mode, you must have OAuth set up and an active Azure subscription. Below is the information you will need to proceed.
+
+#### Gather Information 
+
+***OAuth information***
+if using OAuth, You will need to have the following information for all environments:
+
+1.  Application Name
+2.  Audience
+3.  Domain
+
+#### Setup
+
+**Command Line Setup**
+
+1.  Create a directory for your project
+2.  Navigate to the project folder
+3.  Run the command
+4.  Open the solution in Visual Studio
+5.  Run the **Hosting** project
+   
+**Cloning Setup**
+
+1.  Clone the `project.cookiecutter`
+2.  Create a project directory
+3.  Navigate to the project folder
+4.  Run the command
+5.  Open the solution in Visual Studio
+6.  Run the **Hosting** project
+
+#### Deployment
+
+As of April 4, 2025, Aspire does not support **Azure Cosmos DB for MongoDB** for deployment. Therefore, an **infra** folder will be created under the application host project, containing all the Bicep files needed for deployment, including MongoDB.
+
+By default, the MongoDB Bicep file is configured with:
+
+- MongoDB (RU) configuration.
+- hidden-workload-type: Development/Testing.
+- locationName: East US 2.
+
+By default, the mongo bicep file is configured to use the **MongoDB (RU)** configuration, with the  *hidden-workload-type* to be 'Development/Testing' and the *locationName* of 'East US 2'
+
+Refer to the Microsoft [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/manage-with-bicep) for more information.
+
+----
+
+### Docker Mode
+
+When using this Mode, you will need to have OAuth and Azure already setup and configured.  Below is the information you will need to proceed.
+
+#### Gather Information 
+
+***OAuth information***
+If you use OAuth, you will need to have the following information for all environments:
+
+1.  Application Name
+2.  Audience
+3.  Domain
+  
+***Azure information***
+If you use Azure, you will need to have the following information:
+
+1. Tenant Id 
+2. Subscription Id
+3. Location
+4. Key Vault (all environments) 
+   1. ex:{projectName}-Staging
+5. Storage connection string
+6. Storage container name (all environments)
+   1. ex: {projectName}assetsstaging
+7. Container Name (all environments)
+   1. ex: staging
+8. Container Registry Name (all environments)
+   1. ex: cr3hmn6weg7opbk.azurecr.io
+9.  Container User (all environments)
+    1.  ex: cr3hmn6weg7opbk
+
+#### Setup 
 
 **Command Line Setup**
 
@@ -58,146 +145,3 @@ During setup, you’ll be asked whether you want to use Aspire. Selecting "No" d
 5. Open the solution in Visual Studio
 6. Run docker-compose in **Debug** mode
 7. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
-------
-
-## Aspire Mode
-
-**Command Line Setup**
-
-1.  Create a directory for your project
-2.  Navigate to the project folder
-3.  Run the command
-4.  Open the solution in Visual Studio
-5.  Run the **Hosting** project
-   
-**Cloning Setup**
-
-1.  Clone the `project.cookiecutter`
-2.  Create a project directory
-3.  Navigate to the project folder
-4.  Run the command
-5.  Open the solution in Visual Studio
-6.  Run the **Hosting** project
-
-**Deployment**
-
-You can use aspire for deployment.  However, you will need to manually create a bicep file when using MongoDb since CosmoDB for MongoDb is not integrated with Aspire.
-
-1.  Open **Developer Powershell** in VS or open **Powershell**
-2.  Navigate to the folder where the solution file resides.
-3.  run `azd init`
-    1.  This will ask for the environment (develop, staging, production) you want to create.
-4.  run `azd pipeline config -e {environment-name}` which will setup Github
-    1.  Select the Azure subscription
-    2.  Select the location
-    3.  Enter in the DbPassword (if using a database)
-5.  If using MongoDb, DO NOT COMMIT AND PUSH
-6.  Continue with **Deployment - MongoDb**
-7.  If NOT using MongoDb, commit and push
-
-**Deployment - MongoDb**
-
-At this time (04/04/2025), aspire does not currently support **Azure Cosmos DB for MongoDB** deployment. Therefore; you will need to create a bicep file manually in order for aspire to create the database.
-
-1.  Navigate to the folder where the colution file resides.
-2.  run `azd infra synth`.  This will create an infra folder under the AppHost folder which will contain all the bicep files
-3.  Add the following to the **main.bicep** file
-    `module mongodb 'mongodb/mongodb.module.bicep' = {
-      name: 'mongodb'
-      scope: rg
-      params: {
-      location: location
-      }
-    }`
-
-4.  Navigate to the infra folder
-5.  Create a folder named **mongo**
-6.  Navigate to the new folder
-7.  Create a file called **mongo.module.bicep** 
-8.  Add the fillowing
-   >@description('The location for the resource(s) to be deployed.')
-    param location string = resourceGroup().location<br>
-    @description('Cosmos DB for MongoDb account name')
-    param accountName string = 'mongodb-${uniqueString(resourceGroup().id)}' <br>
-    resource mongoDb 'Microsoft.DocumentDB/databaseAccounts@2024-12-01-preview' = {
-      name: accountName
-      kind: 'MongoDB'
-      location: location
-      tags: {
-        defaultExperience: 'Azure Cosmos DB for MongoDB API'
-        'hidden-workload-type': 'Development/Testing'
-        'hidden-cosmos-mmspecial': ''
-      }
-      identity: {
-        type: 'None'
-      }
-      properties: {
-        publicNetworkAccess: 'Enabled'
-        enableAutomaticFailover: false
-        enableMultipleWriteLocations: false
-        isVirtualNetworkFilterEnabled: false
-        virtualNetworkRules: []
-        disableKeyBasedMetadataWriteAccess: false
-        enableFreeTier: false
-        enableAnalyticalStorage: false
-        analyticalStorageConfiguration: {
-          schemaType: 'FullFidelity'
-        }
-        databaseAccountOfferType: 'Standard'
-        capacityMode: 'Serverless'
-        defaultIdentity: 'FirstPartyIdentity'
-        networkAclBypass: 'None'
-        disableLocalAuth: false
-        enablePartitionMerge: false
-        enablePerRegionPerPartitionAutoscale: false
-        enableBurstCapacity: false
-        enablePriorityBasedExecution: false
-        minimalTlsVersion: 'Tls12'
-        consistencyPolicy: {
-          defaultConsistencyLevel: 'Session'
-          maxIntervalInSeconds: 5
-          maxStalenessPrefix: 100
-        }
-        apiProperties: {
-          serverVersion: '7.0'
-        }
-        locations: [
-          {
-            locationName: 'East US 2'
-            failoverPriority: 0
-            isZoneRedundant: false
-          }
-        ]
-        cors: []
-        capabilities: [
-          {
-            name: 'EnableMongo'
-          }
-        ]
-        ipRules: []
-        backupPolicy: {
-          type: 'Periodic'
-          periodicModeProperties: {
-            backupIntervalInMinutes: 240
-            backupRetentionIntervalInHours: 8
-            backupStorageRedundancy: 'Geo'
-          }
-        }
-        networkAclBypassResourceIds: []
-        diagnosticLogSettings: {
-          enableFullTextQuery: 'None'
-        }
-        capacity: {
-          totalThroughputLimit: 4000
-        }
-      }
-    }
-9.  The **hidden-workload-type** options are 'Development/Testing' or 'Production'
-10. The **location** is set for **East US 2**
-11. Update settings as needed
-12. Commit and push
-   
----
-## Oauth, Azure, Migrations
-
-If you are not using Aspire for deployment, you will need to have the oAuth, Azure, and a database already setup.

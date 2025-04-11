@@ -8,7 +8,7 @@ namespace {{cookiecutter.assembly_name}}.Migrations;
 
 public class MainService : BackgroundService
 {
-    private readonly IHostApplicationLifetime _applicationLifetime;
+    //private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<MainService> _logger;
     private readonly IServiceProvider _serviceProvider;
     public const string ActivitySourceName = "Migrations";

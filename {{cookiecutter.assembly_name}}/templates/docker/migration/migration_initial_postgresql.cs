@@ -14,7 +14,7 @@ public class Initial(PostgresResourceRunner<Initial> resourceRunner) : Migration
     {
         // run a `resource` migration to create initial state.
         //Uncomment once the database is created.
-        //await resourceRunner.AllSqlFromAsync(cancellationToken);
+        await resourceRunner.AllSqlFromAsync(cancellationToken);
     }
 }
 

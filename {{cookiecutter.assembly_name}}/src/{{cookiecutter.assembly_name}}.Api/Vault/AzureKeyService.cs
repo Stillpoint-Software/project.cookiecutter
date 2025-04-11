@@ -1,7 +1,10 @@
+using System.Text;
+using Azure;
+using Azure.Security.KeyVault.Keys;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Security.KeyVault.Keys.Cryptography;
 
-namespace {{cookiecutter.assembly_name}}.Api.Vault
-{
+namespace {{cookiecutter.assembly_name}}.Api.Vault;
 
     public interface IKeyService
     {
@@ -58,9 +61,8 @@ namespace {{cookiecutter.assembly_name}}.Api.Vault
                     return null;
                 }
 
-                return secret.Value.Value
+                return secret.Value.Value;
             }
-
             catch (RequestFailedException failedException) when (failedException.Status == 404)
             {
                 // Create new Key.
@@ -108,4 +110,3 @@ namespace {{cookiecutter.assembly_name}}.Api.Vault
             new( new Uri( keyIdentifier ), GetKeyVaultClientCredential() );
     }
 
-}

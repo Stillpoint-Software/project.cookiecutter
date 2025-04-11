@@ -1,5 +1,11 @@
 using {{cookiecutter.assembly_name}}.AppHost;
 using Microsoft.Extensions.Hosting;
+{% if cookiecutter.include_azure == "yes" %}
+using Azure.Provisioning.KeyVault;
+using Azure.Provisioning.Storage;
+{% endif %}
+
+
 
 var builder = DistributedApplication.CreateBuilder(args);
 

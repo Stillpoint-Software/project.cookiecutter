@@ -4,15 +4,20 @@ using Hyperbee.Pipeline;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Logging;
 using System.Security.Claims;
 {% endif %}
 using {{cookiecutter.assembly_name}}.Api.Validators;
+using {{cookiecutter.assembly_name}}.Api.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Lamar;
 
 namespace {{cookiecutter.assembly_name}}.Api;
 

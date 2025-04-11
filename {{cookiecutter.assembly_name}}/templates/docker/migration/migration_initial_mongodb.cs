@@ -11,8 +11,6 @@ public class Initial( MongoDBResourceRunner<Initial> resourceRunner ) : Migratio
     {
         // run a `resource` migration to create initial state.
         //Uncomment once the database is created.
-        // await resourceRunner.DocumentsFromAsync( [
-        //     "sample/sample.json"
-        // ], cancellationToken );
+        await resourceRunner.DocumentsFromAsync( ["sample/sample.json"], cancellationToken );
     }
 }

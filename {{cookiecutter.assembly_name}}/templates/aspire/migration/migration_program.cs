@@ -4,12 +4,12 @@ using  {{cookiecutter.assembly_name}}.ServiceDefaults;
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database =="MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
-using cookieAspire.Migrations.Extensions;
+using {{cookiecutter.assembly_name}}.Migrations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 
-
 namespace  {{cookiecutter.assembly_name}}.Migrations;
+
 public class Program
 {
     public static void Main( string[] args )

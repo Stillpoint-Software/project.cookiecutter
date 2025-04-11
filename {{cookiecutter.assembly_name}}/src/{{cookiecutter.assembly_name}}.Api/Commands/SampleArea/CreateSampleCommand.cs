@@ -52,6 +52,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         {
             Name = sample.Name,
             Description = sample.Description,
+            CreatedBy = _user,
         } );
     }
 
