@@ -1,6 +1,6 @@
   <ItemGroup>
-    <PackageReference Include="Hyperbee.Json" Version="3.0.2" />
-    <PackageReference Include="Hyperbee.Pipeline" Version="2.0.1" />
+    <PackageReference Include="Hyperbee.Json" Version="3.0.3" />
+    <PackageReference Include="Hyperbee.Pipeline" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />

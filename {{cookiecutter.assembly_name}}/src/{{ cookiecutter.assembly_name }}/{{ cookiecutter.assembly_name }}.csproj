@@ -46,8 +46,8 @@
    {% if cookiecutter.include_azure == "yes" %}
    {% include '/templates/docker/main/main_project.cs' %}
    {% endif %}
-   <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.1" />
-   <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.1" />
+   <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
+   <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
    <PackageReference Include="Lamar" Version="14.0.1" />
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
