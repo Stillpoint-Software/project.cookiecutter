@@ -1,6 +1,8 @@
 # project.cookiecutter
 
-**project.cookiecutter** provides a streamlined process to setup a web API project with support for *OAuth*, *Azure*, and *Auditing* in both **Aspire** and **Docker** modes.
+**project.cookiecutter** provides a streamlined process to setup a web API project with support for *OAuth*, *Azure*, and *Auditing* in both **Aspire** and **Docker** modes.  
+
+If there are any updates to this template, there is a github process that will create a new branch and pull requested.
 
 ## Solution Structure
 
@@ -17,9 +19,10 @@ The solution consists of the following projects:
 
 ## Cookiecutter Setup
 
-install Cookiecutter using the following command:
+install Cookiecutter and Cruft using the following command:
 
  ``python3 -m pip install --user cookiecutter``
+ ``pip3 install cruft``
 
 ### Project Setup
 
@@ -30,11 +33,11 @@ You can set up your project in two ways:
 
 Example command:
 
-``cookiecutter {uri/path to project.cookiecutter} ``
+``cruft create {uri/path to project.cookiecutter}``
 
 **Note: You cannot change the defaults if using the GitHub setup.**
 
-### Default settings
+### Default settings -- maybe
 If you cloned the repository, you can customize the default settings by editing the **.cookiecutterrc** file located at the root of the cookiecutter project.
 
 Example command:

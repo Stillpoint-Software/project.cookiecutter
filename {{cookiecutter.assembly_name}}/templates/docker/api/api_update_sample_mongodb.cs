@@ -1,9 +1,9 @@
 
-{% if cookiecutter.include_audit =='yes'%}
+{% if cookiecutter.include_audit == 'yes' %}
 {% include 'templates/audit/api_sample_update_mongodb.cs' %}
 {% else %}
 
-public record UpdateSample( string sampleId, string Name, string Description );
+public record UpdateSample(string sampleId, string Name, string Description);
 
 public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;
 
@@ -14,8 +14,8 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
     public UpdateSampleCommand(
         ISampleService sampleService,
         IPipelineContextFactory pipelineContextFactory,
-        ILogger<UpdateSampleCommand> logger )
-        : base( pipelineContextFactory, logger )
+        ILogger<UpdateSampleCommand> logger)
+        : base(pipelineContextFactory, logger)
     {
         _sampleService = sampleService;
     }
@@ -25,15 +25,14 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
         return PipelineFactory
             .Start<UpdateSample>()
             .WithLogging()
-            .CancelOnFailure( Validate<UpdateSample> )
-            .PipeAsync( UpdateSampleAsync )
+            .CancelOnFailure(Validate<UpdateSample>)
+            .PipeAsync(UpdateSampleAsync)
             .Build();
     }
 
-    private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
+    private async Task<SampleDefinition> UpdateSampleAsync(IPipelineContext context, UpdateSample update)
     {
-        var filter = Builders<Sample>.Filter.Eq( "Id", update.sampleId );
-        await _sampleService.UpdateSampleAsync( filter, update.sampleId, update.Name, update.Description );
+        await _sampleService.UpdateSampleAsync(update.sampleId, update.Name, update.Description);
         return new SampleDefinition(
             update.sampleId,
             update.Name,

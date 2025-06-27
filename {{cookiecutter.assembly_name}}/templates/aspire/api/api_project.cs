@@ -42,7 +42,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     <PackageReference Include="Cronos" Version="0.10.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
     <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
     <PackageReference Include="Hyperbee.Pipeline" Version="2.0.2" />
