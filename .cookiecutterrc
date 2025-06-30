@@ -1,8 +1,0 @@
-# Refer to the cookiecutter.json for the variables that are used in the project.
-    database: "MongoDb"
-    include_audit: "yes"
-    include_aspire: "yes"
-    include_azure: "yes"
-    include_oauth: "yes"
-    aspire_deploy: "yes"
-    

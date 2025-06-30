@@ -1,8 +1,6 @@
 # project.cookiecutter
 
-**project.cookiecutter** provides a streamlined process to setup a web API project with support for *OAuth*, *Azure*, and *Auditing* in both **Aspire** and **Docker** modes.  
-
-If there are any updates to this template, there is a github process that will create a new branch and pull requested.
+`project.cookiecutter` scaffolds a modern web API solution supporting [OAuth 2.0](https://oauth.net/2/), [Azure](https://azure.microsoft.com/), and auditing, with deployment options for both [Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and Docker environments.
 
 ## Solution Structure
 
@@ -11,55 +9,62 @@ The solution consists of the following projects:
 - **Base Project** (Docker only)
 - **API**
 - **Abstractions**
+- **HostingApp** (Aspire)
 - **Database**
 - **Migrations**
+- **ServiceDefaults** (Aspire)
 - **Tests**
 
 ---
+## Prerequisites
 
-## Cookiecutter Setup
+***Software***   
 
-install Cookiecutter and Cruft using the following command:
+1. Cruft
+   -.  ``pip3 install cruft``
+2. Cookiecutter
+   -.  ``python3 -m pip install --user cookiecutter``
+3. Docker Desktop
+4. DotNet 9.X
 
- ``python3 -m pip install --user cookiecutter``
- ``pip3 install cruft``
+If you need to include OAuth or Azure, you must have OAuth set up and an active Azure subscription. Below is the information you will need to proceed.
+
+***OAuth information***
+For OAuth, You will need to have the following information for all environments:
+
+1.  Application Name
+2.  Audience for each environment
+3.  Domain for each environment
+
+***Azure information***
+For Azure, you will need to have the following information for all environments:
+
+1. Tenant Id
+2. Subscription Id
+3. Location
+4. Key Vault Name for each environment
+5. Storage connection
+6. Storage Container Name for each environment
+7. Storage Account Name for each environment
+8. Container Registry Server for each environment
 
 ### Project Setup
 
-You can set up your project in two ways:
+You can set up your project using either of the following methods:
 
-**GitHub URI**: Point to the project.cookiecutter GitHub repository.
-**Local Clone**: Clone the project.cookiecutter repository locally and run the command from your machine.
+**GitHub URI**: Point to the `project.cookiecutter` GitHub repository.
+**Local Clone**: Clone the `project.cookiecutter` repository to your machine and run the setup locally.
 
 Example command:
 
 ``cruft create {uri/path to project.cookiecutter}``
 
-**Note: You cannot change the defaults if using the GitHub setup.**
-
-### Default settings -- maybe
-If you cloned the repository, you can customize the default settings by editing the **.cookiecutterrc** file located at the root of the cookiecutter project.
-
-Example command:
-
-``cookiecutter {path to project.cookiecutter}   --overwrite-if-exists  --config-file={ path to the .cookiecutterrc file }``
-
-
 ## Project Modes
-You can create a project in one of two modes: **Aspire** or **Docker**. During setup, you’ll be asked whether you want to use Aspire. Selecting **"No"** defaults to Docker.
+During setup, you’ll be prompted to select a project mode: **Aspire** or **Docker**. If you don’t specify a mode, the setup defaults to **Aspire**.
 
 ### Aspire Mode
 
-When using Aspire mode, you must have OAuth set up and an active Azure subscription. Below is the information you will need to proceed.
-
-#### Gather Information 
-
-***OAuth information***
-if using OAuth, You will need to have the following information for all environments:
-
-1.  Application Name
-2.  Audience
-3.  Domain
+Aspire projects require an active Azure subscription and OAuth to be configured. Gather the necessary information before proceeding.
 
 #### Setup
 
@@ -67,7 +72,7 @@ if using OAuth, You will need to have the following information for all environm
 
 1.  Create a directory for your project
 2.  Navigate to the project folder
-3.  Run the command
+3.  Run the command ``cruft create {uri/path to project.cookiecutter}``
 4.  Open the solution in Visual Studio
 5.  Run the **Hosting** project
    
@@ -76,7 +81,7 @@ if using OAuth, You will need to have the following information for all environm
 1.  Clone the `project.cookiecutter`
 2.  Create a project directory
 3.  Navigate to the project folder
-4.  Run the command
+4.  Run the command ``cruft create {uri/path to project.cookiecutter}``
 5.  Open the solution in Visual Studio
 6.  Run the **Hosting** project
 
@@ -98,53 +103,23 @@ Refer to the Microsoft [documentation](https://learn.microsoft.com/en-us/azure/c
 
 ### Docker Mode
 
-When using this Mode, you will need to have OAuth and Azure already setup and configured.  Below is the information you will need to proceed.
-
-#### Gather Information 
-
-***OAuth information***
-If you use OAuth, you will need to have the following information for all environments:
-
-1.  Application Name
-2.  Audience
-3.  Domain
-  
-***Azure information***
-If you use Azure, you will need to have the following information:
-
-1. Tenant Id 
-2. Subscription Id
-3. Location
-4. Key Vault (all environments) 
-   1. ex:{projectName}-Staging
-5. Storage connection string
-6. Storage container name (all environments)
-   1. ex: {projectName}assetsstaging
-7. Container Name (all environments)
-   1. ex: staging
-8. Container Registry Name (all environments)
-   1. ex: cr3hmn6weg7opbk.azurecr.io
-9.  Container User (all environments)
-    1.  ex: cr3hmn6weg7opbk
-
 #### Setup 
 
 **Command Line Setup**
 
 1. Create a directory for your project
 2. Navigate to the project folder
-3. Run the command
+3. Run the command ``cruft create {uri/path to project.cookiecutter}``
 4. Open the solution in Visual Studio
 5. Run docker-compose in **Debug** mode
 6. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
    
-
 **Cloning Setup**
 
 1. Clone the `project.cookiecutter`
 2. Create a project folder
 3. Navigate to the project folder
-4. Run the command
+4. Run the command ``cruft create {uri/path to project.cookiecutter}``
 5. Open the solution in Visual Studio
 6. Run docker-compose in **Debug** mode
 7. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
