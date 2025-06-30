@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-{% if cookiecutter.include_aspire == "yes" %}
-  {% include '/templates/aspire/migration/migration_project.cs' %}
-{% else %}
-  {% include '/templates/docker/migration/migration_project.cs' %}
-{% endif %}
-</Project>

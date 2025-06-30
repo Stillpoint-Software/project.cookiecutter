@@ -1,5 +1,0 @@
-{% if cookiecutter.include_aspire == "no" %}
-  {% include '/templates/docker/api/api_project.cs' %}
-{% else %}
-  {% include '/templates/aspire/api/api_project.cs' %}
-{% endif %}
