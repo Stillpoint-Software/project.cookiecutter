@@ -22,7 +22,7 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
             .PipeAsync(GetSampleAsync)
             .Build();
     }
-    {% if cookiecutter.include_audit == 'yes' %}
+    {% if cookiecutter.include_audit == 'yes' and cookiecutter.database == 'MongoDb' %}
 {% include "../templates/audit/api_sample_get_mongodb.cs" %}
 {% else %}
 private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, string sampleId)

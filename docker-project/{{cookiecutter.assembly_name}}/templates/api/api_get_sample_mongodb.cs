@@ -1,7 +1,7 @@
 
-public interface IGetSampleCommand : ICommandFunction<int, SampleDefinition>;
+public interface IGetSampleCommand : ICommandFunction<string, SampleDefinition>;
 
-public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, IGetSampleCommand
+public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>, IGetSampleCommand
 {
     private readonly ISampleService _sampleService;
 
@@ -14,19 +14,18 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
         _sampleService = sampleService;
     }
 
-    protected override FunctionAsync<int, SampleDefinition> CreatePipeline()
+    protected override FunctionAsync<string, SampleDefinition> CreatePipeline()
     {
         return PipelineFactory
-            .Start<int>()
+            .Start<string>()
             .WithLogging()
             .PipeAsync(GetSampleAsync)
             .Build();
     }
-
     {% if cookiecutter.include_audit == 'yes' %}
-{% include "../'../templates/audit/api_sample_get_postgresql.cs" %}
-{%else%}
-private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, int sampleId)
+{% include "templates/audit/api_sample_get_mongodb.cs" %}
+{% else %}
+private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, string sampleId)
 {
     var sample = await _sampleService.GetSampleAsync(sampleId);
 

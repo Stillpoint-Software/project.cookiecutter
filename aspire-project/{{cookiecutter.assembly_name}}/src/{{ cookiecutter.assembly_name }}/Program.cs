@@ -5,7 +5,7 @@ using Serilog;
 namespace {{ cookiecutter.assembly_name }};
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include '../templates/main/main_program_azure.cs' %}
+{% include 'templates/main/main_program_azure.cs' %}
 {% else %}
-{% include '../templates/main/main_program.cs' %}
+{% include 'templates/main/main_program.cs' %}
 {% endif %}

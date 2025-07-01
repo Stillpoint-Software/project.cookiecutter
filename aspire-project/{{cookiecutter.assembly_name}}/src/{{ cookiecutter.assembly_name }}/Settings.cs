@@ -8,5 +8,5 @@ public class ApiSettings
 }
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include '../templates/main/main_settings.cs' %}
+{% include 'templates/aspire/main/main_settings.cs' %}
 {% endif %}
