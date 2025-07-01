@@ -1,6 +1,6 @@
 
 {% if cookiecutter.include_audit == 'yes' %}
-{% include 'templates/audit/api_sample_update_mongodb.cs' %}
+{% include '../'.. / templates / audit / api_sample_update_mongodb.cs' %}
 {% else %}
 
 public record UpdateSample(string sampleId, string Name, string Description);

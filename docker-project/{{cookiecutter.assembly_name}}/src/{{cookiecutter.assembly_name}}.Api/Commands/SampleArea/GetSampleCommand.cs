@@ -15,7 +15,7 @@ using {{cookiecutter.assembly_name}}.Api.Infrastructure;
 namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
 {% if cookiecutter.database =="PostgreSql" %}
-{% include "/templates/docker/api/api_get_sample_postgresql.cs" %}
+{% include "/templates/api/api_get_sample_postgresql.cs" %}
 {% elif cookiecutter.database =="MongoDb" %}
-{% include "/templates/docker/api/api_get_sample_mongodb.cs" %}
+{% include "/templates/api/api_get_sample_mongodb.cs" %}
 {% endif %}

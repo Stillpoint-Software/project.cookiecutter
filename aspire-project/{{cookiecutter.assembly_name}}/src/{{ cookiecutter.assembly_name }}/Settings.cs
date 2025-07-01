@@ -1,5 +1,5 @@
 ﻿
-namespace {{ cookiecutter.assembly_name}};
+namespace {{ cookiecutter.assembly_name }};
 
 public class ApiSettings
 {
@@ -8,5 +8,5 @@ public class ApiSettings
 }
 
 {% if cookiecutter.include_azure == "yes" %}
-    {% include '/templates/main/main_settings.cs'%}
+{% include '../templates/main/main_settings.cs' %}
 {% endif %}

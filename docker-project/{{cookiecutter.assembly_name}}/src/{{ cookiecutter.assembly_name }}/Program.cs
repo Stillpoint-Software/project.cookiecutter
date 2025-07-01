@@ -1,11 +1,11 @@
-using {{ cookiecutter.assembly_name}}.Extensions;
+using { { cookiecutter.assembly_name} }.Extensions;
 using Lamar.Microsoft.DependencyInjection;
 using Serilog;
 
-namespace {{ cookiecutter.assembly_name}};
+namespace {{ cookiecutter.assembly_name }};
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include '/templates/main/main_program_azure.cs' %}
+{% include '../templates/main/main_program_azure.cs' %}
 {% else %}
-{% include '/templates/main/main_program.cs' %}
-{% endif %}
+    {% include '../templates/main/main_program.cs' %}
+    {% endif %}

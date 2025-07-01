@@ -57,7 +57,7 @@ You can set up your project using either of the following methods:
 
 Example command:
 
-``cruft create {uri/path to project.cookiecutter}``
+``cookiecutter {uri/path to project.cookiecutter} ``
 
 ## Project Modes
 During setup, you’ll be prompted to select a project mode: **Aspire** or **Docker**. If you don’t specify a mode, the setup defaults to **Aspire**.

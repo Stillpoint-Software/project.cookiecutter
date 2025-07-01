@@ -33,7 +33,7 @@ public class SampleService : ISampleService
     }
 
     {% if cookiecutter.include_audit == "yes" %}
-{% include '/templates/audit/data_sample_svc_mongodb.cs' %}
+{% include ''.. / templates / audit / data_sample_svc_mongodb.cs' %}
 {% else %}
 public async Task<string> CreateSampleAsync(Sample sample)
 {

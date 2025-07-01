@@ -57,7 +57,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
     }
 
     {%if cookiecutter.include_audit =='yes'%}
-    {% include 'templates/audit/api_sample_create.cs' %} 
+    {% include '../templates/audit/api_sample_create.cs' %} 
     {%else%}
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {

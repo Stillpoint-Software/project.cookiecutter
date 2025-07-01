@@ -1,20 +1,20 @@
-﻿{% if cookiecutter.include_audit =='yes'%}
+﻿{% if cookiecutter.include_audit == 'yes' %}
 using Audit.Core;
 {% endif %}
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
-using {{cookiecutter.assembly_name}}.Api.Commands.Middleware;
-using {{cookiecutter.assembly_name}}.Api.Identity;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
-using {{cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
+using { { cookiecutter.assembly_name} }.Api.Commands.Infrastructure;
+using { { cookiecutter.assembly_name} }.Api.Commands.Middleware;
+using { { cookiecutter.assembly_name} }.Api.Identity;
+using { { cookiecutter.assembly_name} }.Data.Abstractions.Services;
+using { { cookiecutter.assembly_name} }.Data.Abstractions.Entity;
+using { { cookiecutter.assembly_name} }.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
 
-namespace {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
+namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 
-public record CreateSample( string Name, string Description );
+public record CreateSample(string Name, string Description);
 
 public interface ICreateSampleCommand : ICommandFunction<CreateSample, SampleDefinition>;
 
@@ -27,8 +27,8 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         ISampleService sampleService,
         IPrincipalProvider principalProvider,
         IPipelineContextFactory pipelineContextFactory,
-        ILogger<CreateSampleCommand> logger ) :
-        base( pipelineContextFactory, logger )
+        ILogger<CreateSampleCommand> logger) :
+        base(pipelineContextFactory, logger)
     {
         _sampleService = sampleService;
         _user = principalProvider.GetEmail();
@@ -39,36 +39,36 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         return PipelineFactory
             .Start<CreateSample>()
             .WithLogging()
-            .PipeAsync( CreateSampleAsync )
-            .CancelOnFailure( Validate<Sample> )
-            .PipeAsync( InsertSampleAsync )
+            .PipeAsync(CreateSampleAsync)
+            .CancelOnFailure(Validate<Sample>)
+            .PipeAsync(InsertSampleAsync)
             .Build();
     }
 
-    private async Task<Sample> CreateSampleAsync( IPipelineContext context, CreateSample sample )
+    private async Task<Sample> CreateSampleAsync(IPipelineContext context, CreateSample sample)
     {
 
-        return await Task.FromResult( new Sample
+        return await Task.FromResult(new Sample
         {
             Name = sample.Name,
             Description = sample.Description,
             CreatedBy = _user,
-        } );
+        });
     }
 
     {%if cookiecutter.include_audit =='yes'%}
-    {% include 'templates/audit/api_sample_create.cs' %} 
+{% include '../templates/audit/api_sample_create.cs' %} 
     {%else%}
-    private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
-    {
-       
-        sample.Id = await _sampleService.CreateSampleAsync( sample );
+    private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context, Sample sample)
+{
 
-        return new SampleDefinition(
-            sample.Id,
-            sample.Name,
-            sample.Description
-        );
-    } 
-    {%endif%}
+    sample.Id = await _sampleService.CreateSampleAsync(sample);
+
+    return new SampleDefinition(
+        sample.Id,
+        sample.Name,
+        sample.Description
+    );
+}
+{% endif %}
 }

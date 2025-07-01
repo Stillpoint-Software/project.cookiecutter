@@ -10,36 +10,36 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace {{cookiecutter.assembly_name}}.Migrations.Extensions;
+namespace {{cookiecutter.assembly_name }}.Migrations.Extensions;
 
 internal static class StartupExtensions
 {
-    internal static IConfigurationBuilder AddAppSettingsFile( this IConfigurationBuilder builder )
+    internal static IConfigurationBuilder AddAppSettingsFile(this IConfigurationBuilder builder)
     {
         return builder
-            .AddJsonFile( "appsettings.json", optional: false, reloadOnChange: true );
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
     }
 
-    internal static IConfigurationBuilder AddAppSettingsEnvironmentFile( this IConfigurationBuilder builder )
+    internal static IConfigurationBuilder AddAppSettingsEnvironmentFile(this IConfigurationBuilder builder)
     {
         return builder
-            .AddJsonFile( ConfigurationHelper.EnvironmentAppSettingsName, optional: true );
+            .AddJsonFile(ConfigurationHelper.EnvironmentAppSettingsName, optional: true);
     }
 
 {% if cookiecutter.include_aspire == "yes" and cookiecutter.database =="MongoDb" %}
-    {% include '/templates/migration/migration_startup_ext.cs' %}
+{% include '../templates/migration/migration_startup_ext.cs' %}
 {% elif cookiecutter.include_aspire == "no" %}
 
     {% if cookiecutter.database == "PostgreSql" %}
-    {% include '/templates/migration/migration_startup_ext_postgresql.cs' %}
+    {% include '../templates/migration/migration_startup_ext_postgresql.cs' %}
     {% elif cookiecutter.database == "MongoDb" %}
-    {% include '/templates/migration/migration_startup_ext_mongodb.cs' %}
-    {% endif %}
+        {% include '../templates/migration/migration_startup_ext_mongodb.cs' %}
+        {% endif %}
 
-{% endif %}
-}
+            {% endif %}
+        }
 
 internal static class ConfigurationHelper
 {
-    internal static string EnvironmentAppSettingsName => $"appsettings.{Environment.GetEnvironmentVariable( "DOTNET_ENVIRONMENT" ) ?? "Development"}.json";
+    internal static string EnvironmentAppSettingsName => $"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development"}.json";
 }

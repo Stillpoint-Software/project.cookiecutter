@@ -8,8 +8,8 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
     public GetSampleCommand(
         ISampleService sampleService,
         IPipelineContextFactory pipelineContextFactory,
-        ILogger<GetSampleCommand> logger )
-        : base( pipelineContextFactory, logger )
+        ILogger<GetSampleCommand> logger)
+        : base(pipelineContextFactory, logger)
     {
         _sampleService = sampleService;
     }
@@ -19,19 +19,19 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
         return PipelineFactory
             .Start<string>()
             .WithLogging()
-            .PipeAsync( GetSampleAsync )
+            .PipeAsync(GetSampleAsync)
             .Build();
     }
     {% if cookiecutter.include_audit == 'yes' %}
-    {% include "/templates/audit/api_sample_get_mongodb.cs" %}
-    {% else %}
-    private async Task<SampleDefinition> GetSampleAsync( IPipelineContext context, string sampleId )
-    {
-        var sample = await _sampleService.GetSampleAsync( sampleId );
+{% include "../templates/audit/api_sample_get_mongodb.cs" %}
+{% else %}
+private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, string sampleId)
+{
+    var sample = await _sampleService.GetSampleAsync(sampleId);
 
-        context.AddValidationResult( new ValidationFailure( nameof( sample ), "Sample does not exist" ) );
-        context.CancelAfter();
-        return null;
-    }
-    {% endif %}
+    context.AddValidationResult(new ValidationFailure(nameof(sample), "Sample does not exist"));
+    context.CancelAfter();
+    return null;
+}
+{% endif %}
 }

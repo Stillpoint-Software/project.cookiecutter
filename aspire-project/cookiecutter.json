@@ -19,10 +19,10 @@
     "api_app_name": "Enter the name of the project api",
     "api_web_url": "Enter the full Uri",
     "database_name": "Enter the name for the database",
-    "aspire_deploy": "Do you want to deploy the project using aspire and github?",
+    "aspire_deploy": "Do you want to deploy the project using aspire?",
     "deployment_environment": "If you want to deploy using aspire, please select the environment.",
     "github_deployment": "Do you want to deploy the project using github?",
-    "project_path": "Enter the path to your project(c:/path/to/your/project) for deployment",
-    "template_path": "Enter the path to the cookiecutter folder (c:/path/to/your/template) for deployment"
+    "project_path": "Enter the path to your project(c:/path/to/your/project)",
+    "template_path": "Enter the path to the cookiecutter folder (c:/path/to/your/template)"
   }
 }

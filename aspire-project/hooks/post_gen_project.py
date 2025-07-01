@@ -56,7 +56,7 @@ if auth == False:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 
 # Remove templates
-remove(os.path.join('templates'))
+remove(os.path.join('src/templates'))
 
 # if azure and aspire and github setup deployment
 if deploy and azure and project_path:

@@ -9,16 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Tests", "Solution Tests", "{D0C163AC-938E-4267-8B4F-A02ABF11D5DC}"
-	{% if cookiecutter.include_aspire == "no" %}
-	ProjectSection(SolutionItems) = preProject
-		tests\{{cookiecutter.assembly_name}}.Tests\Dockerfile = tests\{{cookiecutter.assembly_name}}.Tests\Dockerfile
-	EndProjectSection
-	{% endif %}
 EndProject
-{% if cookiecutter.include_aspire == "no" %}
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}", "src\{{cookiecutter.assembly_name}}\{{cookiecutter.assembly_name}}.csproj", "{8D57FD25-1FF6-4168-9C1A-01DB40726E86}"
-EndProject
-{% endif %}
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.Tests", "tests\{{cookiecutter.assembly_name}}.Tests\{{cookiecutter.assembly_name}}.Tests.csproj", "{7C96D8AE-AC0A-4A45-BCE3-EFA118FFF415}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{86031609-E2F9-4727-935E-7DC3FE04A88E}"
@@ -37,16 +28,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_nam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}", "src\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj", "{A04A4617-6D51-401A-A7E5-5EF5296360C1}"
 EndProject
-{% if cookiecutter.include_aspire == "no" %}
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DB905DB1-0B10-439F-B5E6-4FCF13973A65}"
-EndProject
-{% endif%}
-{% if cookiecutter.include_aspire == "yes" %}
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.AppHost", "src\{{cookiecutter.assembly_name}}.AppHost\{{cookiecutter.assembly_name}}.AppHost.csproj", "{EB683D31-CF55-F116-2529-0015448E026C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.ServiceDefaults", "src\{{cookiecutter.assembly_name}}.ServiceDefaults\{{cookiecutter.assembly_name}}.ServiceDefaults.csproj", "{DAD36580-C6D2-EF47-FA5F-D149103E849C}"
 EndProject
-{% endif %}
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.Migrations", "src\{{cookiecutter.assembly_name}}.Migrations\{{cookiecutter.assembly_name}}.Migrations.csproj", "{9A2924FC-B36D-4140-BBD3-7E3E3E1B7022}"
 EndProject
 Global
@@ -59,18 +44,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{% if cookiecutter.include_aspire == "no" %}
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Debug_api|Any CPU.ActiveCfg = Debug_api|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Debug_api|Any CPU.Build.0 = Debug_api|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Debug_migration|Any CPU.ActiveCfg = Debug_migration|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Release_api|Any CPU.ActiveCfg = Release_api|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Release_api|Any CPU.Build.0 = Release_api|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Release_migration|Any CPU.ActiveCfg = Release_migration|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D57FD25-1FF6-4168-9C1A-01DB40726E86}.Release|Any CPU.Build.0 = Release|Any CPU
-		{% endif %}
 		{7C96D8AE-AC0A-4A45-BCE3-EFA118FFF415}.Debug_api|Any CPU.ActiveCfg = Debug_api|Any CPU
 		{7C96D8AE-AC0A-4A45-BCE3-EFA118FFF415}.Debug_api|Any CPU.Build.0 = Debug_api|Any CPU
 		{7C96D8AE-AC0A-4A45-BCE3-EFA118FFF415}.Debug_migration|Any CPU.ActiveCfg = Debug_migration|Any CPU

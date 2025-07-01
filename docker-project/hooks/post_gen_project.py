@@ -60,4 +60,4 @@ if auth == False:
     remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
 
 # Remove templates
-remove(os.path.join('templates'))
+remove(os.path.join('src/templates'))
