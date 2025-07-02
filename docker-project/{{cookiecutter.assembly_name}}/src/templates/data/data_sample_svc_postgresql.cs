@@ -30,7 +30,7 @@ public class SampleService : ISampleService
     }
 
     {% if cookiecutter.include_audit == "yes" %}
-{% include ''.. / templates / audit / data_sample_svc_postgresql.cs' %}
+{% include 'templates/audit/data_sample_svc_postgresql.cs' %}
 {% else %}
 public async Task<int> CreateSampleAsync(Sample sample)
 {

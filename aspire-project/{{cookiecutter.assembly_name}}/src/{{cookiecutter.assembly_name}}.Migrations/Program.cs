@@ -1,10 +1,10 @@
-﻿using { { cookiecutter.assembly_name} }.Data.{ { cookiecutter.database} }
-using  { { cookiecutter.assembly_name} }.ServiceDefaults;
+﻿using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
+using {{ cookiecutter.assembly_name }}.ServiceDefaults;
 {% if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
-using { { cookiecutter.assembly_name} }.Migrations.Extensions;
+using {{ cookiecutter.assembly_name }}.Migrations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 

@@ -99,6 +99,11 @@ By default, the mongo bicep file is configured to use the **MongoDB (RU)** confi
 
 Refer to the Microsoft [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/manage-with-bicep) for more information.
 
+
+#### Database
+
+The project will create the database, however, you will need to create the tables and columns.  If you are using Postgesql and need auditing, you will need to add the **pgcrypto** extension when running locally.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**;
+
 ----
 
 ### Docker Mode
@@ -123,3 +128,7 @@ Refer to the Microsoft [documentation](https://learn.microsoft.com/en-us/azure/c
 5. Open the solution in Visual Studio
 6. Run docker-compose in **Debug** mode
 7. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
+
+#### Database
+
+The project will create the database, however, you will need to create the tables and columns.  If you are using Postgesql and need auditing, you will need to add the **pgcrypto** extension when running locally.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**;

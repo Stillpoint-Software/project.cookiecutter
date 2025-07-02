@@ -6,6 +6,7 @@ using Lamar.Microsoft.DependencyInjection;
 using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
+using {{ cookiecutter.assembly_name}}.Api.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
@@ -28,6 +29,8 @@ public class LamarSetup
             registry.AddSingleton<IGetSampleCommand, GetSampleCommand>();
             registry.AddSingleton<IUpdateSampleCommand, UpdateSampleCommand>();
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
+            registry.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            registry.AddScoped<IPrincipalProvider, PrincipalProvider>();
 
             // Add your own Lamar ServiceRegistry collections
             // of registrations

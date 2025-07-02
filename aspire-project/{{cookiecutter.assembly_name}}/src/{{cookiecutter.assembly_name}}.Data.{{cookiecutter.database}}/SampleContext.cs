@@ -1,18 +1,15 @@
 using System.Data;
-using { { cookiecutter.assembly_name} }.Data.Abstractions.Entity;
+using {{ cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using Microsoft.EntityFrameworkCore;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 {% endif %}
 
-
-namespace {{cookiecutter.assembly_name }}.Data.{ { cookiecutter.database} }
-;
+namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
 
 public class SampleContext : DbContext
 {
-
     {% if cookiecutter.include_audit == 'yes' and cookiecutter.database =="PostgreSql" %}
     private readonly string encryptionKey = "mysecretkey"; // use azure key vault for this
     {% endif %}
@@ -26,7 +23,7 @@ public SampleContext(DbContextOptions<SampleContext> options) : base(options)
 {% if cookiecutter.database == "PostgreSql" %}
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    modelBuilder.HasDefaultSchema("sample");
+    modelBuilder.HasDefaultSchema("{{ cookiecutter.database }}");
 
     var sampleTableBuilder = modelBuilder
         .Entity<Sample>()
@@ -49,7 +46,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
     sampleTableBuilder.Property(x => x.CreatedDate).HasColumnName("created_date");
 }
 {% if cookiecutter.include_audit == 'yes' and cookiecutter.database == 'PostgreSql' %}
-{% include '../templates/audit/data_postgresql_encryption.cs' %}
+{% include 'templates/audit/data_postgresql_encryption.cs' %}
     {% endif %}
 
     {% elif cookiecutter.database == "MongoDb" %}
@@ -64,6 +61,5 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
     base.OnModelCreating(modelBuilder);
     modelBuilder.Entity<Sample>().ToCollection("Sample");
 }
-
 {% endif %}
 }

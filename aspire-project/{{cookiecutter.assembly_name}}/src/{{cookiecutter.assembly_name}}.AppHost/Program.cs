@@ -5,8 +5,6 @@ using Azure.Provisioning.KeyVault;
 using Azure.Provisioning.Storage;
 {% endif %}
 
-
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 {% if cookiecutter.include_azure == "yes" %}
@@ -61,7 +59,6 @@ var dbServer = builder.AddPostgres("postgres", userName: dbUser, password: dbPas
     .WithPgAdmin(x => x.WithImageTag("8.14"));
 
 {% elif cookiecutter.database == "MongoDb" %}
-
 var dbUsername = builder.AddParameter( "DbUser", "mongodb", true );
 var dbPassword = builder.AddParameter( "DbPassword","mongodb", secret: true );
 
@@ -82,10 +79,11 @@ var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>
     .WithReference(projectdb)
     .WithExternalHttpEndpoints()
     {% if cookiecutter.include_azure == "yes" %}
-        .WithReference( secrets )
-        .WithReference( appInsights )
+    .WithReference( secrets )
+    .WithReference( appInsights )
     {% endif %}
-    .WithSwaggerUI();
+    .WithSwaggerUI()
+    .WithHttpHealthCheck();
 
 builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name|lower }}-migrations")
     .WaitFor(projectdb)

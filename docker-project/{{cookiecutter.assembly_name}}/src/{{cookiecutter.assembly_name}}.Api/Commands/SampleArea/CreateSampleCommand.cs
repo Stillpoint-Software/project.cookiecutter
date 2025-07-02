@@ -52,12 +52,12 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         {
             Name = sample.Name,
             Description = sample.Description,
-            CreatedBy = _user,
+            CreatedBy = _user ?? string.Empty,
         } );
     }
 
     {%if cookiecutter.include_audit =='yes'%}
-    {% include '../templates/audit/api_sample_create.cs' %} 
+    {% include 'templates/audit/api_sample_create.cs' %} 
     {%else%}
     private async Task<SampleDefinition> InsertSampleAsync( IPipelineContext context, Sample sample )
     {

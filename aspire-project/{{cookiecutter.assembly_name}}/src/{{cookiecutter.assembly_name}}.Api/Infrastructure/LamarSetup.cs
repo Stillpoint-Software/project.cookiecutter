@@ -3,13 +3,17 @@ using Audit.Core;
 {% endif %} 
 using Hyperbee.Pipeline.Context;
 using Lamar.Microsoft.DependencyInjection;
+using {{ cookiecutter.assembly_name}}.Api.Identity;
 using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
+using {{ cookiecutter.assembly_name}}.Api.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FluentValidation;
+
 
 namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
 
@@ -28,10 +32,15 @@ public class LamarSetup
             registry.AddSingleton<IGetSampleCommand, GetSampleCommand>();
             registry.AddSingleton<IUpdateSampleCommand, UpdateSampleCommand>();
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
+            registry.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            registry.AddSingleton<IPrincipalProvider, PrincipalProvider>();
+            registry.AddSingleton<IValidatorProvider, ValidatorProvider>();
 
-            // Add your own Lamar ServiceRegistry collections
-            // of registrations
-            //registry.IncludeRegistry<MyRegistry>();
+            registry.Scan(scan =>
+          {
+              scan.AssemblyContainingType<SampleValidation>();
+              scan.ConnectImplementationsToTypesClosing(typeof(IValidator<>));
+          });
 
             // discover MVC controllers -- this was problematic
             // inside of the UseLamar() method, but is "fixed" in

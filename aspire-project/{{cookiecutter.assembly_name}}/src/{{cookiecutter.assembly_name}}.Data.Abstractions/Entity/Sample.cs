@@ -2,15 +2,21 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 {% endif %}
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 public record Sample
 {
    {% if cookiecutter.database == "PostgreSql" %}
-    public int Id { get; set; }
+   [Key]
+   public int Id { get; set; }
     public required string Name { get; set; }
+   [Secure]
+   [Column(TypeName = "bytea")]
     public required string Description { get; set; }
     public required string CreatedBy { get; set; }
-    public DateTimeOffset? CreatedDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
    {% elif cookiecutter.database == "MongoDb" %}
     [BsonId]
     [BsonRepresentation( BsonType.ObjectId )]
@@ -21,6 +27,6 @@ public record Sample
     public required string CreatedBy { get; set; }
     [BsonElement( "created_date" )]
     [BsonRepresentation( BsonType.String )]
-    public DateTimeOffset? CreatedDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
    {% endif %}
 }

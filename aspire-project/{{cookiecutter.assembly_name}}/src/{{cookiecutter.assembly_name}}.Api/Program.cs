@@ -22,8 +22,9 @@ public class Program
         // Add service defaults & Aspire components.
         builder.AddServiceDefaults();
 
+
         // Add Lamar 
-        builder.Host.UseLamar();
+        LamarSetup.ConfigureLamar(builder);
 
         {% if cookiecutter.include_azure =="yes" %}
         var connectionString = builder.Configuration["ConnectionStrings:secrets"];
@@ -48,10 +49,10 @@ public class Program
 
         {% if cookiecutter.database == "PostgreSql" %}
         // Add database context
-        builder.AddNpgsqlDbContext<SampleContext>( "projectdb" );
+        builder.AddNpgsqlDbContext<SampleContext>("projectdb");
         {% elif cookiecutter.database == "MongoDb" %}
         //mongodb context here
-        builder.AddMongoDBClient( "projectdb" );
+        builder.AddMongoDBClient(connectionString);
         builder.Services.AddScoped<SampleContext>( svc =>
         {
             var scope = svc.CreateScope();

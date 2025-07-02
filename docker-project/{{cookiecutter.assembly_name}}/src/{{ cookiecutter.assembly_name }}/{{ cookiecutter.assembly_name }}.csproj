@@ -48,8 +48,8 @@
    {% endif %}
    <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
    <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
-   <PackageReference Include="Lamar" Version="15.0.0" />
-   <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.0" />
+   <PackageReference Include="Lamar" Version="14.0.1" />
+   <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
    {% if cookiecutter.database == "PostgreSql" %}
    {% include 'templates/main/main_postgresql.cs' %}
@@ -95,7 +95,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.13.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Api\{{cookiecutter.assembly_name}}.Api.csproj" />

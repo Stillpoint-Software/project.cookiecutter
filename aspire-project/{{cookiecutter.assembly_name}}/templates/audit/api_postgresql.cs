@@ -5,7 +5,7 @@
         .Setup()
         .UsePostgreSql( config => config
             .ConnectionString( connectionString )
-            .Schema( "sample"  )
+            .Schema("{{cookiecutter.database_name}}")
             .TableName( "audit_event" )
             .IdColumnName( "event_id" )
             .LastUpdatedColumnName( "last_updated" )

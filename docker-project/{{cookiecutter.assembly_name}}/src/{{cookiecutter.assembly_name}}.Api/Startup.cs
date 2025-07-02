@@ -33,7 +33,7 @@ public class Startup : IStartupRegistry
         // IOptions<T>
 
         // include implementation registries 
-        services.IncludeStartupRegistry < Data.{ { cookiecutter.database} }.Startup > (Configuration);
+        services.IncludeStartupRegistry < Data.{{ cookiecutter.database }}.Startup > (Configuration);
 
         // additional registrations
         services.AddBackgroundServices();

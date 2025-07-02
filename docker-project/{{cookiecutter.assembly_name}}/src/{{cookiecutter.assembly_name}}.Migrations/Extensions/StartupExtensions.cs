@@ -28,9 +28,9 @@ internal static class StartupExtensions
 
 
     {% if cookiecutter.database == "PostgreSql" %}
-{% include '../templates/migration/migration_startup_ext_postgresql.cs' %}
+{% include 'templates/migration/migration_startup_ext_postgresql.cs' %}
 {% elif cookiecutter.database == "MongoDb" %}
-    {% include '../templates/migration/migration_startup_ext_mongodb.cs' %}
+    {% include 'templates/migration/migration_startup_ext_mongodb.cs' %}
     {% endif %}
     }
 

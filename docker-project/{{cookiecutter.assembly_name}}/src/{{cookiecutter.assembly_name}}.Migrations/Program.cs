@@ -1,5 +1,5 @@
 ﻿
-using { { cookiecutter.assembly_name} }.Migrations.Extensions;
+using {{ cookiecutter.assembly_name }}.Migrations.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

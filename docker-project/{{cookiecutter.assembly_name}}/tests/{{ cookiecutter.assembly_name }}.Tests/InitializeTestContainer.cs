@@ -2,7 +2,7 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 {% if cookiecutter.database == "PostgreSql" %}
-using { { cookiecutter.assembly_name} }.Data.PostgreSql;
+using {{ cookiecutter.assembly_name }}.Data.PostgreSql;
 using Testcontainers.PostgreSql;
 {% elif cookiecutter.database == "MongoDb" %}
 using Testcontainers.MongoDb;

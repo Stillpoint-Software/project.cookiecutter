@@ -1,4 +1,4 @@
-using { { cookiecutter.assembly_name} }.Extensions;
+using {{ cookiecutter.assembly_name }}.Extensions;
 using Lamar.Microsoft.DependencyInjection;
 using Serilog;
 

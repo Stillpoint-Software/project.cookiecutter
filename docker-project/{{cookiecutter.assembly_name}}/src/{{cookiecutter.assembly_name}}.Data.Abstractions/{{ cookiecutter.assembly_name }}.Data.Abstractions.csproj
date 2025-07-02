@@ -14,8 +14,8 @@
     <PackageReference Include = "MongoDB.Bson" Version = "3.4.0" />
     <PackageReference Include = "MongoDB.Driver" Version = "3.4.0" />
     {% endif %}
-  </ItemGroup 
-  <ItemGroup>
+  </ItemGroup>
+    <ItemGroup>
     <PackageReference Update = "Microsoft.SourceLink.GitHub" Version = "8.0.0" >
       <PrivateAssets> all </PrivateAssets>
       <IncludeAssets> runtime; build; native; contentfiles; analyzers; buildtransitive </IncludeAssets>

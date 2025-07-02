@@ -2,6 +2,6 @@
         .Setup()
         .UseMongoDB( config => config
             .ConnectionString( connectionString )
-            .Database( "mongoDb" )
-            .Collection( "audit_event" ) 
+            .Database("{{cookiecutter.database_name}}")
+            .Collection( "audit_event" )
             .SerializeAsBson( true ) );

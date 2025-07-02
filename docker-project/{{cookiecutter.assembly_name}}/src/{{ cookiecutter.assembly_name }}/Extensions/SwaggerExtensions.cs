@@ -1,4 +1,4 @@
-﻿﻿using { { cookiecutter.assembly_name} }.Infrastructure;
+﻿﻿using {{ cookiecutter.assembly_name }}.Infrastructure;
 using Microsoft.OpenApi.Models;
 
 namespace {{cookiecutter.assembly_name }}.Extensions;
@@ -6,7 +6,7 @@ namespace {{cookiecutter.assembly_name }}.Extensions;
 public static class SwaggerExtensions
 {
      {% if cookiecutter.include_oauth == "yes" %}
-{% include ''.. / templates / oauth / main_swagger.cs' %}
+{% include 'templates/oauth/main_swagger.cs' %}
 {% else %}
 
 public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration config)

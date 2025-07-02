@@ -20,5 +20,43 @@ else:
 
         }
     )}}"""
+    
+
+if "{{ cookiecutter.include_azure }}" == "yes":
+    cookiecutter.prompt.read_user_variable("azure_tenant_id", "Enter the Azure tenantId")
+    cookiecutter.prompt.read_user_variable("azure_subscription_id", "Enter the Azure subscriptionId")
+    cookiecutter.prompt.read_user_variable("azure_location", "Enter the Azure region, ex:(eastus)")
+    cookiecutter.prompt.read_user_variable("azure_key_vault_staging", "Enter the name of the Azure key vault for staging, ex:({projectName}-Staging)")
+    cookiecutter.prompt.read_user_variable("azure_key_vault_prod", "Enter the name of the Azure key vault for production, ex:({projectName}-Production")
+    cookiecutter.prompt.read_user_variable("azure_storage_connection_staging", "Enter the connection string to Azure storage")
+    cookiecutter.prompt.read_user_variable("azure_container_dev", "Enter the storage container name for development, ex:(development)")
+    cookiecutter.prompt.read_user_variable("azure_container_staging", "Enter the storage container name for staging, ex:(staging)")
+    cookiecutter.prompt.read_user_variable("azure_container_prod", "Enter the storage container name for production, ex:(production)")
+    cookiecutter.prompt.read_user_variable("azure_storage_account_name_dev", "Enter the storage account name for development, ex:({projectName}}assetsstaging)")
+    cookiecutter.prompt.read_user_variable("azure_storage_account_name_prod", "Enter the storage account name for production, ex:({projectName}}assetsprod)")
+    cookiecutter.prompt.read_user_variable("azure_container_registry_server_staging", "Enter the Azure container registry name for staging, ex:(cr3hmn6weg7opbk.azurecr.io)")
+    cookiecutter.prompt.read_user_variable("azure_container_registry_user_staging", "Enter the Azure container user for staging, ex:(cr3hmn6weg7opbk)")
+    cookiecutter.prompt.read_user_variable("azure_container_registry_server_prod", "Enter the Azure container registry name for production, ex:(crcp24evzhtokxg.azurecr.io)")     
+    cookiecutter.prompt.read_user_variable("azure_container_registry_user_prod", "Enter the Azure container user for production, ex:(crcp24evzhtokxg)")
+else:
+    """{{ cookiecutter.update(
+        {
+            "azure_tenant_id": "",
+            "azure_subscription_id": "",
+            "azure_location": "",
+            "azure_key_vault_staging": "",
+            "azure_key_vault_prod": "",
+            "azure_storage_connection_staging": "",
+            "azure_container_dev": "",
+            "azure_container_staging": "",
+            "azure_container_prod": "",
+            "azure_storage_account_name_dev": "",
+            "azure_storage_account_name_prod": "",
+            "azure_container_registry_server_staging": "",
+            "azure_container_registry_user_staging": "",
+            "azure_container_registry_server_prod": "",
+            "azure_container_registry_user_prod": "",
+        }
+    )}}"""
 
 sys.exit(0)

@@ -10,9 +10,9 @@ using Microsoft.IdentityModel.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Asp.Versioning;
-using { { cookiecutter.assembly_name} }.Api.Validators;
-using { { cookiecutter.assembly_name} }.Extensions;
-using { { cookiecutter.assembly_name} }.Middleware;
+using {{ cookiecutter.assembly_name}}.Api.Validators;
+using {{ cookiecutter.assembly_name}}.Extensions;
+using {{ cookiecutter.assembly_name}}.Middleware;
 using Hyperbee.Extensions.Lamar;
 using Hyperbee.Pipeline;
 using Lamar;
@@ -30,7 +30,7 @@ using MongoDB.Driver;
 namespace {{cookiecutter.assembly_name }};
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include 'templates/aspire/main/main_startup_azure.cs' %}
+{% include 'templates/main/main_startup_azure.cs' %}
 {% else %}
-{% include 'templates/aspire/main/main_startup.cs' %}
+{% include 'templates/main/main_startup.cs' %}
 {% endif %}

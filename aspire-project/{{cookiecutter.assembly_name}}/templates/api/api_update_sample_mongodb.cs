@@ -1,8 +1,9 @@
 
 {% if cookiecutter.include_audit == 'yes' %}
-{% include ''.. / templates / audit / api_sample_update_postgresql.cs' %}
+{% include 'templates/audit/api_sample_update_mongodb.cs' %}
 {% else %}
-public record UpdateSample(int sampleId, string Name, string Description);
+
+public record UpdateSample(string sampleId, string Name, string Description);
 
 public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDefinition>;
 
@@ -32,7 +33,6 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
     private async Task<SampleDefinition> UpdateSampleAsync(IPipelineContext context, UpdateSample update)
     {
         await _sampleService.UpdateSampleAsync(update.sampleId, update.Name, update.Description);
-
         return new SampleDefinition(
             update.sampleId,
             update.Name,

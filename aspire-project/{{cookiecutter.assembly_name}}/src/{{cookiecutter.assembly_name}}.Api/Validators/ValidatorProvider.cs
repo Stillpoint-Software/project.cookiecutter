@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Lamar;
 
-namespace {{cookiecutter.assembly_name}}.Api.Infrastructure;
+namespace {{cookiecutter.assembly_name}}.Api.Validators; 
 
 public class ValidatorProvider : Validators.IValidatorProvider
 {
