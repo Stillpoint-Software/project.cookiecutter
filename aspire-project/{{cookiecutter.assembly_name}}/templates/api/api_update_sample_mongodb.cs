@@ -25,7 +25,6 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
         return PipelineFactory
             .Start<UpdateSample>()
             .WithLogging()
-            .CancelOnFailure(Validate<UpdateSample>)
             .PipeAsync(UpdateSampleAsync)
             .Build();
     }

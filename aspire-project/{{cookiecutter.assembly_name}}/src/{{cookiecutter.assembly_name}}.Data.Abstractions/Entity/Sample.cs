@@ -18,15 +18,18 @@ public record Sample
     public required string CreatedBy { get; set; }
     public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
    {% elif cookiecutter.database == "MongoDb" %}
-    [BsonId]
-    [BsonRepresentation( BsonType.ObjectId )]
-    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+   private string _description;
+
+   [Key]
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
     public required string Name { get; set; }
-    public required string Description { get; set; }
-    [BsonElement( "created_by" )]
+   [Secure]
+   public required string Description
+   {
+      get => _description != null ? SecurityHelper.DecryptValue(_description) : null;
+      set => _description = value != null ? SecurityHelper.EncryptValue(value) : null;
+   }
     public required string CreatedBy { get; set; }
-    [BsonElement( "created_date" )]
-    [BsonRepresentation( BsonType.String )]
-    public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow.ToString();
    {% endif %}
 }

@@ -1,11 +1,11 @@
 public class SampleService : ISampleService
 {
-    protected IMongoCollection<Sample> _sampleService;
+    private readonly SampleContext _dbContext;
     private readonly ILogger _logger;
 
-    public SampleService(IMongoDbService context, ILogger<Sample> logger)
+    public SampleService(SampleContext dbContext, ILogger<Sample> logger)
     {
-        _sampleService = context.GetCollection<Sample>("Sample");
+        _dbContext = dbContext;
         _logger = logger;
     }
 
@@ -13,18 +13,19 @@ public class SampleService : ISampleService
     {
         try
         {
-            var filter = Builders<Sample>.Filter.Eq("Id", sampleId);
-            var sample = await (await _sampleService.FindAsync(filter)).FirstOrDefaultAsync();
+            var sample = await _dbContext.Samples.Where(x => x.Id.ToString() == sampleId)
+              .FirstOrDefaultAsync();
+
             if (sample != null)
             {
                 return new SampleDefinition(
-                    sample.Id,
+                    sample.Id.ToString(),
                     sample.Name,
                     sample.Description
               );
             }
 
-            return new SampleDefinition(null, null, null);
+            return new SampleDefinition(sample.Id.ToString(), sample.Name, sample.Description);
         }
         catch (Exception ex)
         {
@@ -32,50 +33,57 @@ public class SampleService : ISampleService
         }
     }
 
-    {% if cookiecutter.include_audit == "yes" %}
-{% include 'templates/audit/data_sample_svc_mongodb.cs' %}
-{% else %}
-public async Task<string> CreateSampleAsync(Sample sample)
-{
-    try
-    {
-        var existingSample = await _sampleService.AsQueryable().FirstOrDefaultAsync(x => x.Id == sample.Id);
 
-        if (existingSample == null)
+    public async Task<ObjectId> CreateSampleAsync(Sample sample)
+    {
+        try
         {
-            await _sampleService.InsertOneAsync(sample);
+            var existingSample = await _dbContext.Samples.Where(x => x.Id == sample.Id)
+             .FirstOrDefaultAsync();
+
+            if (existingSample == null)
+            {
+                await _dbContext.Samples.AddAsync(sample);
+                await _dbContext.SaveChangesAsync();
+                return sample.Id;
+            }
+            return existingSample.Id;
         }
-        return sample.Id;
-    }
-    catch (Exception ex)
-    {
-        throw new ServiceException(nameof(CreateSampleAsync), "Error saving sample.", ex);
-    }
-}
-
-
-public async Task UpdateSampleAsync(string sampleId, string name, string description)
-{
-    try
-    {
-        var filter = Builders<Sample>.Filter.Eq("Id", sampleId);
-        var existing = await (await _sampleService.FindAsync(filter)).FirstOrDefaultAsync();
-        if (existing is null)
+        catch (Exception ex)
         {
-            throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
+            throw new ServiceException(nameof(CreateSampleAsync), "Error saving sample.", ex);
         }
-
-        var update = Builders<Sample>.Update.Set(x => x.Name, name).Set(x => x.Description, description);
-
-        await _sampleService.UpdateOneAsync(filter, update);
-
     }
-    catch (Exception ex)
+
+    public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
     {
-        throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
+        try
+        {
+            if (existing is null)
+            {
+                throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
+            }
+
+            var update = Builders<Sample>.Update.Set(x => x.Name, name).Set(x => x.Description, description);
+
+            _dbContext.Entry(existing).CurrentValues.SetValues(new
+            {
+                Name = name,
+                Description = description
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            return new SampleDefinition
+            (
+                existing.Id.ToString(),
+                existing.Name ?? string.Empty,
+                existing.Description ?? string.Empty
+            );
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
+        }
     }
-}
-
-{% endif %}
-
 }

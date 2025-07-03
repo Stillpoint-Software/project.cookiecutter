@@ -1,10 +1,10 @@
 ﻿{% if cookiecutter.include_audit == 'yes' %}
 using Audit.Core;
-using {{ cookiecutter.assembly_name}}.Data.{{ cookiecutter.database}}
-;
+using {{ cookiecutter.assembly_name}}.Data.{{ cookiecutter.database}};
 {% endif %}
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
+using MongoDB.Bson;
 {% endif %}
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;

@@ -28,12 +28,13 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
             .Build();
     }
 
-    private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
+    private async Task<SampleDefinition> UpdateSampleAsync(IPipelineContext context, UpdateSample update)
     {
-        var original = Builders<Sample>.Filter.Eq( "Id", update.sampleId ) ?? throw new Exception( "Sample not found" );
-        using (AuditScope.Create( "Sample:Update", () => original ))
+        var original = await _sampleContext.Samples.FindAsync(ObjectId.Parse(update.sampleId)) ?? throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Samples.");
+
+        using (AuditScope.Create("Sample:Update", () => original))
         {
-            var updatedSample =  await _sampleService.UpdateSampleAsync( original, update.sampleId, update.Name, update.Description );
+            var updatedSample = await _sampleService.UpdateSampleAsync(original, update.sampleId, update.Name, update.Description);
 
             return updatedSample;
         }

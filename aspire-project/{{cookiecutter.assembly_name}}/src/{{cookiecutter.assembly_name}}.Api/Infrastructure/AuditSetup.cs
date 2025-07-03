@@ -20,31 +20,32 @@ public static class AuditSetup
 
     public static void ConfigureAudit(WebApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database}}"];
 
         var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
         {% if cookiecutter.database == "PostgreSql" %}
+        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_Name}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
         {% endif %}
         {% if cookiecutter.database == "MongoDb" %}
+        var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_Name}}");
         {% include 'templates/audit/api_mongodb.cs' %}
         {% endif %}
 
-                Configuration.AddOnSavingAction(scope =>
-                {
-                    if (scope.Event is ListAuditEvent auditEvent)
+        Configuration.AddOnSavingAction(scope =>
+        {
+            if (scope.Event is ListAuditEvent auditEvent)
+            {
+                var auditList = auditEvent.List
+                    .Cast<object>()
+                    .Select(item => new ListAuditModel
                     {
-                        var auditList = auditEvent.List
-                            .Cast<object>()
-                            .Select(item => new ListAuditModel
-                            {
-                    {% if cookiecutter.database == "PostgreSql" %}
-                    Id = (int)item.GetType().GetProperty("Id")!.GetValue(item)!
-                    {% elif cookiecutter.database == "MongoDb" %}
-                    Id = (string)item.GetType().GetProperty("Id")!.GetValue(item)!
-                    {% endif %}
-                })
-                .ToList();
+            {% if cookiecutter.database == "PostgreSql" %}
+            Id = (int)item.GetType().GetProperty("Id")!.GetValue(item)!
+            {% elif cookiecutter.database == "MongoDb" %}
+            Id = (string)item.GetType().GetProperty("Id")!.GetValue(item)!
+            {% endif %}
+        })
+        .ToList();
 
                 auditEvent.List = auditList;
             }

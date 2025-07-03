@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 {% if cookiecutter.database == "PostgreSql" %}
 using Microsoft.EntityFrameworkCore;
 {% elif cookiecutter.database == "MongoDb" %}
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 {% endif %}

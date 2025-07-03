@@ -12,6 +12,9 @@ using {{ cookiecutter.assembly_name }}.Data.Abstractions.Entity;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
 
+{% if cookiecutter.database=='MongoDb' %}
+using MongoDB.Bson;
+{% endif %}
 namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 
 public record CreateSample(string Name, string Description);
@@ -57,7 +60,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
     }
 
     {%if cookiecutter.include_audit =='yes'%}
-{% include 'templates/audit/api_sample_create.cs' %} 
+    {% include 'templates/audit/api_sample_create.cs' %} 
     {%else%}
     private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context, Sample sample)
 {

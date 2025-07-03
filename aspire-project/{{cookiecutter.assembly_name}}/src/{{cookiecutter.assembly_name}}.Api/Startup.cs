@@ -79,18 +79,6 @@ public class Startup
             factoryServices.ProxyService<IValidatorProvider>(rootProvider);
         });
 
-        {% if cookiecutter.database == "MongoDb" %}
-        services.AddControllers()
-              .AddJsonOptions(x =>
-              {
-                  // serialize enums as strings in api responses (e.g. Color)
-                  x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                  x.JsonSerializerOptions.Converters.Add(new JsonBoolConverter());
-                  x.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                  x.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-                  x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-              });
-        {% endif %}
         // Add Swagger for API documentation
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -115,9 +103,8 @@ public class Startup
         }
         else
         {
-            app.UseHsts();
             // General middleware setup
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors(c => // must be called before UseResponseCaching
             {
@@ -127,6 +114,7 @@ public class Startup
             });
 
             app.UseAuthorization();
+            app.UseHsts();
         }
 
         app.MapControllers();

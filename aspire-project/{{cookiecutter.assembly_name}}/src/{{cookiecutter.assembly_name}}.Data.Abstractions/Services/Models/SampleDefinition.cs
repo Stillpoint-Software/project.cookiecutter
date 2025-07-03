@@ -4,8 +4,8 @@ public record SampleDefinition(
     {% if cookiecutter.database == "PostgreSql" %}
     int? SampleId,
     {% elif cookiecutter.database == "MongoDb" %}
-    string? SampleId,
+    string Id,
     {% endif %}
-    string? Name,
-    string? Description
+    string Name,
+    string Description
 );

@@ -2,6 +2,7 @@ using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Asp.Versioning;
+
 namespace {{cookiecutter.assembly_name}}.Api.Controllers;
 
 [ApiController]

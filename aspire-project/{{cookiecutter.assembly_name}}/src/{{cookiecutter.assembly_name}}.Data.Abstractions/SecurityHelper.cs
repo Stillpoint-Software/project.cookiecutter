@@ -39,7 +39,7 @@ public static class SecurityHelper
         // Split the stored value into IV and encrypted data
         var parts = encryptedValue.Split( ':' );
         if (parts.Length != 2)
-            throw new FormatException( "Invalid encrypted value format." );
+            return encryptedValue;
 
         var ivBase64 = parts[0];
         var encryptedBase64 = parts[1];

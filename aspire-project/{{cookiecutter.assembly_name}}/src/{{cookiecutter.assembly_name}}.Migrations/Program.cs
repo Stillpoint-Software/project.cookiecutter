@@ -25,7 +25,7 @@ public class Program
         startupInstance.ConfigureServices(builder.Services);
 
         {% if cookiecutter.database == "PostgreSql" %}
-        builder.AddNpgsqlDbContext<SampleContext>("projectdb"); // this allows for telemetry
+        builder.AddNpgsqlDbContext<SampleContext>("{{cookiecutter.database_name}}"); // this allows for telemetry
         {% elif cookiecutter.database == "MongoDb" %}
         //mongodb here
         builder.AddMongoDBClient("{{cookiecutter.database_name}}");
