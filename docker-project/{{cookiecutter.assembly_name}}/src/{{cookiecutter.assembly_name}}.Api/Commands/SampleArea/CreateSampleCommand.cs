@@ -21,17 +21,14 @@ public interface ICreateSampleCommand : ICommandFunction<CreateSample, SampleDef
 public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDefinition>, ICreateSampleCommand
 {
     private readonly ISampleService _sampleService;
-    private readonly string _user;
 
     public CreateSampleCommand(
         ISampleService sampleService,
-        IPrincipalProvider principalProvider,
         IPipelineContextFactory pipelineContextFactory,
         ILogger<CreateSampleCommand> logger ) :
         base( pipelineContextFactory, logger )
     {
         _sampleService = sampleService;
-        _user = principalProvider.GetEmail();
     }
 
     protected override FunctionAsync<CreateSample, SampleDefinition> CreatePipeline()
@@ -52,7 +49,7 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         {
             Name = sample.Name,
             Description = sample.Description,
-            CreatedBy = _user ?? string.Empty,
+            CreatedBy = "test user"
         } );
     }
 

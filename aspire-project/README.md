@@ -16,10 +16,12 @@ The solution consists of the following projects:
 - **ServiceDefaults**
 - **Tests**
 
-#### Database
+##### Databases
+- **Postgesql**
+    The Aspire will create the database, however, you will need to create the tables and columns.  If you are using **Postgesql** and need auditing, you will need to add the **pgcrypto** extension to the correct schema when running locally in order to encrypt the data.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**.  Make sure the definition of the extension is **public**.  Also, give public access to run the **pgp_sym_encrypt** function.
 
-The Aspire will create the database, however, you will need to create the tables and columns.  If you are using **Postgesql** and need auditing, you will need to add the **pgcrypto** extension to the correct schema when running locally in order to encrypt the data.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**.  Make sure the definition of the extension is **public**;
+    `GRANT EXECUTE ON FUNCTION pgp_sym_encrypt(text, text) TO {Your DB username from Aspire}}`
 
-Also, give public access to run the **pgp_sym_encrypt** function.
-
-`GRANT EXECUTE ON FUNCTION pgp_sym_encrypt(text, text) TO {Your DB username from Aspire}}`
+- **MongoDb**
+  Aspire does not automatically create the Database.  You will need to create the database and tables separately.
+ 

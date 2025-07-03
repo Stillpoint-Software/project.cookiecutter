@@ -15,16 +15,19 @@ namespace {{cookiecutter.assembly_name}}.Api;
 
 public class Program
 {
-    public static void Main( string[] args )
+    public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder( args );
+        var builder = WebApplication.CreateBuilder(args);
 
         // Add service defaults & Aspire components.
         builder.AddServiceDefaults();
 
-
+        {% if cookiecutter.database == "PostgreSql" %}
         // Add Lamar 
         LamarSetup.ConfigureLamar(builder);
+        {% elif cookiecutter.database == "MongoDb" %}   
+                builder.Host.UseLamar();
+         {% endif %}
 
         {% if cookiecutter.include_azure =="yes" %}
         var connectionString = builder.Configuration["ConnectionStrings:secrets"];
@@ -48,11 +51,10 @@ public class Program
         startupInstance.ConfigureServices( builder.Services );
 
         {% if cookiecutter.database == "PostgreSql" %}
-        // Add database context
         builder.AddNpgsqlDbContext<SampleContext>("projectdb");
         {% elif cookiecutter.database == "MongoDb" %}
-        //mongodb context here
-        builder.AddMongoDBClient(connectionString);
+
+        builder.AddMongoDBClient("projectdb");
         builder.Services.AddScoped<SampleContext>( svc =>
         {
             var scope = svc.CreateScope();

@@ -17,7 +17,7 @@ public class SampleContext : DbContext
     private readonly string encryptionKey = "mysecretkey"; // use azure key vault for this
     {% endif %}
 
-public DbSet<Sample> Sample { get; set; }
+public DbSet<Sample> Samples { get; set; }
 
 public SampleContext(DbContextOptions<SampleContext> options) : base(options)
     {
@@ -62,7 +62,7 @@ public static SampleContext Create(IMongoDatabase database) =>
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     base.OnModelCreating(modelBuilder);
-    modelBuilder.Entity<Sample>().ToCollection("Sample");
+    modelBuilder.Entity<Sample>().ToCollection("sample");
 }
 
 {% endif %}

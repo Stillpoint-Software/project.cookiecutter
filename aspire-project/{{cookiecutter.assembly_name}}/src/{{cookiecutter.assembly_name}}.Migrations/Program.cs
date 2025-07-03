@@ -40,7 +40,7 @@ public class Program
                 .AddEnvironmentVariables()
                 .AddUserSecrets<Program>(optional: true);
 
-        //Connection string for projectdb from aspire
+        //Connection string from aspire
         var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
 
         if (string.IsNullOrEmpty(connectionString))

@@ -79,6 +79,18 @@ public class Startup
             factoryServices.ProxyService<IValidatorProvider>(rootProvider);
         });
 
+        {% if cookiecutter.database == "MongoDb" %}
+        services.AddControllers()
+              .AddJsonOptions(x =>
+              {
+                  // serialize enums as strings in api responses (e.g. Color)
+                  x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                  x.JsonSerializerOptions.Converters.Add(new JsonBoolConverter());
+                  x.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                  x.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                  x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+              });
+        {% endif %}
         // Add Swagger for API documentation
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
