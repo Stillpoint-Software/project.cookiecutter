@@ -1,0 +1,12 @@
+name: Template Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 11 * * MON"
+
+jobs:
+  update:
+    uses: varndellwagglebee/workflows/.github/workflows/template-update.yml@main
+    with:
+      template_repo: https://github.com/varndellwagglebee/cookiecutter-template.git

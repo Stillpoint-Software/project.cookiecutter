@@ -23,11 +23,11 @@ public static class AuditSetup
 
         var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
         {% if cookiecutter.database == "PostgreSql" %}
-        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_Name}}"];
+        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
         {% endif %}
         {% if cookiecutter.database == "MongoDb" %}
-        var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_Name}}");
+        var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_name}}");
         {% include 'templates/audit/api_mongodb.cs' %}
         {% endif %}
 

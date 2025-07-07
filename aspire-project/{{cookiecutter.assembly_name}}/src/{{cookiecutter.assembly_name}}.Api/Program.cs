@@ -47,10 +47,10 @@ public class Program
         startupInstance.ConfigureServices( builder.Services );
 
         {% if cookiecutter.database == "PostgreSql" %}
-        builder.AddNpgsqlDbContext<SampleContext>("{{cookiecutter.database_Name}}");
+        builder.AddNpgsqlDbContext<SampleContext>("{{cookiecutter.database_name}}");
         {% elif cookiecutter.database == "MongoDb" %}
 
-        builder.AddMongoDBClient("{{cookiecutter.database_Name}}");
+        builder.AddMongoDBClient("{{cookiecutter.database_name}}");
         builder.Services.AddScoped<SampleContext>( svc =>
         {
             var scope = svc.CreateScope();

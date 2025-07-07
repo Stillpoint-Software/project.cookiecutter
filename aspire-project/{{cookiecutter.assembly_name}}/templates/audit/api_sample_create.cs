@@ -6,7 +6,11 @@
 
             var sampleDefinition = new SampleDefinition
             (
+                {% if cookiecutter.database == "PostgreSql" %}
+                sample.Id,
+                {% else %}
                 sample.Id.ToString(),
+                {% endif %} 
                 sample.Name,
                 sample.Description
             );

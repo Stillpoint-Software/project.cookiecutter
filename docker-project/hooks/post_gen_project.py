@@ -1,7 +1,8 @@
 import os
 import shutil
-import sys
 import subprocess
+from collections import OrderedDict
+import json
 
 print(os.getcwd())  # prints src/{{ cookiecutter.assembly_name }}
 
@@ -61,3 +62,40 @@ if auth == False:
 
 # Remove templates
 remove(os.path.join('src/templates'))
+
+
+def main():
+    context = OrderedDict([
+        ("assembly_name", "{{ cookiecutter.assembly_name }}"),
+        ("root_namespace", "{{ cookiecutter.root_namespace }}"),
+        ("api_app_name", "{{ cookiecutter.api_app_name }}"),
+        ("api_web_url", "{{ cookiecutter.api_web_url }}"),
+        ("database", "{{ cookiecutter.database }}"),
+        ("database_name", "{{ cookiecutter.database_name }}"),
+        ("include_audit", "{{ cookiecutter.include_audit }}"),
+        ("include_oauth", "{{ cookiecutter.include_oauth }}"),
+        ("include_azure", "{{ cookiecutter.include_azure }}"),
+        ("aspire_deploy", "{{ cookiecutter.aspire_deploy }}")
+    ])
+
+    # 🔐 Conditionally add OAuth context
+    if "{{ cookiecutter.include_oauth }}" == "yes":
+        context.update({
+            "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
+            "oauth_audience": "{{ cookiecutter.oauth_audience }}",
+            "oauth_api_audience_dev": "{{ cookiecutter.oauth_api_audience_dev }}",
+            "oauth_api_audience_prod": "{{ cookiecutter.oauth_api_audience_prod }}",
+            "oauth_domain_dev": "{{ cookiecutter.oauth_domain_dev }}",
+            "oauth_domain_prod": "{{ cookiecutter.oauth_domain_prod }}"
+        })
+
+    # 📝 Write the final context
+    try:
+        with open(".cookiecutter.json", "w") as f:
+            json.dump(context, f, indent=4)
+        print("✅ .cookiecutter.json created successfully.")
+    except Exception as e:
+        print("❌ Error writing .cookiecutter.json:", e)
+
+if __name__ == "__main__":
+    main()

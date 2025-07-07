@@ -31,7 +31,7 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
     private async Task<SampleDefinition> UpdateSampleAsync( IPipelineContext context, UpdateSample update )
     {
 
-      var original = await _sampleContext.Sample.FindAsync( update.sampleId ) ?? throw new Exception( "Sample not found" );
+      var original = await _sampleContext.Samples.FindAsync( update.sampleId ) ?? throw new Exception( "Sample not found" );
 
       //var original = await _sampleService.GetSampleAsync( update.Id );  // This is an issue with updating in the service as it is not being tracked by the context
 

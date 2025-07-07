@@ -1,7 +1,9 @@
-import os
+import os 
+from collections import OrderedDict
 import shutil
 import sys
 import subprocess
+import json
 
 print(os.getcwd())  # prints src/{{ cookiecutter.assembly_name }}
 
@@ -12,7 +14,7 @@ def remove(filepath):
     elif os.path.isdir(filepath):
         shutil.rmtree(filepath)
         print(f'Removed directory: {filepath}')
-
+        
 azure = '{{cookiecutter.include_azure}}'=='yes'
 database = '{{cookiecutter.database}}' =='PostgreSql'
 audit = '{{cookiecutter.include_audit}}'=='yes'
@@ -70,3 +72,65 @@ if deploy and azure and project_path:
         print(f"Error running '{script_path}': {e}")
         sys.exit(1)
 
+def main():
+    context = OrderedDict([
+        ("assembly_name", "{{ cookiecutter.assembly_name }}"),
+        ("root_namespace", "{{ cookiecutter.root_namespace }}"),
+        ("api_app_name", "{{ cookiecutter.api_app_name }}"),
+        ("api_web_url", "{{ cookiecutter.api_web_url }}"),
+        ("database", "{{ cookiecutter.database }}"),
+        ("database_name", "{{ cookiecutter.database_name }}"),
+        ("include_audit", "{{ cookiecutter.include_audit }}"),
+        ("include_oauth", "{{ cookiecutter.include_oauth }}"),
+        ("include_azure", "{{ cookiecutter.include_azure }}"),
+        ("aspire_deploy", "{{ cookiecutter.aspire_deploy }}")
+    ])
+
+    # 🔐 Conditionally add OAuth context
+    if "{{ cookiecutter.include_oauth }}" == "yes":
+        context.update({
+            "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
+            "oauth_audience": "{{ cookiecutter.oauth_audience }}",
+            "oauth_api_audience_dev": "{{ cookiecutter.oauth_api_audience_dev }}",
+            "oauth_api_audience_prod": "{{ cookiecutter.oauth_api_audience_prod }}",
+            "oauth_domain_dev": "{{ cookiecutter.oauth_domain_dev }}",
+            "oauth_domain_prod": "{{ cookiecutter.oauth_domain_prod }}"
+        })
+
+    # ☁️ Conditionally add Azure context
+    if "{{ cookiecutter.include_azure }}" == "yes":
+        context.update({
+            "azure_tenant_id": "{{ cookiecutter.azure_tenant_id }}",
+            "azure_subscription_id": "{{ cookiecutter.azure_subscription_id }}",
+            "azure_location": "{{ cookiecutter.azure_location }}",
+            "azure_key_vault_staging": "{{ cookiecutter.azure_key_vault_staging }}",
+            "azure_key_vault_prod": "{{ cookiecutter.azure_key_vault_prod }}",
+            "azure_storage_connection_staging": "{{ cookiecutter.azure_storage_connection_staging }}",
+            "azure_container_dev": "{{ cookiecutter.azure_container_dev }}",
+            "azure_container_staging": "{{ cookiecutter.azure_container_staging }}",
+            "azure_container_prod": "{{ cookiecutter.azure_container_prod }}",
+            "azure_storage_account_name_dev": "{{ cookiecutter.azure_storage_account_name_dev }}",
+            "azure_storage_account_name_prod": "{{ cookiecutter.azure_storage_account_name_prod }}",
+            "azure_container_registry_server_staging": "{{ cookiecutter.azure_container_registry_server_staging }}",
+            "azure_container_registry_user_staging": "{{ cookiecutter.azure_container_registry_user_staging }}",
+            "azure_container_registry_server_prod": "{{ cookiecutter.azure_container_registry_server_prod }}",
+            "azure_container_registry_user_prod": "{{ cookiecutter.azure_container_registry_user_prod }}"
+        })
+
+    # 🚀 Conditionally add Aspire deployment values
+    if "{{ cookiecutter.aspire_deploy }}" == "yes":
+        context["deployment_environment"] = "{{ cookiecutter.deployment_environment }}"
+        context["project_path"] = "{{ cookiecutter.project_path }}"
+        context["github_deployment"] = "{{ cookiecutter.github_deployment }}"
+        context["template_path"] = "{{ cookiecutter.template_path }}"
+
+    # 📝 Write the final context
+    try:
+        with open(".cookiecutter.json", "w") as f:
+            json.dump(context, f, indent=4)
+        print("✅ .cookiecutter.json created successfully.")
+    except Exception as e:
+        print("❌ Error writing .cookiecutter.json:", e)
+
+if __name__ == "__main__":
+    main()

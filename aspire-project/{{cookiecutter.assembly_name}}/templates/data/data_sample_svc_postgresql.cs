@@ -14,7 +14,7 @@ public class SampleService : ISampleService
     {
         try
         {
-            return await _sampleContext.Sample
+            return await _sampleContext.Samples
                   .Where(x => x.Id == sampleId)
                   .Select(x => new SampleDefinition(
                       x.Id,
@@ -36,7 +36,7 @@ public async Task<int> CreateSampleAsync(Sample sample)
 {
     try
     {
-        _sampleContext.Sample.Add(sample);
+        _sampleContext.Samples.Add(sample);
         await _sampleContext.SaveChangesAsync();
         return sample.Id;
     }
