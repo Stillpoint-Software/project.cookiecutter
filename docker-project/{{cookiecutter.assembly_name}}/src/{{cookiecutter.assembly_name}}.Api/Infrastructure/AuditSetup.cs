@@ -21,7 +21,7 @@ public static class AuditSetup
 
     public static void ConfigureAudit(WebApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString("{{cookiecutter.databaseName}}");
+        var connectionString = builder.Configuration.GetConnectionString("{{cookiecutter.database_name}}");
 
         var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
         {% if cookiecutter.database == "PostgreSql" %}
