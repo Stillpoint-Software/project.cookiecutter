@@ -1,62 +1,79 @@
+"""
+pre_gen_project.py
+
+Runs *before* project generation.  
+• Interactive sessions (no --no-input): ask the user the questions you defined.  
+• Non-interactive sessions (e.g. GitHub Actions with --no-input=1): silently
+  set every optional value to "" so Cookiecutter continues without a TTY.
+"""
+
+from __future__ import annotations
+
+import os
 import sys
-import cookiecutter.prompt
 
+from cookiecutter import prompt
+from cookiecutter.main import cookiecutter
+
+# --------------------------------------------------------------------------- #
+# Detect --no-input
+# --------------------------------------------------------------------------- #
+# • In CLI usage Cookiecutter sets env var COOKIECUTTER_NO_INPUT=1
+#   when you pass --no-input.
+# • We ALSO detect GitHub Actions (CI=true) just in case, but the env var
+#   is the reliable signal.
+NO_INPUT = os.getenv("COOKIECUTTER_NO_INPUT") == "1"
+
+# Helper: prompt when interactive, else return ""
+def maybe_ask(var: str, question: str) -> str:
+    if NO_INPUT:
+        return ""  # CI mode: skip prompt
+    return prompt.read_user_variable(var, question)  # raises on Ctrl-C
+
+# --------------------------------------------------------------------------- #
+# OAuth questions
+# --------------------------------------------------------------------------- #
 if "{{ cookiecutter.include_oauth }}" == "yes":
-    cookiecutter.prompt.read_user_variable("oauth_app_name","Enter the OAuth application name for development, ex:(https://{project_dev_domain}/api/v2/)")
-    cookiecutter.prompt.read_user_variable("oauth_audience","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
-    cookiecutter.prompt.read_user_variable("oauth_api_audience_dev","Enter the OAuth audience for development, ex:(https://{project_dev_domain}/api/v2/)")
-    cookiecutter.prompt.read_user_variable("oauth_api_audience_prod","Enter the OAuth audience for production, ex:(https://{project_production_domain}/api/v2/)")
-    cookiecutter.prompt.read_user_variable("oauth_domain_dev","Enter the OAuth dev url. ex:(dev-22u8ixu7nxxc581t.us.auth0.com)")
-    cookiecutter.prompt.read_user_variable("oauth_domain_prod","Enter the OAuth production url. ex:(main-22u8ixu7nxxc581t.us.auth0.com")
-else:
-    """{{ cookiecutter.update(
-        {
-            "oauth_app_name": "",
-            "oauth_audience": "",
-            "oauth_api_audience_dev": "",
-            "oauth_api_audience_prod": "",
-            "oauth_domain_dev": "",
-            "oauth_domain_prod": "",
+    oauth_vars = {
+        "oauth_app_name":           "Enter the OAuth application name for DEV (ex: https://{project_dev_domain}/api/v2/)",
+        "oauth_audience":           "Enter the OAuth audience for DEV (ex: https://{project_dev_domain}/api/v2/)",
+        "oauth_api_audience_dev":   "Enter the OAuth API audience for DEV",
+        "oauth_api_audience_prod":  "Enter the OAuth API audience for PROD",
+        "oauth_domain_dev":         "Enter the OAuth domain for DEV (ex: dev-xxxxx.us.auth0.com)",
+        "oauth_domain_prod":        "Enter the OAuth domain for PROD (ex: prod-xxxxx.us.auth0.com)",
+    }
 
-        }
-    )}}"""
-    
+    # Ask (or stub) every var
+    for var, question in oauth_vars.items():
+        cookiecutter.variables[var] = maybe_ask(var, question)
 
+# --------------------------------------------------------------------------- #
+# Azure questions
+# --------------------------------------------------------------------------- #
 if "{{ cookiecutter.include_azure }}" == "yes":
-    cookiecutter.prompt.read_user_variable("azure_tenant_id", "Enter the Azure tenantId")
-    cookiecutter.prompt.read_user_variable("azure_subscription_id", "Enter the Azure subscriptionId")
-    cookiecutter.prompt.read_user_variable("azure_location", "Enter the Azure region, ex:(eastus)")
-    cookiecutter.prompt.read_user_variable("azure_key_vault_staging", "Enter the name of the Azure key vault for staging, ex:({projectName}-Staging)")
-    cookiecutter.prompt.read_user_variable("azure_key_vault_prod", "Enter the name of the Azure key vault for production, ex:({projectName}-Production")
-    cookiecutter.prompt.read_user_variable("azure_storage_connection_staging", "Enter the connection string to Azure storage")
-    cookiecutter.prompt.read_user_variable("azure_container_dev", "Enter the storage container name for development, ex:(development)")
-    cookiecutter.prompt.read_user_variable("azure_container_staging", "Enter the storage container name for staging, ex:(staging)")
-    cookiecutter.prompt.read_user_variable("azure_container_prod", "Enter the storage container name for production, ex:(production)")
-    cookiecutter.prompt.read_user_variable("azure_storage_account_name_dev", "Enter the storage account name for development, ex:({projectName}}assetsstaging)")
-    cookiecutter.prompt.read_user_variable("azure_storage_account_name_prod", "Enter the storage account name for production, ex:({projectName}}assetsprod)")
-    cookiecutter.prompt.read_user_variable("azure_container_registry_server_staging", "Enter the Azure container registry name for staging, ex:(cr3hmn6weg7opbk.azurecr.io)")
-    cookiecutter.prompt.read_user_variable("azure_container_registry_user_staging", "Enter the Azure container user for staging, ex:(cr3hmn6weg7opbk)")
-    cookiecutter.prompt.read_user_variable("azure_container_registry_server_prod", "Enter the Azure container registry name for production, ex:(crcp24evzhtokxg.azurecr.io)")     
-    cookiecutter.prompt.read_user_variable("azure_container_registry_user_prod", "Enter the Azure container user for production, ex:(crcp24evzhtokxg)")
-else:
-    """{{ cookiecutter.update(
-        {
-            "azure_tenant_id": "",
-            "azure_subscription_id": "",
-            "azure_location": "",
-            "azure_key_vault_staging": "",
-            "azure_key_vault_prod": "",
-            "azure_storage_connection_staging": "",
-            "azure_container_dev": "",
-            "azure_container_staging": "",
-            "azure_container_prod": "",
-            "azure_storage_account_name_dev": "",
-            "azure_storage_account_name_prod": "",
-            "azure_container_registry_server_staging": "",
-            "azure_container_registry_user_staging": "",
-            "azure_container_registry_server_prod": "",
-            "azure_container_registry_user_prod": "",
-        }
-    )}}"""
+    azure_vars = {
+        "azure_tenant_id":                       "Azure tenant ID",
+        "azure_subscription_id":                 "Azure subscription ID",
+        "azure_location":                        "Azure region (ex: eastus)",
+        "azure_key_vault_staging":               "Key Vault name for STAGING",
+        "azure_key_vault_prod":                  "Key Vault name for PROD",
+        "azure_storage_connection_staging":      "Storage connection string (staging)",
+        "azure_container_dev":                   "Blob container for DEV",
+        "azure_container_staging":               "Blob container for STAGING",
+        "azure_container_prod":                  "Blob container for PROD",
+        "azure_storage_account_name_dev":        "Storage account name (DEV)",
+        "azure_storage_account_name_prod":       "Storage account name (PROD)",
+        "azure_container_registry_server_staging": "ACR server for STAGING",
+        "azure_container_registry_user_staging":   "ACR user  for STAGING",
+        "azure_container_registry_server_prod":    "ACR server for PROD",
+        "azure_container_registry_user_prod":      "ACR user  for PROD",
+    }
 
+    for var, question in azure_vars.items():
+        cookiecutter.variables[var] = maybe_ask(var, question)
+
+# --------------------------------------------------------------------------- #
+# If we skipped prompts, cookiecutter.variables already has empty strings
+# for the keys (satisfies later hooks/templates). Nothing else to do.
+# --------------------------------------------------------------------------- #
 sys.exit(0)
