@@ -1,7 +1,9 @@
 """
-post_gen_project.py (Docker flavour)
+post_gen_project.py – runs after cookiecutter project generation.
 
-Runs after cookiecutter generation, both locally and in CI.
+Designed to work both:
+• Interactively on dev machines (Windows/macOS/Linux)
+• Non-interactive in CI (e.g., GitHub Actions ubuntu-latest runner)
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-ROOT = Path.cwd()  # project root
+ROOT = Path.cwd()                               # project root
 SRC  = ROOT / "src" / "{{ cookiecutter.assembly_name }}"
 
 # --------------------------------------------------------------------------- #
@@ -95,14 +97,14 @@ if not include_oauth:
 rm(ROOT / "src/templates")
 
 # --------------------------------------------------------------------------- #
-# 2️⃣  Optional Docker sanity check (log only)
+# 2️⃣  Optional Docker sanity check
 # --------------------------------------------------------------------------- #
 if not docker_installed():
     print("⚠️  Docker does not appear to be installed or on PATH; "
           "container tasks may fail.")
 
 # --------------------------------------------------------------------------- #
-# 3️⃣  Persist context if missing
+# 3️⃣  Persist context if missing (⤵️ wrapped with "cookiecutter")
 # --------------------------------------------------------------------------- #
 cookie_file = ROOT / ".cookiecutter.json"
 if not cookie_file.exists():
@@ -127,7 +129,8 @@ if not cookie_file.exists():
         "oauth_domain_prod": "{{ cookiecutter.oauth_domain_prod }}",
     }
 
-    cookie_file.write_text(json.dumps(context, indent=4))
+    # ✅ Wrap so replay files work
+    cookie_file.write_text(json.dumps({"cookiecutter": context}, indent=4))
     print("✅ .cookiecutter.json written")
 
 print("🎉 Docker post-gen hook completed successfully")
