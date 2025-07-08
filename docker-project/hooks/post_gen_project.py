@@ -1,101 +1,133 @@
-import os
+"""
+post_gen_project.py (Docker flavour)
+
+Runs after cookiecutter generation, both locally and in CI.
+"""
+
+from __future__ import annotations
+
+import json
 import shutil
 import subprocess
-from collections import OrderedDict
-import json
+import sys
+from pathlib import Path
+from typing import Iterable
 
-print(os.getcwd())  # prints src/{{ cookiecutter.assembly_name }}
+ROOT = Path.cwd()  # project root
+SRC  = ROOT / "src" / "{{ cookiecutter.assembly_name }}"
 
-def remove(filepath):
-    if os.path.isfile(filepath):
-        os.remove(filepath)
-        print(f'Removed file: {filepath}')
-    elif os.path.isdir(filepath):
-        shutil.rmtree(filepath)
-        print(f'Removed directory: {filepath}')
+# --------------------------------------------------------------------------- #
+# Utilities
+# --------------------------------------------------------------------------- #
+def rm(item: Path | str) -> None:
+    p = Path(item)
+    if not p.exists():
+        return
+    shutil.rmtree(p) if p.is_dir() else p.unlink()
+    kind = "dir " if p.is_dir() else "file"
+    print(f"🗑️  Removed {kind}: {p.as_posix()}")
 
-def is_docker_installed() -> bool:
+def rm_each(paths: Iterable[Path | str]) -> None:
+    for p in paths:
+        rm(p)
+
+def docker_installed() -> bool:
     try:
         subprocess.run(["docker", "--version"], capture_output=True, check=True)
         return True
     except Exception:
         return False
 
-   
-azure = '{{cookiecutter.include_azure}}'=='yes'
-database = '{{cookiecutter.database}}' =='PostgreSql'
-audit = '{{cookiecutter.include_audit}}'=='yes'
-auth = '{{cookiecutter.include_oauth}}'=='yes'
+# --------------------------------------------------------------------------- #
+# Evaluate cookiecutter answers
+# --------------------------------------------------------------------------- #
+include_azure   = "{{ cookiecutter.include_azure }}"   == "yes"
+database_is_pg  = "{{ cookiecutter.database }}"        == "PostgreSql"
+include_audit   = "{{ cookiecutter.include_audit }}"   == "yes"
+include_oauth   = "{{ cookiecutter.include_oauth }}"   == "yes"
 
-if not azure:
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\ApplicationInsightsExtension.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}', 'Extensions\AzureSecretsExtensions.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations','Extensions\AzureSecretsExtensions.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Vault'))
-
-if database: # delete mongo files
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Extensions\MongoExtensions.cs')) 
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Services\MongoDbService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'BsonCollectionAttribute.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'Services\MongoDbService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}.Data.Abstractions', 'SecurityHelper.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations', 'Resources\\1000-Initial\\administration\\users\\user.json'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IMongoDbService.cs'))
-
-if not database: # delete postgres files
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}', 'DbConnectionProvider.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Migrations', 'Resources\\1000-Initial\\CreateUsers.sql'))
-
-if audit == False:
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\AuditSetup.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\ListAuditEvent.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api','Infrastructure\ListAuditModel.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Abstractions','Secure.cs'))
-
-if auth == False:
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\AuthService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Identity\CryptoRandom.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Extensions\AuthPolicyExtensions.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Api', 'Infrastructure\SecurityRequirementsOperationFilter.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.Abstractions','Services\IAuthService.cs'))
-    remove(os.path.join('src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}','Settings.cs'))
-
-# Remove templates
-remove(os.path.join('src/templates'))
-
-
-def main():
-    context = OrderedDict([
-        ("assembly_name", "{{ cookiecutter.assembly_name }}"),
-        ("root_namespace", "{{ cookiecutter.root_namespace }}"),
-        ("api_app_name", "{{ cookiecutter.api_app_name }}"),
-        ("api_web_url", "{{ cookiecutter.api_web_url }}"),
-        ("database", "{{ cookiecutter.database }}"),
-        ("database_name", "{{ cookiecutter.database_name }}"),
-        ("include_audit", "{{ cookiecutter.include_audit }}"),
-        ("include_oauth", "{{ cookiecutter.include_oauth }}"),
-        ("include_azure", "{{ cookiecutter.include_azure }}"),
-        ("aspire_deploy", "{{ cookiecutter.aspire_deploy }}")
+# --------------------------------------------------------------------------- #
+# 1️⃣  Conditional clean-up
+# --------------------------------------------------------------------------- #
+if not include_azure:
+    rm_each([
+        SRC / "Extensions/ApplicationInsightsExtension.cs",
+        SRC / "Extensions/AzureSecretsExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Extensions/AzureSecretsExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Vault",
     ])
 
-    # 🔐 Conditionally add OAuth context
-    if "{{ cookiecutter.include_oauth }}" == "yes":
-        context.update({
-            "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
-            "oauth_audience": "{{ cookiecutter.oauth_audience }}",
-            "oauth_api_audience_dev": "{{ cookiecutter.oauth_api_audience_dev }}",
-            "oauth_api_audience_prod": "{{ cookiecutter.oauth_api_audience_prod }}",
-            "oauth_domain_dev": "{{ cookiecutter.oauth_domain_dev }}",
-            "oauth_domain_prod": "{{ cookiecutter.oauth_domain_prod }}"
-        })
+if database_is_pg:
+    mongo_base = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}"
+    rm_each([
+        mongo_base / "Extensions/MongoExtensions.cs",
+        mongo_base / "Services/MongoDbService.cs",
+        mongo_base / "BsonCollectionAttribute.cs",
+        mongo_base.parent / ".Data.Abstractions/Services/IMongoDbService.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/administration/users/user.json",
+    ])
+else:
+    pg_base = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}"
+    rm_each([
+        pg_base / "DbConnectionProvider.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateUsers.sql",
+    ])
 
-    # 📝 Write the final context
-    try:
-        with open(".cookiecutter.json", "w") as f:
-            json.dump(context, f, indent=4)
-        print("✅ .cookiecutter.json created successfully.")
-    except Exception as e:
-        print("❌ Error writing .cookiecutter.json:", e)
+if not include_audit:
+    rm_each([
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/AuditSetup.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditEvent.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditModel.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Abstractions/Secure.cs",
+    ])
 
-if __name__ == "__main__":
-    main()
+if not include_oauth:
+    rm_each([
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Identity/AuthService.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Identity/CryptoRandom.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Extensions/AuthPolicyExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/SecurityRequirementsOperationFilter.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Data.Abstractions/Services/IAuthService.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/Settings.cs",
+    ])
+
+# Strip template snippets
+rm(ROOT / "src/templates")
+
+# --------------------------------------------------------------------------- #
+# 2️⃣  Optional Docker sanity check (log only)
+# --------------------------------------------------------------------------- #
+if not docker_installed():
+    print("⚠️  Docker does not appear to be installed or on PATH; "
+          "container tasks may fail.")
+
+# --------------------------------------------------------------------------- #
+# 3️⃣  Persist context if missing
+# --------------------------------------------------------------------------- #
+cookie_file = ROOT / ".cookiecutter.json"
+if not cookie_file.exists():
+    context = {
+        "include_docker": "yes",
+        "assembly_name": "{{ cookiecutter.assembly_name }}",
+        "root_namespace": "{{ cookiecutter.root_namespace }}",
+        "api_app_name": "{{ cookiecutter.api_app_name }}",
+        "api_web_url": "{{ cookiecutter.api_web_url }}",
+        "database": "{{ cookiecutter.database }}",
+        "database_name": "{{ cookiecutter.database_name }}",
+        "include_audit": "{{ cookiecutter.include_audit }}",
+        "include_oauth": "{{ cookiecutter.include_oauth }}",
+        "include_azure": "{{ cookiecutter.include_azure }}",
+        "aspire_deploy": "{{ cookiecutter.aspire_deploy }}",
+        # OAuth block
+        "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
+        "oauth_audience": "{{ cookiecutter.oauth_audience }}",
+        "oauth_api_audience_dev": "{{ cookiecutter.oauth_api_audience_dev }}",
+        "oauth_api_audience_prod": "{{ cookiecutter.oauth_api_audience_prod }}",
+        "oauth_domain_dev": "{{ cookiecutter.oauth_domain_dev }}",
+        "oauth_domain_prod": "{{ cookiecutter.oauth_domain_prod }}",
+    }
+
+    cookie_file.write_text(json.dumps(context, indent=4))
+    print("✅ .cookiecutter.json written")
+
+print("🎉 Docker post-gen hook completed successfully")

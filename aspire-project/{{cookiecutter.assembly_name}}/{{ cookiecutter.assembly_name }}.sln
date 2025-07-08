@@ -4,7 +4,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{379108A6-C3A1-4475-B722-68F24BF578D9}"
 	ProjectSection(SolutionItems) = preProject
-		.github\Project.Dockerfile = .github\Project.Dockerfile
+		.cookiecutter.json = .cookiecutter.json
 		.github\README.md = .github\README.md
 	EndProjectSection
 EndProject
@@ -14,12 +14,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_nam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{86031609-E2F9-4727-935E-7DC3FE04A88E}"
 	ProjectSection(SolutionItems) = preProject
+	{% if cookiecutter.include_azure = "yes"}
 		.github\workflows\DbMigrations_Production.yml = .github\workflows\DbMigrations_Production.yml
 		.github\workflows\DbMigrations_Staging.yml = .github\workflows\DbMigrations_Staging.yml
 		.github\workflows\ProdDeployment.yml = .github\workflows\ProdDeployment.yml
 		.github\workflows\ProdProvisioning.yml = .github\workflows\ProdProvisioning.yml
 		.github\workflows\StagingDeployment.yml = .github\workflows\StagingDeployment.yml
 		.github\workflows\StagingProvisioning.yml = .github\workflows\StagingProvisioning.yml
+	{% endif %}
+	.github\workflows\project_template_update.yml = .github\workflows\project_template_update.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.Api", "src\{{cookiecutter.assembly_name}}.Api\{{cookiecutter.assembly_name}}.Api.csproj", "{1CF06017-4D04-463B-94DC-752A32FEAB33}"
