@@ -1,8 +1,10 @@
-# post_gen_project.py – runs after cookiecutter project generation.
-#
-# Works both
-#   • Interactively on dev machines (Windows/macOS/Linux)
-#   • Non-interactive in CI (e.g. GitHub Actions ubuntu-latest runner)
+"""
+post_gen_project.py – runs after cookiecutter project generation.
+
+Works both:
+• Interactively on dev machines (Windows/macOS/Linux)
+• Non-interactive in CI runners (e.g., GitHub Actions ubuntu-latest)
+"""
 
 from __future__ import annotations
 
@@ -13,17 +15,17 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
 # Paths
-# ─────────────────────────────────────────── #
-ROOT = Path.cwd()                                    # project root
+# ──────────────────────────────────────────── #
+ROOT = Path.cwd()                                   # project root
 SRC  = ROOT / "src" / "{{ cookiecutter.assembly_name }}"
 
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
 # Helpers
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
 def rm(path: Path | str) -> None:
-    """Delete a file or directory if it exists (idempotent)."""
+    """Idempotently delete a file or directory."""
     p = Path(path)
     if not p.exists():
         return
@@ -39,14 +41,12 @@ def rm_each(paths: Iterable[Path | str]) -> None:
         rm(p)
 
 def _yes(value: str | None) -> bool:
-    """Treat any truthy / non-empty form of 'yes' as True; everything else as False."""
+    """Return True when *value* represents an affirmative answer."""
     return (value or "").strip().lower() == "yes"
 
-# ─────────────────────────────────────────── #
-# Evaluate cookiecutter answers (string literals after render)
-# * Every lookup is wrapped with `.get()` so the file survives
-#   if a key was trimmed out of cookiecutter.json
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
+# Evaluate cookiecutter answers (all rendered as strings)
+# ──────────────────────────────────────────── #
 include_azure   = _yes("{{ cookiecutter.get('include_azure', '') }}")
 database_is_pg  = "{{ cookiecutter.get('database', '') }}" == "PostgreSql"
 include_audit   = _yes("{{ cookiecutter.get('include_audit', '') }}")
@@ -56,9 +56,9 @@ github_deploy   = _yes("{{ cookiecutter.get('github_deployment', '') }}")
 project_path    = "{{ cookiecutter.get('project_path', '') }}"
 template_path   = "{{ cookiecutter.get('template_path', '') }}"
 
-# ─────────────────────────────────────────── #
-# 1️⃣  Clean-up unneeded files
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
+# 1️⃣  Clean-up files we don’t need in this flavour
+# ──────────────────────────────────────────── #
 if not include_azure:
     rm_each([
         SRC / "Extensions" / "ApplicationInsightsExtension.cs",
@@ -84,7 +84,7 @@ if database_is_pg:
         ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/administration/users/user.json",
     ])
 else:
-    # Remove Postgres artefacts
+    # Remove PostgreSql artefacts
     pg_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.PostgreSql"
     rm_each([
         pg_root / "DbConnectionProvider.cs",
@@ -109,12 +109,12 @@ if not include_oauth:
         ROOT / "src/{{ cookiecutter.assembly_name }}.Data.MongoDb/Settings.cs",
     ])
 
-# Remove template snippets
+# Always remove template snippets
 rm(ROOT / "src/templates")
 
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
 # 2️⃣  Optional deployment helper
-# ─────────────────────────────────────────── #
+# ──────────────────────────────────────────── #
 if aspire_deploy and include_azure and project_path:
     deploy_script = ROOT / "deployment.py"
     try:
@@ -135,67 +135,69 @@ if aspire_deploy and include_azure and project_path:
         print(f"❌ Deployment helper failed: {exc}")
         sys.exit(exc.returncode)
 
-# ─────────────────────────────────────────── #
-# 3️⃣  Persist final context (only if file doesn't already exist)
-# ─────────────────────────────────────────── #
-cookie_file = ROOT / ".cookiecutter.json"
-if not cookie_file.exists():
-    context: dict[str, str] = {
-        "include_aspire": "yes",
+# ──────────────────────────────────────────── #
+# 3️⃣  Persist the *minimal* context for future replays
+# ──────────────────────────────────────────── #
+COOKIE_FILE = ROOT / ".cookiecutter.json"
+if not COOKIE_FILE.exists():
+    ctx: dict[str, str] = {
+        # ── core answers ──
         "assembly_name": "{{ cookiecutter.assembly_name }}",
         "root_namespace": "{{ cookiecutter.root_namespace }}",
-        "api_app_name": "{{ cookiecutter.api_app_name }}",
-        "api_web_url": "{{ cookiecutter.api_web_url }}",
         "database": "{{ cookiecutter.get('database', '') }}",
         "database_name": "{{ cookiecutter.database_name }}",
+
+        # ── feature toggles ──
         "include_audit": "{{ cookiecutter.get('include_audit', '') }}",
         "include_oauth": "{{ cookiecutter.get('include_oauth', '') }}",
         "include_azure": "{{ cookiecutter.get('include_azure', '') }}",
         "aspire_deploy": "{{ cookiecutter.get('aspire_deploy', '') }}",
     }
 
-    # 🔐 OAuth
+    # 🔐 OAuth extras
     if include_oauth:
-        context.update(
-            oauth_app_name="{{ cookiecutter.oauth_app_name }}",
-            oauth_audience="{{ cookiecutter.oauth_audience }}",
-            oauth_api_audience_dev="{{ cookiecutter.oauth_api_audience_dev }}",
-            oauth_api_audience_prod="{{ cookiecutter.oauth_api_audience_prod }}",
-            oauth_domain_dev="{{ cookiecutter.oauth_domain_dev }}",
-            oauth_domain_prod="{{ cookiecutter.oauth_domain_prod }}",
+        ctx.update(
+            oauth_app_name="{{ cookiecutter.get('oauth_app_name', '') }}",
+            oauth_audience="{{ cookiecutter.get('oauth_audience', '') }}",
+            oauth_api_audience_dev="{{ cookiecutter.get('oauth_api_audience_dev', '') }}",
+            oauth_api_audience_prod="{{ cookiecutter.get('oauth_api_audience_prod', '') }}",
+            oauth_domain_dev="{{ cookiecutter.get('oauth_domain_dev', '') }}",
+            oauth_domain_prod="{{ cookiecutter.get('oauth_domain_prod', '') }}",
         )
 
-    # ☁️ Azure
+    # ☁️ Azure extras
     if include_azure:
-        context.update(
-            azure_tenant_id="{{ cookiecutter.azure_tenant_id }}",
-            azure_subscription_id="{{ cookiecutter.azure_subscription_id }}",
-            azure_location="{{ cookiecutter.azure_location }}",
-            azure_key_vault_staging="{{ cookiecutter.azure_key_vault_staging }}",
-            azure_key_vault_prod="{{ cookiecutter.azure_key_vault_prod }}",
-            azure_storage_connection_staging="{{ cookiecutter.azure_storage_connection_staging }}",
-            azure_container_dev="{{ cookiecutter.azure_container_dev }}",
-            azure_container_staging="{{ cookiecutter.azure_container_staging }}",
-            azure_container_prod="{{ cookiecutter.azure_container_prod }}",
-            azure_storage_account_name_dev="{{ cookiecutter.azure_storage_account_name_dev }}",
-            azure_storage_account_name_prod="{{ cookiecutter.azure_storage_account_name_prod }}",
-            azure_container_registry_server_staging="{{ cookiecutter.azure_container_registry_server_staging }}",
-            azure_container_registry_user_staging="{{ cookiecutter.azure_container_registry_user_staging }}",
-            azure_container_registry_server_prod="{{ cookiecutter.azure_container_registry_server_prod }}",
-            azure_container_registry_user_prod="{{ cookiecutter.azure_container_registry_user_prod }}",
+        ctx.update(
+            azure_tenant_id="{{ cookiecutter.get('azure_tenant_id', '') }}",
+            azure_subscription_id="{{ cookiecutter.get('azure_subscription_id', '') }}",
+            azure_location="{{ cookiecutter.get('azure_location', '') }}",
+            azure_key_vault_staging="{{ cookiecutter.get('azure_key_vault_staging', '') }}",
+            azure_key_vault_prod="{{ cookiecutter.get('azure_key_vault_prod', '') }}",
+            azure_storage_connection_staging="{{ cookiecutter.get('azure_storage_connection_staging', '') }}",
+            azure_container_dev="{{ cookiecutter.get('azure_container_dev', '') }}",
+            azure_container_staging="{{ cookiecutter.get('azure_container_staging', '') }}",
+            azure_container_prod="{{ cookiecutter.get('azure_container_prod', '') }}",
+            azure_storage_account_name_dev="{{ cookiecutter.get('azure_storage_account_name_dev', '') }}",
+            azure_storage_account_name_prod="{{ cookiecutter.get('azure_storage_account_name_prod', '') }}",
+            azure_container_registry_server_staging="{{ cookiecutter.get('azure_container_registry_server_staging', '') }}",
+            azure_container_registry_user_staging="{{ cookiecutter.get('azure_container_registry_user_staging', '') }}",
+            azure_container_registry_server_prod="{{ cookiecutter.get('azure_container_registry_server_prod', '') }}",
+            azure_container_registry_user_prod="{{ cookiecutter.get('azure_container_registry_user_prod', '') }}",
         )
 
-    # 🚀 Aspire deployment
+    # 🚀 Aspire deploy extras
     if aspire_deploy:
-        context.update(
+        ctx.update(
             deployment_environment="{{ cookiecutter.get('deployment_environment', '') }}",
-            project_path=project_path,
             github_deployment=str(github_deploy).lower(),
+            project_path=project_path,
             template_path=template_path,
         )
 
-    # ✅  Wrap context so replay files work: {"cookiecutter": {...}}
-    cookie_file.write_text(json.dumps({"cookiecutter": context}, indent=4))
+    # ── final sweep: remove empties ──
+    ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
+
+    COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
     print("✅  .cookiecutter.json written")
 
 print("🎉 Post-gen hook completed successfully")
