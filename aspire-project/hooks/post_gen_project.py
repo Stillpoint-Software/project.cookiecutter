@@ -1,10 +1,8 @@
-"""
-post_gen_project.py – runs after cookiecutter project generation.
-
-Designed to work both:
-• Interactively on dev machines (Windows/macOS/Linux)
-• Non-interactive in CI (e.g., GitHub Actions ubuntu-latest runner)
-"""
+# post_gen_project.py – runs after cookiecutter project generation.
+#
+# Works both
+#   • Interactively on dev machines (Windows/macOS/Linux)
+#   • Non-interactive in CI (e.g. GitHub Actions ubuntu-latest runner)
 
 from __future__ import annotations
 
@@ -15,15 +13,15 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 # Paths
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 ROOT = Path.cwd()                                    # project root
 SRC  = ROOT / "src" / "{{ cookiecutter.assembly_name }}"
 
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 # Helpers
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 def rm(path: Path | str) -> None:
     """Delete a file or directory if it exists (idempotent)."""
     p = Path(path)
@@ -40,21 +38,27 @@ def rm_each(paths: Iterable[Path | str]) -> None:
     for p in paths:
         rm(p)
 
-# --------------------------------------------------------------------------- #
-# Evaluate cookiecutter answers (string literals after render)
-# --------------------------------------------------------------------------- #
-include_azure   = "{{ cookiecutter.include_azure }}"       == "yes"
-database_is_pg  = "{{ cookiecutter.database }}"            == "PostgreSql"
-include_audit   = "{{ cookiecutter.include_audit }}"       == "yes"
-include_oauth   = "{{ cookiecutter.include_oauth }}"       == "yes"
-aspire_deploy   = "{{ cookiecutter.aspire_deploy }}"       == "yes"
-github_deploy   = "{{ cookiecutter.github_deployment }}"   == "yes"
-project_path    = "{{ cookiecutter.project_path }}"
-template_path   = "{{ cookiecutter.template_path }}"
+def _yes(value: str | None) -> bool:
+    """Treat any truthy / non-empty form of 'yes' as True; everything else as False."""
+    return (value or "").strip().lower() == "yes"
 
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
+# Evaluate cookiecutter answers (string literals after render)
+# * Every lookup is wrapped with `.get()` so the file survives
+#   if a key was trimmed out of cookiecutter.json
+# ─────────────────────────────────────────── #
+include_azure   = _yes("{{ cookiecutter.get('include_azure', '') }}")
+database_is_pg  = "{{ cookiecutter.get('database', '') }}" == "PostgreSql"
+include_audit   = _yes("{{ cookiecutter.get('include_audit', '') }}")
+include_oauth   = _yes("{{ cookiecutter.get('include_oauth', '') }}")
+aspire_deploy   = _yes("{{ cookiecutter.get('aspire_deploy', '') }}")
+github_deploy   = _yes("{{ cookiecutter.get('github_deployment', '') }}")
+project_path    = "{{ cookiecutter.get('project_path', '') }}"
+template_path   = "{{ cookiecutter.get('template_path', '') }}"
+
+# ─────────────────────────────────────────── #
 # 1️⃣  Clean-up unneeded files
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 if not include_azure:
     rm_each([
         SRC / "Extensions" / "ApplicationInsightsExtension.cs",
@@ -71,7 +75,7 @@ if not include_azure:
 
 if database_is_pg:
     # Remove Mongo artefacts
-    mongo_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}"
+    mongo_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.MongoDb"
     rm_each([
         mongo_root / "Extensions/MongoExtensions.cs",
         mongo_root / "Services/MongoDbService.cs",
@@ -81,7 +85,7 @@ if database_is_pg:
     ])
 else:
     # Remove Postgres artefacts
-    pg_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}"
+    pg_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.PostgreSql"
     rm_each([
         pg_root / "DbConnectionProvider.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateUsers.sql",
@@ -102,15 +106,15 @@ if not include_oauth:
         ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Extensions/AuthPolicyExtensions.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/SecurityRequirementsOperationFilter.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Data.Abstractions/Services/IAuthService.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}/Settings.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Data.MongoDb/Settings.cs",
     ])
 
 # Remove template snippets
 rm(ROOT / "src/templates")
 
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 # 2️⃣  Optional deployment helper
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 if aspire_deploy and include_azure and project_path:
     deploy_script = ROOT / "deployment.py"
     try:
@@ -118,10 +122,10 @@ if aspire_deploy and include_azure and project_path:
             [
                 sys.executable,
                 str(deploy_script),
-                "{{ cookiecutter.deployment_environment }}",
+                "{{ cookiecutter.get('deployment_environment', '') }}",
                 "{{ cookiecutter.assembly_name }}",
                 str(github_deploy).lower(),
-                "{{ cookiecutter.database }}",
+                "{{ cookiecutter.get('database', '') }}",
                 project_path,
                 template_path,
             ],
@@ -131,9 +135,9 @@ if aspire_deploy and include_azure and project_path:
         print(f"❌ Deployment helper failed: {exc}")
         sys.exit(exc.returncode)
 
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 # 3️⃣  Persist final context (only if file doesn't already exist)
-# --------------------------------------------------------------------------- #
+# ─────────────────────────────────────────── #
 cookie_file = ROOT / ".cookiecutter.json"
 if not cookie_file.exists():
     context: dict[str, str] = {
@@ -142,12 +146,12 @@ if not cookie_file.exists():
         "root_namespace": "{{ cookiecutter.root_namespace }}",
         "api_app_name": "{{ cookiecutter.api_app_name }}",
         "api_web_url": "{{ cookiecutter.api_web_url }}",
-        "database": "{{ cookiecutter.database }}",
+        "database": "{{ cookiecutter.get('database', '') }}",
         "database_name": "{{ cookiecutter.database_name }}",
-        "include_audit": "{{ cookiecutter.include_audit }}",
-        "include_oauth": "{{ cookiecutter.include_oauth }}",
-        "include_azure": "{{ cookiecutter.include_azure }}",
-        "aspire_deploy": "{{ cookiecutter.aspire_deploy }}",
+        "include_audit": "{{ cookiecutter.get('include_audit', '') }}",
+        "include_oauth": "{{ cookiecutter.get('include_oauth', '') }}",
+        "include_azure": "{{ cookiecutter.get('include_azure', '') }}",
+        "aspire_deploy": "{{ cookiecutter.get('aspire_deploy', '') }}",
     }
 
     # 🔐 OAuth
@@ -184,7 +188,7 @@ if not cookie_file.exists():
     # 🚀 Aspire deployment
     if aspire_deploy:
         context.update(
-            deployment_environment="{{ cookiecutter.deployment_environment }}",
+            deployment_environment="{{ cookiecutter.get('deployment_environment', '') }}",
             project_path=project_path,
             github_deployment=str(github_deploy).lower(),
             template_path=template_path,
