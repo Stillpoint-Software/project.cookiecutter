@@ -48,6 +48,7 @@ def _yes(value: str | None) -> bool:
 # Evaluate cookiecutter answers (all rendered as strings)
 # ──────────────────────────────────────────── #
 include_azure   = _yes("{{ cookiecutter.get('include_azure', '') }}")
+include_service_bus = _yes("{{ cookiecutter.get('include_service_bus', '') }}")
 database_is_pg  = "{{ cookiecutter.get('database', '') }}" == "PostgreSql"
 include_audit   = _yes("{{ cookiecutter.get('include_audit', '') }}")
 include_oauth   = _yes("{{ cookiecutter.get('include_oauth', '') }}")
@@ -61,10 +62,10 @@ template_path   = "{{ cookiecutter.get('template_path', '') }}"
 # ──────────────────────────────────────────── #
 if not include_azure:
     rm_each([
-        SRC / "Extensions" / "ApplicationInsightsExtension.cs",
-        SRC / "Extensions" / "AzureSecretsExtensions.cs",
+        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/ApplicationInsightsExtension.cs",
+        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AzureSecretsExtensions.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Extensions/AzureSecretsExtensions.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Vault",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Vault",
         ROOT / ".github/workflows/ProdDeployment.yml",
         ROOT / ".github/workflows/ProdProvisioning.yml",
         ROOT / ".github/workflows/StagingDeployment.yml",
@@ -81,11 +82,11 @@ if database_is_pg:
         mongo_root / "Services/MongoDbService.cs",
         mongo_root / "BsonCollectionAttribute.cs",
         mongo_root.parent / ".Data.Abstractions/Services/IMongoDbService.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/administration/users/user.json",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/samples/sample.json",
     ])
 else:
-    # Remove PostgreSql artefacts
-    pg_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.PostgreSql"
+    # Remove PostgreSql artifacts
+    pg_root = ROOT / "src/{{ cookiecutter.assembly_name }}.Data.{{cookiecutter.database}}"
     rm_each([
         pg_root / "DbConnectionProvider.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateUsers.sql",
@@ -93,24 +94,24 @@ else:
 
 if not include_audit:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/AuditSetup.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditEvent.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/ListAuditModel.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/AuditSetup.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/ListAuditEvent.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/ListAuditModel.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Abstractions/Secure.cs",
     ])
 
 if not include_oauth:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Identity/AuthService.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Identity/CryptoRandom.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Extensions/AuthPolicyExtensions.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Api/Infrastructure/SecurityRequirementsOperationFilter.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Identity/AuthService.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Identity/CryptoRandom.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AuthPolicyExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Infrastructure/Extensions/SecurityRequirementsOperationFilter.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Data.Abstractions/Services/IAuthService.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Data.MongoDb/Settings.cs",
     ])
 
 # Always remove template snippets
-rm(ROOT / "src/templates")
+rm(ROOT / "templates")
 
 # ──────────────────────────────────────────── #
 # 2️⃣  Optional deployment helper
@@ -148,9 +149,11 @@ if not COOKIE_FILE.exists():
         "database_name": "{{ cookiecutter.database_name }}",
 
         # ── feature toggles ──
+        "is_aspire": "yes",
         "include_audit": "{{ cookiecutter.get('include_audit', '') }}",
         "include_oauth": "{{ cookiecutter.get('include_oauth', '') }}",
         "include_azure": "{{ cookiecutter.get('include_azure', '') }}",
+        "include_service_bus": "{{ cookiecutter.get('include_service_bus', '') }}",
         "aspire_deploy": "{{ cookiecutter.get('aspire_deploy', '') }}",
     }
 

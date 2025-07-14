@@ -23,7 +23,7 @@ public SampleContext(DbContextOptions<SampleContext> options) : base(options)
 {% if cookiecutter.database == "PostgreSql" %}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("{{ cookiecutter.database }}");
+        modelBuilder.HasDefaultSchema("{{ cookiecutter.database_name | lower }}");
 
         var sampleTableBuilder = modelBuilder
             .Entity<Sample>()

@@ -1,20 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
- <PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-  {% if cookiecutter.include_azure =="yes" %}
-    <ItemGroup>
-    <Compile Remove="Vault\AzureKeyService.cs" />
-  </ItemGroup>
-  {% endif %}
+
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-    </AssemblyAttribute>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.7" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.3" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    {% if cookiecutter.include_service_bus == "yes" %}
+    <PackageReference Include="Aspire.Azure.Messaging.ServiceBus" Version="9.3.1" />
+    {% endif %}
     {% if cookiecutter.include_audit == "yes" %}
     <PackageReference Include="Audit.NET" Version="30.0.2" />
     {% endif %}
@@ -23,13 +26,20 @@
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB" Version="30.0.2" />
     {% endif %} 
-    {% if cookiecutter.include_azure == "yes" %}
+    {$ if cookiecutter.include_azure == "yes" %}
     <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.3.1" />
     <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.3.1" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
     {% endif %}
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+    {% if cookiecutter.include_service_bus == "yes" %}
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+    {% endif %}
+    <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.12.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     {% if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Npgsql" Version="9.0.3" />
     {% elif cookiecutter.database =="MongoDb" %}
@@ -41,32 +51,22 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+    <PackageReference Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     <PackageReference Include="Cronos" Version="0.11.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
     <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
     <PackageReference Include="Hyperbee.Pipeline" Version="2.0.2" />
-    <PackageReference Include="Lamar" Version="14.0.1" />
-    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
     {% if cookiecutter.include_oauth == "yes" %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     {% endif %}
-    <PackageReference Include="System.Linq.Async" Version="6.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+    <PackageReference Include="Lamar" Version="14.0.1" />
+    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj" />
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.ServiceDefaults\{{cookiecutter.assembly_name}}.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Core\{{cookiecutter.assembly_name}}.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0">
-    <PrivateAssets>all</PrivateAssets>
-    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.14.0" />
-  </ItemGroup>
-  </Project>
+
+</Project>

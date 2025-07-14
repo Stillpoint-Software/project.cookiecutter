@@ -94,7 +94,7 @@ if not include_oauth:
     ])
 
 # Strip template snippets
-rm(ROOT / "src/templates")
+rm(ROOT / "templates")
 
 # --------------------------------------------------------------------------- #
 # 2️⃣  Optional Docker sanity check
@@ -109,7 +109,7 @@ if not docker_installed():
 cookie_file = ROOT / ".cookiecutter.json"
 if not cookie_file.exists():
     context = {
-        "include_docker": "yes",
+        "is_docker": "yes",
         "assembly_name": "{{ cookiecutter.assembly_name }}",
         "root_namespace": "{{ cookiecutter.root_namespace }}",
         "api_app_name": "{{ cookiecutter.api_app_name }}",

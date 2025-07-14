@@ -49,6 +49,20 @@ var storage = builder.ExecutionContext.IsPublishMode
 } );
 {% endif %}
 
+{% if cookiecutter.include_service_bus == "yes" %}
+//Azure Service Bus
+var projectdb = dbServer.AddDatabase("samplemessages");
+
+
+var serviceBus = builder.AddAzureServiceBus("sbemulatorns").RunAsEmulator(emulator =>
+{
+    emulator.WithHostPort(7777);
+});
+
+var topic = serviceBus.AddServiceBusTopic("topic");
+topic.AddServiceBusSubscription("sub2");
+{% endif %}
+
 {% if cookiecutter.database == "PostgreSql" %}
 var dbPassword = builder.AddParameter("DbPassword", "postgres", true);
 var dbUser = builder.AddParameter("DbUser", "postgres", true);
@@ -56,7 +70,7 @@ var dbUser = builder.AddParameter("DbUser", "postgres", true);
 var dbServer = builder.AddPostgres("postgres", userName: dbUser, password: dbPassword)
     .PublishAsConnectionString()
     .WithDataVolume()
-    .WithPgAdmin(x => x.WithImageTag("8.14"));
+    .WithPgAdmin(x => x.WithImageTag("9.5"));
 
 {% elif cookiecutter.database == "MongoDb" %}
 var dbUsername = builder.AddParameter( "DbUser", "mongodb", true );
@@ -81,6 +95,9 @@ var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>
     {% if cookiecutter.include_azure == "yes" %}
     .WithReference( secrets )
     .WithReference( appInsights )
+    {% endif %}
+    {% if cookiecutter.include_service_bus == "yes" %}
+    .WithReference( serviceBus ).WaitFor( serviceBus )
     {% endif %}
     .WithSwaggerUI()
     .WithHttpHealthCheck();

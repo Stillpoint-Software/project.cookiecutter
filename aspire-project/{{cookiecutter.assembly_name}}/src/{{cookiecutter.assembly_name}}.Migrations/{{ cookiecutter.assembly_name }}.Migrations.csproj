@@ -5,9 +5,9 @@
   </PropertyGroup>
 <ItemGroup >
 {% if cookiecutter.database == "PostgreSql" %}
-    <None Remove = "Resources\1000-Initial\CreateUsers.sql" />
+  <EmbeddedResource Include="Resources\1000-Initial\CreateUsers.sql" />
 {% elif cookiecutter.database == "MongoDb" %}
-    <None Remove = "Resources\1000-Initial\administration\users\user.json" />
+  <EmbeddedResource Include= "Resources\1000-Initial\administration\users\user.json" />
 {% endif %}
   </ItemGroup >
   <ItemGroup >

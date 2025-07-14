@@ -9,6 +9,7 @@
   "include_audit": ["yes", "no"],
   "include_oauth": ["yes", "no"],
   "include_azure": ["yes", "no"],
+  "include_service_bus": ["yes", "no"],
   "aspire_deploy": ["yes", "no"],
   "deployment_environment": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}['development', 'staging', 'production']{% else %}''{% endif %}",
   "project_path": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}'Project path'{% else %}''{% endif %}",
