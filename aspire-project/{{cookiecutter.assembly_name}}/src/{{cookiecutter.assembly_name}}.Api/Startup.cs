@@ -1,9 +1,9 @@
 
 using Lamar;
-using {{ cookiecutter.assembly_name}}.Api.Endpoints;
-using {{ cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
-using {{ cookiecutter.assembly_name}}.ServiceDefaults;
-using {{ cookiecutter.assembly_name}}.Infrastructure.Configuration;
+using {{cookiecutter.assembly_name}}.Core.Commands.Middleware;
+using {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
+using {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
+using {{cookiecutter.assembly_name}}.ServiceDefaults;
 using Microsoft.IdentityModel.Logging;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
@@ -13,30 +13,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace {{cookiecutter.assembly_name }}.Api;
 
-public class Startup
+public class Startup : IStartupRegistry
 {
-    public IConfiguration Configuration { get; }
 
-    public Startup(IConfiguration configuration)
+    public void ConfigureServices(IHostApplicationBuilder builder, IServiceCollection services)
     {
-        Configuration = configuration;
-    }
-
-    public void ConfigureServices(WebApplicationBuilder builder, IServiceCollection services)
-    {
-        builder.AddServiceDefaults();
+        builder.UseStartup<Microservices.Infrastructure.Startup>();
 
         builder.AddBackgroundServices();
         {% if cookiecutter.database == "PostgreSql" %}
-        builder.AddNpgsqlDbContext<SampleContext>("{{cookiecutter.database_name}}");
+        builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name}}");
         {% elif cookiecutter.database == "MongoDb" %}
-        builder.AddMongoDBClient("{{cookiecutter.database_name}}");
-        builder.Services.AddScoped<SampleContext>(svc =>
-        {
-            var scope = svc.CreateScope();
-            return SampleContext.Create(scope.ServiceProvider.GetRequiredService<IMongoDatabase>());
-        });
+        {% include 'templates/api/api_mongo_service.cs' %}
         {% endif %}
+        builder.AddOpenTelemetry();
 
         builder.Configuration
             .AddEnvironmentVariables()
@@ -47,9 +37,21 @@ public class Startup
     {
         app.MapDefaultEndpoints();
         app.MapMessagingEndpoints();
-        app.MapControllers();
+        //app.MapControllers();
+    }
+
+    public void ConfigureScanner(ServiceRegistry services)
+    {
+        IdentityModelEventSource.ShowPII = true; // show pii info in logs for debugging openid
+
+        services.Scan(scanner =>
+        {
+            scanner.TheCallingAssembly();
+            scanner.WithDefaultConventions();
+        });
     }
 }
+
 public static class StartupExtensions
 {
     public static void AddBackgroundServices(this IServiceCollection _)
@@ -64,4 +66,7 @@ public static class StartupExtensions
         services.AddHostedService<HeartbeatService>();       
          */
     }
+    {% if cookiecutter.include_azure_service_bus == "yes" %}
+    {% include "templates/api/api_service_bus.cs" %}
+    {% endif %}
 }

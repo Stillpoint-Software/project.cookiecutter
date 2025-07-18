@@ -32,7 +32,7 @@ public class Startup( IConfiguration configuration ) : IStartupRegistry
         services.AddSingleton( typeof( IResourceProvider<> ), typeof( ResourceProvider<> ) );
         {% if cookiecutter.database == "PostgreSql" %}
         services.AddSingleton<IDbConnectionProvider, NpgsqlConnectionProvider>( c => new NpgsqlConnectionProvider( Configuration["{{cookiecutter.database}}:ConnectionString"] ) );
-        services.AddDbContext<SampleContext>( options =>
+        services.AddDbContext<DatabaseContext>( options =>
         {
             options.UseNpgsql( Configuration["{{cookiecutter.database}}:ConnectionString"] );
         } );

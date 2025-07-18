@@ -5,17 +5,17 @@ public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDef
 public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDefinition>, IUpdateSampleCommand
 {
     private readonly ISampleService _sampleService;
-     private readonly SampleContext _sampleContext;
+     private readonly DatabaseContext _databaseContext;
 
     public UpdateSampleCommand(
         ISampleService sampleService,
-        SampleContext sampleContext,
+        DatabaseContext databaseContext,
         IPipelineContextFactory pipelineContextFactory,
         ILogger<UpdateSampleCommand> logger )
         : base( pipelineContextFactory, logger )
     {
         _sampleService = sampleService;
-        _sampleContext = sampleContext;
+        _databaseContext = databaseContext;
     }
 
     protected override FunctionAsync<UpdateSample, SampleDefinition> CreatePipeline()
@@ -30,7 +30,7 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
 
     private async Task<SampleDefinition> UpdateSampleAsync(IPipelineContext context, UpdateSample update)
     {
-        var original = await _sampleContext.Samples.FindAsync(ObjectId.Parse(update.sampleId)) ?? throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Samples.");
+        var original = await _databaseContext.Samples.FindAsync(ObjectId.Parse(update.sampleId)) ?? throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Samples.");
 
         using (AuditScope.Create("Sample:Update", () => original))
         {

@@ -1,7 +1,7 @@
   optionsBuilder.UseNpgsql( connectionString );
-  _dbContext = new SampleContext( optionsBuilder.Options ); 
- 
- Configuration
+  _dbContext = new DatabaseContext( optionsBuilder.Options );
+
+Audit.Core.Configuration
         .Setup()
         .UsePostgreSql( config => config
             .ConnectionString( connectionString )

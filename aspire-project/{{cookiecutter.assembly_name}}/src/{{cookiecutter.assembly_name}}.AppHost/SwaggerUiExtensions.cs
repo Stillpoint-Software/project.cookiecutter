@@ -74,6 +74,10 @@ public static class SwaggerUIExtensions
                     continue;
                 }
 
+                // BF - Wait for dependencies to be ready, otherwise our forwarding maps may be overwritten by
+                // the resource when it starts up. We want to ensure the resource has published its own urls first.
+                await notificationService.WaitForDependenciesAsync(r, cancellationToken); //BF
+                
                 // We store the url and path for each resource so we can hit the open api endpoint
                 resourceToEndpoint[r.Name] = (annotation.EndpointReference.Url, annotation.Path);
 

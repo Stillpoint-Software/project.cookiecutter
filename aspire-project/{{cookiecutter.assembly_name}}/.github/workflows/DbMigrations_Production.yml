@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-nuget
         
       - name: Build with dotnet
-        working-directory: src/api/GlyphEditor
+        working-directory: src/api/{{cookiecutter.assembly_name}}
         run:  dotnet build ${{ env.SOLUTION_NAME }} --configuration ${{env.BUILD_CONFIGURATION}}
       
       - name: Azure Login

@@ -1,4 +1,3 @@
-using {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
 using {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
 using Serilog;
 
@@ -8,26 +7,24 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var logger = BootstrapExtensions.CreateLogger<Program>();
-
         try
         {
-            logger.Information("Starting host...");
-            logger.Information("Using environment settings '{EnvironmentAppSettingsName}'.", ConfigurationHelper.EnvironmentAppSettingsName);
-
             var builder = WebApplication.CreateBuilder(args);
+            builder.AddServiceDefaults();
+
+            Log.Information("Starting host...");
+            Log.Information("Using environment settings '{EnvironmentAppSettingsName}'.", ConfigurationHelper.EnvironmentAppSettingsName);
 
             var app = builder.ConfigureApplication(configure =>
             {
                 configure.UseStartup<Startup>();
-                configure.UseStartup<Infrastructure.Startup>();
             });
 
             await app.RunAsync();
         }
         catch (Exception ex)
         {
-            logger.Fatal(ex, "Host terminated unexpectedly.");
+            Log.Error(ex, "Unhandled exception during startup");
             return 1;
         }
         finally

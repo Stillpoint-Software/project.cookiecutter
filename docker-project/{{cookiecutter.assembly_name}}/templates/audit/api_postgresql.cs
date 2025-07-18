@@ -1,5 +1,5 @@
   optionsBuilder.UseNpgsql( connectionString );
-  _dbContext = new SampleContext( optionsBuilder.Options ); 
+  _dbContext = new DatabaseContext( optionsBuilder.Options ); 
  
  Configuration
         .Setup()

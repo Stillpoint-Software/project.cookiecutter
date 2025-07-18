@@ -1,9 +1,9 @@
 public class SampleService : ISampleService
 {
-    private readonly SampleContext _dbContext;
+    private readonly DatabaseContext _dbContext;
     private readonly ILogger _logger;
 
-    public SampleService(SampleContext dbContext, ILogger<Sample> logger)
+    public SampleService(DatabaseContext dbContext, ILogger<Sample> logger)
     {
         _dbContext = dbContext;
         _logger = logger;

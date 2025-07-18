@@ -5,7 +5,10 @@ using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
+using {{cookiecutter.assembly_name}}.Core.Security;
+
+
+namespace {{cookiecutter.assembly_name }}.Data.Abstractions.Entity;
 public record Sample
 {
    {% if cookiecutter.database == "PostgreSql" %}

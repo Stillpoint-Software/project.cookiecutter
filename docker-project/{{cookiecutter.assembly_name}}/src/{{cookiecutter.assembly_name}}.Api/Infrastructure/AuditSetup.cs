@@ -17,13 +17,13 @@ namespace {{cookiecutter.assembly_name }}.Api.Infrastructure;
 
 public static class AuditSetup
 {
-    private static  SampleContext _dbContext;
+    private static DatabaseContext _dbContext;
 
     public static void ConfigureAudit(WebApplicationBuilder builder)
     {
         var connectionString = builder.Configuration.GetConnectionString("{{cookiecutter.database_name}}");
 
-        var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         {% if cookiecutter.database == "PostgreSql" %}
         {% include 'templates/audit/api_postgresql.cs' %}
         {% endif %}
@@ -62,7 +62,7 @@ public static class AuditSetup
         } );
     }
 
-    private static void SetSecuredProperties(AuditEvent auditEvent, SampleContext _dbContext)
+    private static void SetSecuredProperties(AuditEvent auditEvent, DatabaseContext _dbContext)
     {
         var secureProperties = auditEvent.Target.New?.GetType()
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)

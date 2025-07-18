@@ -1,12 +1,12 @@
 
 public class SampleService : ISampleService
 {
-    private readonly SampleContext _sampleContext;
+    private readonly DatabaseContext _databaseContext;
     private readonly ILogger _logger;
 
-    public SampleService(SampleContext sampleContext, ILogger<Sample> logger)
+    public SampleService(DatabaseContext databaseContext, ILogger<Sample> logger)
     {
-        _sampleContext = sampleContext;
+        _databaseContext = databaseContext;
         _logger = logger;
     }
 
@@ -14,7 +14,7 @@ public class SampleService : ISampleService
     {
         try
         {
-            return await _sampleContext.Sample
+            return await _databaseContext.Samples
                   .Where(x => x.Id == sampleId)
                   .Select(x => new SampleDefinition(
                       x.Id,
@@ -36,8 +36,8 @@ public async Task<int> CreateSampleAsync(Sample sample)
 {
     try
     {
-        _sampleContext.Sample.Add(sample);
-        await _sampleContext.SaveChangesAsync();
+        _databaseContext.Samples.Add(sample);
+        await _databaseContext.SaveChangesAsync();
         return sample.Id;
     }
     catch (Exception ex)
@@ -50,7 +50,7 @@ public async Task UpdateSampleAsync(int sampleId, string name, string descriptio
 {
     try
     {
-        await _sampleContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync();
     }
     catch (Exception ex)
     {

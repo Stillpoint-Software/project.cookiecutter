@@ -3,8 +3,8 @@
     {
         try
         {
-            _sampleContext.Sample.Add( sample );
-            await _sampleContext.SaveChangesAsync();
+            _databaseContext.Samples.Add( sample );
+            await _databaseContext.SaveChangesAsync();
             return sample.Id;
         }
         catch (Exception ex)
@@ -20,13 +20,13 @@
             if (existing == null)
                 throw new ServiceException( nameof( UpdateSampleAsync ), "Sample cannot be null." );
 
-            _sampleContext.Entry( existing ).CurrentValues.SetValues( new
+            _databaseContext.Entry( existing ).CurrentValues.SetValues( new
             {
                 Name = name,
                 Description = description
             } );
 
-            await _sampleContext.SaveChangesAsync();
+            await _databaseContext.SaveChangesAsync();
 
             return new SampleDefinition(
                 existing.Id,

@@ -19,10 +19,16 @@
   {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB" Version="30.0.2" />
   {% endif %} 
+  {% if cookiecutter.include_azure_key_vault== "yes" %}
     <PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.3.1" />
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.3.1" />
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+  {% endif %}
+  {% if cookiecutter.include_azure_storage== "yes" %}
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="9.3.1" />
+  {% endif %}
+  {% if cookiecutter.include_azure_service_bus== "yes" %}
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
+  {% endif %}
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
     <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.12.1" />
@@ -40,7 +46,6 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
 
-    <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.2.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
@@ -52,19 +57,9 @@
 
     <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
     <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
-    <PackageReference Include="Hyperbee.Pipeline" Version="2.0.2" />
-
-    <PackageReference Include="Lamar" Version="14.0.1" />
-    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
+    <PackageReference Include="Hyperbee.Pipeline" Version="2.1.0" />
 
     <PackageReference Include="System.Linq.Async" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\{{ cookiecutter.assembly_name}}.Data.Abstractions\{{ cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-  </ItemGroup>
-
 </Project>

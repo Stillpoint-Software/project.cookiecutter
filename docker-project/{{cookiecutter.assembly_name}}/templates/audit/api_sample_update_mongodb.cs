@@ -5,17 +5,17 @@ public interface IUpdateSampleCommand : ICommandFunction<UpdateSample, SampleDef
 public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDefinition>, IUpdateSampleCommand
 {
     private readonly ISampleService _sampleService;
-     private readonly SampleContext _sampleContext;
+     private readonly DatabaseContext _databaseContext;
 
     public UpdateSampleCommand(
         ISampleService sampleService,
-        SampleContext sampleContext,
+        DatabaseContext databaseContext,
         IPipelineContextFactory pipelineContextFactory,
         ILogger<UpdateSampleCommand> logger )
         : base( pipelineContextFactory, logger )
     {
         _sampleService = sampleService;
-        _sampleContext = sampleContext;
+        _databaseContext = databaseContext;
     }
 
     protected override FunctionAsync<UpdateSample, SampleDefinition> CreatePipeline()

@@ -10,7 +10,7 @@ using MongoDB.EntityFrameworkCore.Extensions;
 namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}
 ;
 
-public class SampleContext : DbContext
+public class DatabaseContext : DbContext
 {
 
     {% if cookiecutter.include_audit == 'yes' and cookiecutter.database =="PostgreSql" %}
@@ -19,7 +19,7 @@ public class SampleContext : DbContext
 
 public DbSet<Sample> Samples { get; set; }
 
-public SampleContext(DbContextOptions<SampleContext> options) : base(options)
+public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
 }
 
@@ -54,8 +54,8 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
     {% elif cookiecutter.database == "MongoDb" %}
 
-public static SampleContext Create(IMongoDatabase database) =>
-    new(new DbContextOptionsBuilder<SampleContext>()
+public static DatabaseContext Create(IMongoDatabase database) =>
+    new(new DbContextOptionsBuilder<DatabaseContext>()
                                     .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
                                     .Options);
 

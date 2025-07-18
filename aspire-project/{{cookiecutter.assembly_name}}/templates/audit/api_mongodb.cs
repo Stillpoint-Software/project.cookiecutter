@@ -1,4 +1,4 @@
-  Configuration
+Audit.Core.Configuration
         .Setup()
         .UseMongoDB( config => config
             .ConnectionString( connectionString )

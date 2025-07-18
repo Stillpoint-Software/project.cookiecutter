@@ -2,7 +2,7 @@
 {% if cookiecutter.include_audit == 'yes' %}
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE IF NOT EXISTS {{cookiecutter.assembly_name}}.audit_event
+CREATE TABLE IF NOT EXISTS {{cookiecutter.database_name}}.audit_event
 (
 	event_id     SERIAL PRIMARY KEY,
 	data         jsonb,
@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS {{cookiecutter.assembly_name}}.audit_event
 );
 
 /* PGP: Symmetric */
-
 CREATE OR REPLACE FUNCTION public.db_sym_encrypt(t text, k text) RETURNS bytea AS $function$
 BEGIN
    RETURN pgp_sym_encrypt(t, k);
@@ -22,19 +21,21 @@ CREATE OR REPLACE FUNCTION public.db_sym_decrypt(t bytea, k text) RETURNS text A
 BEGIN
    RETURN pgp_sym_decrypt(t,k);
 END;
-$function$ LANGUAGE plpgsql;						  
+$function$ LANGUAGE plpgsql;	
+
+GRANT EXECUTE ON FUNCTION pgp_sym_encrypt(text, text) TO {{cookiecutter.database_name}};
+
 
 {% endif %}
 
 
-CREATE SCHEMA IF NOT EXISTS administration;
+CREATE SCHEMA IF NOT EXISTS sample;
 
-CREATE TABLE IF NOT EXISTS administration.user
+CREATE TABLE IF NOT EXISTS sample.{{cookiecutter.database_name}}_users
 (
-    user_id      SERIAL PRIMARY KEY,
+    id      SERIAL PRIMARY KEY,
     name         TEXT,
-    email        Text NOT NULL,
-    active       BOOLEAN NOT NULL DEFAULT(false),
+    description  bytea NOT NULL,
     created_by   TEXT NOT NULL,
     created_date TIMESTAMP WITH TIME ZONE NOT NULL
 );

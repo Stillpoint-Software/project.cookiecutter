@@ -1,134 +1,161 @@
-# project.cookiecutter
+# `project.cookiecutter`
 
-`project.cookiecutter` scaffolds a modern web API solution supporting [OAuth 2.0](https://oauth.net/2/), [Azure](https://azure.microsoft.com/), and auditing, with deployment options for both [Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and Docker environments.
+A template for scaffolding a modern .NET 9 Web API solution with support for:
 
-## Solution Structure
-
-The solution consists of the following projects:
-
-- **Base Project** (Docker only)
-- **API**
-- **Abstractions**
-- **HostingApp** (Aspire)
-- **Database**
-- **Migrations**
-- **ServiceDefaults** (Aspire)
-- **Tests**
+- [OAuth 2.0](https://oauth.net/2/)
+- [Azure services](https://azure.microsoft.com/)
+- Auditing
+- Deployment options for both [Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and Docker environments
 
 ---
-## Prerequisites
 
-***Software***   
+## 🧱 Solution Structure
 
-1. Cruft
-   -.  ``pip3 install cruft``
-2. Cookiecutter
-   -.  ``python3 -m pip install --user cookiecutter``
-3. Docker Desktop
-4. DotNet 9.X
+The generated solution contains the following projects:
 
-If you need to include OAuth or Azure, you must have OAuth set up and an active Azure subscription. Below is the information you will need to proceed.
+| Project           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `Core`            | Core application logic                   |
+| `Infrastructure`  | Azure, logging, storage, telemetry, etc. |
+| `API`             | Web API endpoints                        |
+| `Abstractions`    | Shared contracts and interfaces          |
+| `HostingApp`      | Aspire host process (Aspire only)        |
+| `ServiceDefaults` | Aspire extensions and configuration      |
+| `Database`        | Entity definitions and configuration     |
+| `Migrations`      | EF Core migrations                       |
+| `Tests`           | Unit/integration test projects           |
 
-***OAuth information***
-For OAuth, You will need to have the following information for all environments:
+---
 
-1.  Application Name
-2.  Audience for each environment
-3.  Domain for each environment
+## 🛠 Prerequisites
 
-***Azure information***
-For Azure, you will need to have the following information for all environments:
+### Required Software
 
-1. Tenant Id
-2. Subscription Id
-3. Location
-4. Key Vault Name for each environment
-5. Storage connection
-6. Storage Container Name for each environment
-7. Storage Account Name for each environment
-8. Container Registry Server for each environment
+- [Cookiecutter](https://cookiecutter.readthedocs.io/)
+  ```bash
+  python3 -m pip install --user cookiecutter
+  ```
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [.NET 9.x SDK](https://dotnet.microsoft.com/)
 
-### Project Setup
+### Optional: OAuth & Azure Integration
 
-You can set up your project using either of the following methods:
+If you plan to enable OAuth or Azure integrations (Key Vault, Application Insights, Storage, Service Bus), you'll need the following information available for **each environment**.
 
-**GitHub URI**: Point to the `project.cookiecutter` GitHub repository.
-**Local Clone**: Clone the `project.cookiecutter` repository to your machine and run the setup locally.
+#### OAuth Configuration
 
-Example command:
+- Application Name
+- Audience (per environment)
+- Domain (per environment)
 
-``cookiecutter {uri/path to project.cookiecutter} ``
+#### Azure Configuration
 
-## Project Modes
-During setup, you’ll be prompted to select a project mode: **Aspire** or **Docker**. If you don’t specify a mode, the setup defaults to **Aspire**.
+- Tenant ID
+- Subscription ID
+- Region/Location
 
-### Aspire Mode
+##### Key Vault
 
-Aspire projects require an active Azure subscription and OAuth to be configured. Gather the necessary information before proceeding.
+- Key Vault Name (per environment)
 
-#### Setup
+##### Storage
 
-**Command Line Setup**
+- Connection string
+- Storage container name
+- Storage account name
 
-1.  Create a directory for your project
-2.  Navigate to the project folder
-3.  Run the command ``cruft create {uri/path to project.cookiecutter}``
-4.  Open the solution in Visual Studio
-5.  Run the **Hosting** project
-   
-**Cloning Setup**
+##### Service Bus
 
-1.  Clone the `project.cookiecutter`
-2.  Create a project directory
-3.  Navigate to the project folder
-4.  Run the command ``cruft create {uri/path to project.cookiecutter}``
-5.  Open the solution in Visual Studio
-6.  Run the **Hosting** project
+- Service Bus namespace name
 
-#### Deployment
+---
 
-As of April 4, 2025, Aspire does not support **Azure Cosmos DB for MongoDB** for deployment. Therefore, an **infra** folder will be created under the application host project, containing all the Bicep files needed for deployment, including MongoDB.
+## 🚀 Project Setup
 
-By default, the MongoDB Bicep file is configured with:
+You can generate the solution from either:
 
-- MongoDB (RU) configuration.
-- hidden-workload-type: Development/Testing.
-- locationName: East US 2.
+- The GitHub repository URL
+- A local clone of `project.cookiecutter`
 
-By default, the mongo bicep file is configured to use the **MongoDB (RU)** configuration, with the  *hidden-workload-type* to be 'Development/Testing' and the *locationName* of 'East US 2'
+Example:
+```bash
+cookiecutter gh:your-org/project.cookiecutter
+# or
+cookiecutter path/to/local/project.cookiecutter
+```
 
-Refer to the Microsoft [documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/manage-with-bicep) for more information.
+---
 
+## 🧰 Project Modes
 
-#### Database
+During setup, you'll choose between two project modes:
 
-The project will create the database, however, you will need to create the tables and columns.  If you are using Postgesql and need auditing, you will need to add the **pgcrypto** extension when running locally.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**;
+- **Aspire** (default)
+- **Docker**
 
-----
+---
 
-### Docker Mode
+## 🌱 Aspire Mode
 
-#### Setup 
+### Setup Steps
 
-**Command Line Setup**
+<details>
+<summary><strong>Command Line Setup</strong></summary>
 
-1. Create a directory for your project
-2. Navigate to the project folder
-3. Run the command ``cruft create {uri/path to project.cookiecutter}``
-4. Open the solution in Visual Studio
-5. Run docker-compose in **Debug** mode
-6. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
-   
-**Cloning Setup**
+1. Create a project folder  
+2. Navigate to the folder  
+3. Run Cookiecutter  
+   ```bash
+   cookiecutter gh:your-org/project.cookiecutter
+   ```
+4. Open the generated solution in Visual Studio  
+5. Run the `HostingApp` project
+</details>
 
-1. Clone the `project.cookiecutter`
-2. Create a project folder
-3. Navigate to the project folder
-4. Run the command ``cruft create {uri/path to project.cookiecutter}``
-5. Open the solution in Visual Studio
-6. Run docker-compose in **Debug** mode
-7. If using OAuth, retrieve your OAuth credentials and store them in **Manage User Secrets**.
+<details>
+<summary><strong>Using a Local Clone</strong></summary>
 
-#### Database
+1. Clone the `project.cookiecutter` repository  
+2. Create a project folder  
+3. Run Cookiecutter from that path  
+4. Open the solution in Visual Studio  
+5. Run the `HostingApp` project
+</details>
 
-The project will create the database, however, you will need to create the tables and columns.  If you are using Postgesql and need auditing, you will need to add the **pgcrypto** extension when running locally.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**;
+---
+
+## 🐳 Docker Mode
+
+### Setup Steps
+
+<details>
+<summary><strong>Command Line Setup</strong></summary>
+
+1. Create a project folder  
+2. Navigate to the folder  
+3. Run Cookiecutter  
+   ```bash
+   cookiecutter gh:your-org/project.cookiecutter
+   ```
+4. Open the solution in Visual Studio  
+5. Run `docker-compose` in Debug mode  
+6. (If using OAuth) Add credentials to **Manage User Secrets**
+</details>
+
+<details>
+<summary><strong>Using a Local Clone</strong></summary>
+
+1. Clone the `project.cookiecutter` repository  
+2. Create a project folder  
+3. Navigate to the folder  
+4. Run Cookiecutter  
+5. Open the solution in Visual Studio  
+6. Run `docker-compose` in Debug mode  
+7. (If using OAuth) Add credentials to **Manage User Secrets**
+</details>
+
+---
+
+## 📄 Additional Info
+
+Each mode (`Aspire`, `Docker`) includes a dedicated `README.md` within its generated folder for environment-specific setup and configuration instructions.

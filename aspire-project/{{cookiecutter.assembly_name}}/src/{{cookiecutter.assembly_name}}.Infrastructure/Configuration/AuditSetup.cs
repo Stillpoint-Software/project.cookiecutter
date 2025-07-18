@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Reflection;
+{% if cookiecutter.include_audit == "yes" %}
 using Audit.Core;
+{% endif %} 
 {% if cookiecutter.database == "PostgreSql" %}
 using Audit.PostgreSql.Configuration;
 {% elif cookiecutter.database == "MongoDb" %}
@@ -12,16 +15,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions;
 
-namespace {{cookiecutter.assembly_name }}.Api.Infrastructure;
+namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
 
 public static class AuditSetup
 {
-    private static SampleContext _dbContext;
+    private static DatabaseContext _dbContext;
 
     public static void ConfigureAudit(WebApplicationBuilder builder)
     {
 
-        var optionsBuilder = new DbContextOptionsBuilder<SampleContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         {% if cookiecutter.database == "PostgreSql" %}
         var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
@@ -31,7 +34,7 @@ public static class AuditSetup
         {% include 'templates/audit/api_mongodb.cs' %}
         {% endif %}
 
-        Configuration.AddOnSavingAction(scope =>
+        Audit.Core.Configuration.AddOnSavingAction(scope =>
         {
             if (scope.Event is ListAuditEvent auditEvent)
             {
@@ -59,7 +62,7 @@ public static class AuditSetup
         } );
     }
 
-    private static void SetSecuredProperties(AuditEvent auditEvent, SampleContext _dbContext)
+    private static void SetSecuredProperties(AuditEvent auditEvent, DatabaseContext _dbContext)
     {
         var secureProperties = auditEvent.Target.New?.GetType()
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)

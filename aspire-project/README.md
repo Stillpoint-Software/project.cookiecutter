@@ -1,74 +1,84 @@
-# aspire project.cookiecutter
+# Aspire project.cookiecutter
 
-**aspire project.cookiecutter** provides a streamlined process to setup a web API project with support for *OAuth*, *Azure*, and *Auditing* for **Aspire**.  
+A cookiecutter template for generating a .NET Aspire-based Web API solution with built-in support for:
 
-If there are any updates to this template, there is a github process that will create a new branch, update the project, run tests and create a pull request.
+- OAuth authentication
+- Azure services (Key Vault, Storage, etc.)
+- Auditing (PostgreSQL or MongoDB support)
 
-## Solution Structure
+The template includes automation to keep your generated project in sync. When the upstream template updates, a GitHub Action automatically:
+- Creates a new branch
+- Applies the latest template changes
+- Opens a pull request for review
 
-The solution consists of the following projects:
+---
 
-- **API**
-- **Abstractions**
-- **AppHost**
-- **Database**
-- **Migrations**
-- **ServiceDefaults**
-- **Tests**
+## 🧱 Solution Structure
 
-##### Databases
-- **Postgesql**
-    The Aspire will create the database, however, you will need to create the tables and columns.  If you are using **Postgesql** and need auditing, you will need to add the **pgcrypto** extension to the correct schema when running locally in order to encrypt the data.  You can to this by adding the extension in the database\extension folder and look for **pgcrypto**.  Make sure the definition of the extension is **public**.  Also, give public access to run the **pgp_sym_encrypt** function.
+The solution is organized into the following projects:
 
-    `CREATE EXTENSION IF NOT EXISTS pgcrypto;`
+| Project           | Purpose                                                       |
+| ----------------- | ------------------------------------------------------------- |
+| `Core`            | Domain models and core logic                                  |
+| `Infrastructure`  | Integrations (Azure, telemetry, encryption)                   |
+| `API`             | ASP.NET Core Web API endpoints                                |
+| `Abstractions`    | Shared contracts and interfaces                               |
+| `AppHost`         | Aspire host application                                       |
+| `ServiceDefaults` | Default setup for Aspire (e.g., OpenTelemetry, health checks) |
+| `Database`        | EF Core database setup and seed data                          |
+| `Migrations`      | EF Core migration scripts                                     |
+| `Tests`           | Unit and integration tests                                    |
 
-    `GRANT EXECUTE ON FUNCTION pgp_sym_encrypt(text, text) TO {Your DB username from Aspire}}`
+---
 
+## 🗄 Database Support
 
-   `CREATE OR REPLACE FUNCTION db_sym_encrypt(input_text TEXT, key TEXT)
-RETURNS BYTEA AS $$
-BEGIN
-    -- Replace this with your encryption logic
-    RETURN pgp_sym_encrypt(input_text, key);
-END;
-$$ LANGUAGE plpgsql;`
+### 🔹 PostgreSQL (Recommended for Auditing)
 
-`CREATE OR REPLACE FUNCTION db_sym_decrypt(input_cipher BYTEA, key TEXT)
-RETURNS TEXT AS $$
-BEGIN
-    RETURN pgp_sym_decrypt(input_cipher, key);
-END;
-$$ LANGUAGE plpgsql;`
+- Aspire automatically provisions the PostgreSQL database.
+- **Schema and tables are not auto-created** — you must run SQL manually or from a script with migrations.
 
+#### 🔐 Auditing & Encryption Setup
 
-Here is script for audit table
+To enable field-level encryption and auditing:
+- Use the provided `createSample.sql` file.
+- This includes:
+  - `pgcrypto` extension for encryption
+  - SQL functions for `pgp_sym_encrypt`/`decrypt`
+  - An audit table with required permissions
 
+**Note:**  
+You can also add `pgcrypto` manually using your DB client:
+- Navigate to the `database/extensions` folder
+- Enable the `pgcrypto` extension in the **public** schema
+- Grant **public** access to `pgp_sym_encrypt`
 
-CREATE TABLE IF NOT EXISTS samplemessages.audit_event
-(
-    event_id SERIAL PRIMARY KEY,
-    event_type TEXT NOT NULL,
-    data jsonb,
-    last_updated TIMESTAMP WITH TIME ZONE NOT NULL
-)
+---
 
+### 🔹 MongoDB
 
+- Aspire **does not automatically create** MongoDB databases or collections.
+- You must provision them manually or use the provided Bicep deployment templates.
 
+---
 
-Here is the script for the sample data
+## 🚀 Deployment Notes
 
-CREATE SCHEMA IF NOT EXISTS samplemessages
+### CosmosDB for MongoDB (⚠️ Aspire Limitation)
 
-CREATE TABLE IF NOT EXISTS samplemessages.sample
-(
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    description bytea,
-    created_by TEXT NOT NULL,
-    created_date TIMESTAMP WITH TIME ZONE NOT NULL
-)
+As of **April 4, 2025**, Aspire does **not support Azure Cosmos DB for MongoDB** deployments directly.
 
+To work around this:
+- An `infra/` folder is included in the `AppHost` project
+- It contains **Bicep templates** for deploying Cosmos DB–compatible MongoDB
+- Customize the bicep file as needed.
 
-- **MongoDb**
-  Aspire does not automatically create the Database.  You will need to create the database and tables separately.
- 
+**Default MongoDB Bicep Config:**
+
+- **API Type:** MongoDB (RU-based throughput)
+- **Workload Type:** Development/Testing
+- **Region:** East US 2
+- **File:** `infra/mongo.bicep`
+
+📖 [Microsoft Docs – Deploy MongoDB via Bicep](https://learn.microsoft.com/en-us/azure/cosmos-db/mongodb/manage-with-bicep)
+
