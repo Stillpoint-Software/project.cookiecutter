@@ -1,42 +1,41 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
 
 public static class SerilogSetup
 {
-    public static void ConfigureSerilog( WebApplicationBuilder builder )
+    public static void ConfigureSerilog(IHostApplicationBuilder builder)
     {
-        builder.Host.UseSerilog( ( ctx, lc ) => lc
+        builder.Services.AddSerilog((ctx, lc) => lc
                 .Enrich.FromLogContext()
-                .WriteTo.OpenTelemetry( options =>
+                .WriteTo.OpenTelemetry(options =>
                 {
                     options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-                    var headers = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"]?.Split( ',' ) ?? [];
-                    foreach ( var header in headers )
+                    var headers = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"]?.Split(',') ?? [];
+                    foreach (var header in headers)
                     {
-                        var (key, value) = header.Split( '=' ) switch
+                        var (key, value) = header.Split('=') switch
                         {
                             [string k, string v] => (k, v),
-                            var v => throw new Exception( $"Invalid header format {v}" )
+                            var v => throw new Exception($"Invalid header format {v}")
                         };
 
-                        options.Headers.Add( key, value );
+                        options.Headers.Add(key, value);
                     }
-                    options.ResourceAttributes.Add( "service.name", "apiservice" );
+                    options.ResourceAttributes.Add("service.name", "apiservice");
 
                     //To remove the duplicate issue, we can use the below code to get the key and value from the configuration
 
-                    var (otelResourceAttribute, otelResourceAttributeValue) = builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]?.Split( '=' ) switch
+                    var (otelResourceAttribute, otelResourceAttributeValue) = builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]?.Split('=') switch
                     {
                         [string k, string v] => (k, v),
-                        _ => throw new Exception( $"Invalid header format {builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]}" )
+                        _ => throw new Exception($"Invalid header format {builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]}")
                     };
 
-                    options.ResourceAttributes.Add( otelResourceAttribute, otelResourceAttributeValue );
-                } )
-                .ReadFrom.Configuration( ctx.Configuration )
+                    options.ResourceAttributes.Add(otelResourceAttribute, otelResourceAttributeValue);
+                })
+                .ReadFrom.Configuration(builder.Configuration)
         );
     }
 }
-

@@ -7,8 +7,10 @@
   </PropertyGroup>
   <ItemGroup >
     <PackageReference Include = "Asp.Versioning.Mvc" Version = "8.1.0" />
-    {% if cookiecutter.include_azure == "yes" %}
+    {% if cookiecutter.include_azure_key_vault == "yes" %}
     <PackageReference Include = "Azure.Security.KeyVault.Keys" Version = "4.7.0" />
+    {% endif %}
+    {% if cookiecutter.include_azure_storage == "yes" %}
     <PackageReference Include = "Azure.Storage.Blobs" Version = "12.24.0" />
     <PackageReference Include = "Serilog.Sinks.AzureBlobStorage" Version = "4.0.5" />
     {% endif %}

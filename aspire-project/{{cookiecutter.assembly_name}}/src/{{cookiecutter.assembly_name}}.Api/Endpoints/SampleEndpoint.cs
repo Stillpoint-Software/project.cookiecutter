@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
+using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 
 namespace {{cookiecutter.assembly_name}}.Api.Endpoints;
 

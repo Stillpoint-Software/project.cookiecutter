@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_nam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{86031609-E2F9-4727-935E-7DC3FE04A88E}"
 	ProjectSection(SolutionItems) = preProject
-	{% if cookiecutter.include_azure == "yes" %}
+	{% if cookiecutter.include_azure_key_vault == "yes" or cookiecutter.include_azure_storage or cookiecutter.azure_service_bus %}
 		.github\workflows\DbMigrations_Production.yml = .github\workflows\DbMigrations_Production.yml
 		.github\workflows\DbMigrations_Staging.yml = .github\workflows\DbMigrations_Staging.yml
 		.github\workflows\ProdDeployment.yml = .github\workflows\ProdDeployment.yml
@@ -40,8 +40,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{cookiecutter.assembly_name}}.Core", "src\{{cookiecutter.assembly_name}}.Core\{{cookiecutter.assembly_name}}.Core.csproj", "{103A9196-BE5C-2EA1-DD8F-5903F3BAF81C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{cookiecutter.assembly_name}}.Infrastructure", "src\{{cookiecutter.assembly_name}}.Infrastructure\{{cookiecutter.assembly_name}}.Infrastructure.csproj", "{7A534687-C940-531C-0DD9-1A90600EA67F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,8 +120,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7C96D8AE-AC0A-4A45-BCE3-EFA118FFF415} = {D0C163AC-938E-4267-8B4F-A02ABF11D5DC}
 		{86031609-E2F9-4727-935E-7DC3FE04A88E} = {379108A6-C3A1-4475-B722-68F24BF578D9}
-		{EB683D31-CF55-F116-2529-0015448E026C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{DAD36580-C6D2-EF47-FA5F-D149103E849C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E6D504A-6B34-4BE5-98D3-60CC3E7690D7}

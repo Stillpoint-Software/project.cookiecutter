@@ -41,7 +41,7 @@ services:
         condition: service_healthy
     environment:
       PostgreSql__ConnectionString: Host=db;Database={{cookiecutter.assembly_name|lower}}-container;User Id={{cookiecutter.database|lower}};Password={{cookiecutter.database|lower}}
-  {% if cookiecutter.include_azure == "yes" %}
+  {% if cookiecutter.include_azure_storage == "yes" %}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: storage
@@ -97,7 +97,7 @@ services:
         condition: service_healthy
     environment:
       Mongo__ConnectionString: mongodb://root:{{cookiecutter.database|lower}}@db:27017/{{cookiecutter.assembly_name|lower}}-container
-  {% if cookiecutter.include_azure == "yes" %}
+  {% if cookiecutter.include_azure_storage == "yes" %}
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: storage

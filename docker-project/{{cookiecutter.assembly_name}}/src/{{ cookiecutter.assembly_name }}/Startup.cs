@@ -16,7 +16,7 @@ using {{ cookiecutter.assembly_name }}.Middleware;
 using Hyperbee.Extensions.Lamar;
 using Hyperbee.Pipeline;
 using Lamar;
-{% if cookiecutter.include_azure == "yes" %}
+{% if cookiecutter.include_application_insights == "yes" %}
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 {% endif %}
 using Microsoft.AspNetCore.Http.Json;
@@ -30,7 +30,7 @@ using MongoDB.Driver;
 namespace {{cookiecutter.assembly_name }};
 
 {% if cookiecutter.include_azure == "yes" %}
-{% include 'templates/main/main_startup_azure.cs' %}
+{% include 'templates/main/startup_azure.cs' %}
 {% else %}
-    {% include 'templates/main/main_startup.cs' %}
-    {% endif %}
+{% include 'templates/main/startup.cs' %}
+{% endif %}

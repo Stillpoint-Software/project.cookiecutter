@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
-using {{cookiecutter.assembly_name}}.Api.Commands.Infrastructure;
-using {{cookiecutter.assembly_name}}.Api.Identity;
+using {{cookiecutter.assembly_name}}.Core.Identity;
 using NSubstitute;
 
 namespace {{cookiecutter.assembly_name}}.Tests.TestSupport;

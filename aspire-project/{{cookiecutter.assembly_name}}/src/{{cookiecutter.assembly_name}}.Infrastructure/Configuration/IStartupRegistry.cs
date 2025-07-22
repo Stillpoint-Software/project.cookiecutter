@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
 
 public interface IStartupRegistry
 {
-    void ConfigureServices( WebApplicationBuilder builder, IServiceCollection services );
-    void ConfigureScanner( ServiceRegistry services );
-    void ConfigureApp( WebApplication app, IWebHostEnvironment env );
+    void ConfigureServices(IHostApplicationBuilder builder, IServiceCollection services);
+    void ConfigureScanner(ServiceRegistry services);
+    void ConfigureApp(WebApplication app, IWebHostEnvironment env);
 }

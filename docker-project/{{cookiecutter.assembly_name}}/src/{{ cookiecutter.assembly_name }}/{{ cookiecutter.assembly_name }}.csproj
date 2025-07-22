@@ -44,7 +44,7 @@
    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
    <PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="9.0.0" />
    {% if cookiecutter.include_azure == "yes" %}
-   {% include 'templates/main/main_project.cs' %}
+   {% include 'templates/main/project.cs' %}
    {% endif %}
    <PackageReference Include="Hyperbee.Extensions.DependencyInjection" Version="2.0.3" />
    <PackageReference Include="Hyperbee.Extensions.Lamar" Version="2.0.3" />
@@ -52,16 +52,16 @@
    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="14.0.1" />
    <PackageReference Include="LamarCodeGeneration" Version="6.3.0" />
    {% if cookiecutter.database == "PostgreSql" %}
-   {% include 'templates/main/main_postgresql.cs' %}
+   {% include 'templates/main/postgresql.cs' %}
    {% elif cookiecutter.database == "MongoDb" %}
-   {% include 'templates/main/main_mongodb.cs' %}
+   {% include 'templates/main/mongodb.cs' %}
    {% endif %}
    <PackageReference Include="Serilog" Version="4.3.0" />
    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
    <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
-   {% if cookiecutter.include_azure == "yes" %}
+   {% if cookiecutter.include_application_insights == "yes" %}
    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
    {% endif %}
    <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />

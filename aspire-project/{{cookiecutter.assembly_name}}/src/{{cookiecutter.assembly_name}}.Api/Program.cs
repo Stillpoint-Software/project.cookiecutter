@@ -1,3 +1,5 @@
+
+using {{cookiecutter.assembly_name}}.ServiceDefaults;
 using {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
 using Serilog;
 
@@ -5,7 +7,7 @@ namespace {{cookiecutter.assembly_name}}.Api;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         try
         {

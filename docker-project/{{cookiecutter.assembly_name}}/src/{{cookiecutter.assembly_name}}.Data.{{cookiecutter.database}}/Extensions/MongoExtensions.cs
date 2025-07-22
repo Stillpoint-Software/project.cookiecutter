@@ -14,7 +14,7 @@ internal static class {{cookiecutter.database}}Extensions
 
         var connectionString = config["MongoDb:ConnectionString"];
         var databaseName = config["MongoDb:Database"];
-        {% if cookiecutter.include_azure == "yes" %}
+        {% if cookiecutter.include_azure_key_vault == "yes" %}
         var keyVaultNameSpace = config["MongoDb:KeyVaultNamespace"];
         services.AddSingleton<IMongoDbService, MongoDbService>(
           c => new MongoDbService(connectionString, databaseName, keyVaultNameSpace)

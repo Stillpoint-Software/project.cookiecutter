@@ -11,11 +11,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 {% if cookiecutter.include_azure_key_vault == "yes" %}
 {% include 'templates/host/key_vault.cs' %}
-{% endif % }
+{% endif %}
 
 {% if cookiecutter.include_azure_application_insights == "yes" %}
 {% include 'templates/host/application_insights.cs' %}
-{% endif % }
+{% endif %}
 
 {% if cookiecutter.include_azure_storage == "yes" %}
 {% include 'templates/host/storage.cs' %}
@@ -47,7 +47,7 @@ var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>
     .WithReference( serviceBus ).WaitFor( serviceBus )
     {% endif %}
     .WithSwaggerUI()
-    .WithHttpHealthCheck();
+    .WithHttpHealthCheck("/health");
 
 builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name|lower }}-migrations")
     .WaitFor(projectdb)

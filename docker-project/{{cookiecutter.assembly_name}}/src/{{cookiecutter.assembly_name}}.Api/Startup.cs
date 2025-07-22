@@ -39,7 +39,7 @@ public class Startup : IStartupRegistry
         services.AddBackgroundServices();
         services.Configure<ApiSettings>(options => Configuration.GetSection("Api").Bind(options));
 
-        {% if cookiecutter.include_azure == "yes" %}
+        {% if cookiecutter.include_azure_storage == "yes" %}
         services.Configure<AzureStorageSettings>(options =>
         {
             options.ConnectionString = Configuration.GetValue("Azure:Storage:Data:ConnectionString", "");

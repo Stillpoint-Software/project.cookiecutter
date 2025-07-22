@@ -49,11 +49,14 @@ public static class SerilogExtensions
     /// <param name="logger">Only used for the extension method base type</param>
     public static Serilog.ILogger ConfigureSerilogBootstrapLogger(this Serilog.ILogger logger)
     {
+        var serviceName = Environment.GetEnvironmentVariable("OTEL_SERVICE_NAME") ?? "app";
+        var logFile = Path.Combine("logs", $"{serviceName}-{DateTime.UtcNow:yyyyMMdd}.txt");
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+            .WriteTo.File(logFile, rollingInterval: RollingInterval.Day)
             .CreateBootstrapLogger();
 
         return logger;

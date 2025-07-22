@@ -41,7 +41,9 @@ _yes = lambda s: (s or "").strip().lower() == "yes"
 # ──────────────────────────────────────────── #
 # Answers
 # ──────────────────────────────────────────── #
-include_azure        = _yes("{{ cookiecutter.include_azure }}")
+include_azure_key_vault    = _yes("{{ cookiecutter.include_azure_key_vault }}")
+include_azure_application_insights = _yes("{{ cookiecutter.include_azure_application_insights }}")
+include_azure_storage      = _yes("{{ cookiecutter.include_azure_storage }}")
 include_azure_service_bus  = _yes("{{ cookiecutter.include_azure_service_bus }}")
 database_is_pg       = "{{ cookiecutter.database }}" == "PostgreSql"
 include_audit        = _yes("{{ cookiecutter.include_audit }}")
@@ -62,7 +64,7 @@ rm(ROOT / "templates")
 # ──────────────────────────────────────────── #
 # 2️⃣  Optional deployment helper (unchanged)
 # ──────────────────────────────────────────── #
-if aspire_deploy and include_azure and project_path:
+if aspire_deploy and include_azure_key_vault or include_azure_application_insights or include_azure_storage or include_azure_service_bus and project_path:
     try:
         subprocess.run(
             [
@@ -128,7 +130,9 @@ if not COOKIE_FILE.exists():
         "is_docker": "yes",
         "include_audit": "{{ cookiecutter.include_audit }}",
         "include_oauth": "{{ cookiecutter.include_oauth }}",
-        "include_azure": "{{ cookiecutter.include_azure }}",
+        "include_azure_key_vault": "{{ cookiecutter.include_azure_key_vault }}",
+        "include_azure_application_insights": "{{ cookiecutter.include_azure_application_insights }}",
+        "include_azure_storage": "{{ cookiecutter.include_azure_storage }}",
         "include_azure_service_bus": "{{ cookiecutter.include_azure_service_bus }}",
         "aspire_deploy": "{{ cookiecutter.aspire_deploy }}",
 

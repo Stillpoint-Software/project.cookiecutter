@@ -10,6 +10,7 @@ using {{ cookiecutter.assembly_name }}.Core.Identity;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Entity;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
+using {{ cookiecutter.assembly_name }}.Core.Extensions;
 using Microsoft.Extensions.Logging;
 
 {% if cookiecutter.database=='MongoDb' %}

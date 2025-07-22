@@ -5,9 +5,9 @@
   </PropertyGroup>
 <ItemGroup >
 {% if cookiecutter.database == "PostgreSql" %}
-  <EmbeddedResource Include="Resources\1000-Initial\CreateUsers.sql" />
+  <EmbeddedResource Include="Resources\1000-Initial\CreateSchema.sql" />
 {% elif cookiecutter.database == "MongoDb" %}
-  <EmbeddedResource Include= "Resources\1000-Initial\administration\users\user.json" />
+  <EmbeddedResource Include= "Resources\1000-Initial\sample\sample.json" />
 {% endif %}
   </ItemGroup >
   <ItemGroup >
@@ -20,15 +20,15 @@
     <PackageReference Include = "Aspire.Hosting.MongoDB" Version = "9.3.1" />
     <PackageReference Include = "Aspire.MongoDB.Driver.v3" Version = "9.3.1" />
 {% endif %}
-{% if cookiecutter.include_azure == 'yes' %}
+{% if cookiecutter.include_azure_key_vault == 'yes' %}
     <PackageReference Include = "Azure.Identity" Version = "1.14.1" />
 {% endif %}
     <PackageReference Include = "Hyperbee.Migrations" Version = "2.0.3" />
-     <PackageReference Include = "Microsoft.EntityFrameworkCore.Tools" Version = "9.0.6" >
+     <PackageReference Include = "Microsoft.EntityFrameworkCore.Tools" Version = "9.0.7" >
       <PrivateAssets > all </PrivateAssets >
       <IncludeAssets > runtime; build; native; contentfiles; analyzers; buildtransitive </IncludeAssets >
     </PackageReference >
-    <PackageReference Include = "Microsoft.Extensions.Hosting" Version = "9.0.6" />
+    <PackageReference Include = "Microsoft.Extensions.Hosting" Version = "9.0.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include = "..\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj" />

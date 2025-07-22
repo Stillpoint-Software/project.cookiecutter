@@ -73,29 +73,44 @@ template_path        = "{{ cookiecutter.template_path }}"
 # 1️⃣  Conditional clean-up
 # ──────────────────────────────────────────── #
 
+# - Database artifacts -
+if not database_is_pg:
+    rm_each([
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/samples",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/DatabaseConfigurationPostgres.cs",
+    ])
+    
+if database_is_pg:
+    rm_each([
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateSample.sql",
+    ])
+
 # — Azure artifacts —
 if not include_azure_key_vault:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Vault",
-        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AzureSecretsExtensions.cs",
-        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/AzureKeyVaultConfiguration.cs",
-        SRC / "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Production.json",
-        SRC / "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Staging.json"
+        SRC / ".Core/Vault",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AzureSecretsExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/AzureKeyVaultConfiguration.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Production.json",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Staging.json",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Extensions/AzureSecretsExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Identity/CryptoRandom.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Vault"
     ])
 
 if not include_azure_application_insights:
     rm_each([
-        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/ApplicationInsightsExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/ApplicationInsightsExtensions.cs",
     ])
 
 if not include_azure_service_bus:
     rm_each([
-        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Commands/Middleware/CommandMiddlewareTelemetryExtensions.cs",
-        SRC / "src/{{ cookiecutter.assembly_name }}.Core/Commands/Middleware/TelemetrySourceProvider.cs"
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Commands/Middleware/CommandMiddlewareTelemetryExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Commands/Middleware/TelemetrySourceProvider.cs"
     ])
     
 # - deployment artifacts -
-if not aspire_deploy:
+#if not aspire_deploy:
 
 # — Audit artifacts —
 if not include_audit:
@@ -107,8 +122,11 @@ if not include_audit:
 #- — OAuth artifacts —
 if not include_oauth:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/AuthServices.cs",
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/CryptoRandom.cs",   
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Identity/AuthService.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/CryptoRandom.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Infrastructure/Extensions/SecurityRequirementsOperationFilter.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AuthPolicyExtensions.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Data/Abstractions/IAuthService.cs",
     ])
 
 rm(ROOT / "templates")           # always drop template snippets
@@ -177,6 +195,7 @@ if not COOKIE_FILE.exists():
         "include_azure_key_vault": "{{ cookiecutter.include_azure_key_vault }}",
         "include_azure_application_insights": "{{ cookiecutter.include_azure_application_insights }}",
         "include_azure_storage": "{{ cookiecutter.include_azure_storage }}",
+        "include_azure_service_bus": "{{ cookiecutter.include_azure_service_bus }}",
         "aspire_deploy": "{{ cookiecutter.aspire_deploy }}",
 
         # mandatory SHA

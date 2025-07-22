@@ -1,5 +1,5 @@
-﻿using {{cookiecutter.assembly_name}}.Api.Identity;
-using {{cookiecutter.assembly_name}}.Api.Validators;
+﻿using {{cookiecutter.assembly_name}}.Core.Identity;
+using {{cookiecutter.assembly_name}}.Core.Validators;
 using Hyperbee.Pipeline.Context;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;

@@ -27,7 +27,8 @@ internal static class StartupExtensions
     }
 
 {% if cookiecutter.database =="MongoDb" %}
-{% include 'templates/migration/migration_startup_ext.cs' %}
+{% include 'templates/migration/
+startup_ext.cs' %}
 {% endif %}
         }
 

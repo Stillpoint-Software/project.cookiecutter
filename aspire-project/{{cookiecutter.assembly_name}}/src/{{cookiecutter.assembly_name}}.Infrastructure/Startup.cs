@@ -90,7 +90,7 @@ public class Startup : IStartupRegistry
             builder.AddAzureKeyVaultClient("secrets");
         }
         {% endif %}
-        {% if cookiecutter.include_azure_blob_storage == "yes" %}
+        {% if cookiecutter.include_azure_storage == "yes" %}
         //Add Azure Blob Storage to DI Container
         builder.AddAzureBlobClient("blobs");
         {% endif %}
@@ -124,6 +124,12 @@ public class Startup : IStartupRegistry
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
+            app.UseSwaggerUI(c =>
+           {
+               c.SwaggerEndpoint("/swagger/v1/swagger.json", "PAspire API v1");
+               c.RoutePrefix = string.Empty;  // Makes Swagger UI available at the root ("/")
+
+           });
         }
         else
         {

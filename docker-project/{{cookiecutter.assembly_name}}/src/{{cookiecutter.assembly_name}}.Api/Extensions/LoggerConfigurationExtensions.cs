@@ -40,7 +40,7 @@ public static class LoggerConfigurationExtensions
         return loggerConfiguration;
     }
 
-    {% if cookiecutter.include_azure =='yes' %}
+    {% if cookiecutter.include_application_insights =='yes' %}
     public static LoggerConfiguration WithAzureApplicationInsights(this LoggerConfiguration loggerConfiguration, IServiceProvider services)
     {
         // https://github.com/serilog-contrib/serilog-sinks-applicationinsights

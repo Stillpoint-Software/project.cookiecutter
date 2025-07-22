@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using Yarp.ReverseProxy.Forwarder;
 
+
 namespace {{cookiecutter.assembly_name}}.AppHost;
 public static class SwaggerUIExtensions
 {

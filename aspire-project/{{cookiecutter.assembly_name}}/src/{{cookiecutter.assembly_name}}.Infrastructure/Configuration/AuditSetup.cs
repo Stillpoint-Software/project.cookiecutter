@@ -1,5 +1,5 @@
 using System.Reflection;
-using System.Reflection;
+using Microsoft.Extensions.Hosting;
 {% if cookiecutter.include_audit == "yes" %}
 using Audit.Core;
 {% endif %} 
@@ -7,13 +7,11 @@ using Audit.Core;
 using Audit.PostgreSql.Configuration;
 {% elif cookiecutter.database == "MongoDb" %}
 using Audit.MongoDB.Providers;
-using {{ cookiecutter.assembly_name }}.Data.Abstractions;
 {% endif %}
 using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using {{ cookiecutter.assembly_name }}.Data.Abstractions;
+using {{ cookiecutter.assembly_name }}.Core.Security;
+using {{ cookiecutter.assembly_name }}.Data.PostgreSql;
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
 
@@ -21,7 +19,7 @@ public static class AuditSetup
 {
     private static DatabaseContext _dbContext;
 
-    public static void ConfigureAudit(WebApplicationBuilder builder)
+    public static void ConfigureAudit(IHostApplicationBuilder builder)
     {
 
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
@@ -66,7 +64,7 @@ public static class AuditSetup
     {
         var secureProperties = auditEvent.Target.New?.GetType()
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetCustomAttribute<Secure>() != null);
+            .Where(p => p.GetCustomAttribute<SecureAttribute>() != null);
         if (secureProperties != null)
         {
             foreach (var property in secureProperties)

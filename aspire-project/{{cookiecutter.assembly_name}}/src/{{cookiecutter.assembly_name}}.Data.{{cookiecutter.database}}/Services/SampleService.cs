@@ -1,4 +1,5 @@
-using {{ cookiecutter.assembly_name}}.Data.Abstractions;
+using Microsoft.Extensions.Logging;
+using {{ cookiecutter.assembly_name }}.Core.Services;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
@@ -13,9 +14,8 @@ using MongoDB.Driver.Linq;
 
 namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}.Services;
 
-
 {% if cookiecutter.database == "PostgreSql" %}
-{% include "templates/data/data_sample_svc_postgresql.cs" %}
+{% include "templates/data/sample_svc_postgresql.cs" %}
 {% elif cookiecutter.database == "MongoDb" %}
-{% include "templates/data/data_sample_svc_mongodb.cs" %}
+{% include "templates/data/sample_svc_mongodb.cs" %}
 {% endif %}

@@ -1,11 +1,12 @@
-﻿using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
+﻿using Microsoft.Extensions.Logging;
+using NSubstitute;
+using {{cookiecutter.assembly_name}}.Api.Commands.SampleArea;
 using {{cookiecutter.assembly_name}}.Api.Validators;
+using {{cookiecutter.assembly_name}}.Core.Identity;
+using {{cookiecutter.assembly_name}}.Core.Validators;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{cookiecutter.assembly_name}}.Tests.TestSupport;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using {{cookiecutter.assembly_name}}.Api.Identity;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 {% endif %}

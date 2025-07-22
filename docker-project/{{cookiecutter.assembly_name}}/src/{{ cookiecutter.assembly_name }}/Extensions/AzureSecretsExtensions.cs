@@ -4,7 +4,7 @@ namespace {{cookiecutter.assembly_name}}.Extensions;
 
 public static class AzureSecretsExtensions
 {
-    {%- if cookiecutter.include_azure == "yes" -%}
+    {%- if cookiecutter.include_azure_key_vault == "yes" -%}
     public static IConfigurationBuilder AddAzureSecrets( this IConfigurationBuilder builder, IHostEnvironment hostingEnvironment, string vaultName )
     {
         if ( hostingEnvironment.IsDevelopment() )

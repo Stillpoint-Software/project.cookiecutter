@@ -10,9 +10,12 @@ using {{cookiecutter.assembly_name}}.Infrastructure.Data;
 using {{cookiecutter.assembly_name}}.Infrastructure.IoC;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 {% if cookiecutter.include_audit == "yes" %}
 using Audit.Core;
 {% endif %}
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
+using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.Services;
 
 namespace {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
 
@@ -36,6 +39,7 @@ public static class LamarSetup
             registry.AddSingleton<IPrincipalProvider, PrincipalProvider>();
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
             registry.AddSingleton<IValidatorProvider, ValidatorProvider>();
+            registry.AddSingleton<ISampleService, SampleService>();
 
             // MVC + JSON settings
             registry.AddControllers()

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Hyperbee.Pipeline;
-using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name}}.Core.Extensions;
+using {{ cookiecutter.assembly_name}}.Core.Services;
 using Microsoft.Extensions.Logging;
 
 namespace {{cookiecutter.assembly_name}}.Core.Commands.Middleware;

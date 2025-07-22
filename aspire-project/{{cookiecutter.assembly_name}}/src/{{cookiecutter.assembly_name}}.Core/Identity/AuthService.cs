@@ -7,7 +7,7 @@ using {{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}};
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace {{cookiecutter.assembly_name}}.Api.Identity;
+namespace {{cookiecutter.assembly_name}}.Core.Identity;
 public class AuthService : IAuthService
 {
 

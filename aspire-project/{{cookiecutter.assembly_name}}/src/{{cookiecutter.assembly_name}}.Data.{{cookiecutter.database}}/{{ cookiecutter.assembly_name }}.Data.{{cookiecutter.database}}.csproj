@@ -14,4 +14,7 @@
     {% endif %}
     <PackageReference Include = "System.Text.Json" Version = "9.0.7" />
   </ItemGroup >
+    <ItemGroup>
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

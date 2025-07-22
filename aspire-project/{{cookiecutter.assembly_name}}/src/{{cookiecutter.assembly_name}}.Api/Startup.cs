@@ -1,10 +1,19 @@
 
+#define CONTAINER_DIAGNOSTICS
+using FluentValidation;
 using Lamar;
-using {{cookiecutter.assembly_name}}.Core.Commands.Middleware;
-using {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
-using {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
-using {{cookiecutter.assembly_name}}.ServiceDefaults;
 using Microsoft.IdentityModel.Logging;
+using {{ cookiecutter.assembly_name }}.Api.Commands.SampleArea;
+using {{ cookiecutter.assembly_name }}.Api.Endpoints;
+using {{ cookiecutter.assembly_name }}.Api.Validators;
+using {{ cookiecutter.assembly_name }}.Core.Identity;
+using {{ cookiecutter.assembly_name }}.Core.Validators;
+using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
+using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
+using {{ cookiecutter.assembly_name }}.Data.PostgreSql.Services;
+using {{ cookiecutter.assembly_name }}.Infrastructure.Configuration;
+using {{ cookiecutter.assembly_name }}.Infrastructure.Extensions;
+using {{ cookiecutter.assembly_name }}.ServiceDefaults;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,25 +27,27 @@ public class Startup : IStartupRegistry
 
     public void ConfigureServices(IHostApplicationBuilder builder, IServiceCollection services)
     {
-        builder.UseStartup<Microservices.Infrastructure.Startup>();
+        builder.UseStartup <{{ cookiecutter.assembly_name }}.Infrastructure.Startup > ();
 
         builder.AddBackgroundServices();
         {% if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name}}");
         {% elif cookiecutter.database == "MongoDb" %}
-        {% include 'templates/api/api_mongo_service.cs' %}
+        {% include 'templates/api/mongo_service.cs' %}
         {% endif %}
+        {% if cookiecutter.include_azure_service_bus == "yes" %}
         builder.AddOpenTelemetry();
+        {% endif %}
 
         builder.Configuration
-            .AddEnvironmentVariables()
-            .AddUserSecrets<Program>(optional: true);
+        .AddEnvironmentVariables()
+        .AddUserSecrets<Program>(optional: true);
     }
 
     public void ConfigureApp(WebApplication app, IWebHostEnvironment env)
     {
         app.MapDefaultEndpoints();
-        app.MapMessagingEndpoints();
+        app.MapSampleEndpoints();
         //app.MapControllers();
     }
 
@@ -46,15 +57,33 @@ public class Startup : IStartupRegistry
 
         services.Scan(scanner =>
         {
+            scanner.AssemblyContainingType<SampleValidation>();
+            scanner.ConnectImplementationsToTypesClosing(typeof(IValidator<>));
             scanner.TheCallingAssembly();
             scanner.WithDefaultConventions();
         });
+
+        services.For<ISampleService>().Use<SampleService>();
+        services.For<IPrincipalProvider>().Use<PrincipalProvider>();
+        services.For<ICreateSampleCommand>().Use<CreateSampleCommand>();
+        services.For<IValidatorProvider>().Use<ValidatorProvider>();
+    }
+    private static void ContainerDiagnostics(IApplicationBuilder app, IHostEnvironment env)
+    {
+#if CONTAINER_DIAGNOSTICS
+        if (!env.IsDevelopment())
+            return;
+
+        var container = (IContainer)app.ApplicationServices;
+        Console.WriteLine(container.WhatDidIScan());
+        Console.WriteLine(container.WhatDoIHave());
+#endif
     }
 }
 
 public static class StartupExtensions
 {
-    public static void AddBackgroundServices(this IServiceCollection _)
+    public static void AddBackgroundServices(this IHostApplicationBuilder builder)
     {
         /* example
         services.Configure<HeartbeatServiceOptions>( x =>
@@ -67,6 +96,6 @@ public static class StartupExtensions
          */
     }
     {% if cookiecutter.include_azure_service_bus == "yes" %}
-    {% include "templates/api/api_service_bus.cs" %}
-    {% endif %}
+    {% include "templates/api/service_bus.cs" %}
+{% endif %}
 }

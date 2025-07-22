@@ -10,13 +10,12 @@ using {{ cookiecutter.assembly_name }}.Core.Commands.Middleware;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
 using {{ cookiecutter.assembly_name }}.Core.Extensions;
-using Microsoft.Extensions.Logging;
 
 
 namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 
 {% if cookiecutter.database == "PostgreSql" %}
-{% include 'templates/api/api_get_sample_postgresql.cs' %}
+{% include 'templates/api/get_sample_postgresql.cs' %}
 {% elif cookiecutter.database == "MongoDb" %}
-{% include 'templates/api/api_get_sample_mongodb.cs' %}
+{% include 'templates/api/get_sample_mongodb.cs' %}
 {% endif %}
