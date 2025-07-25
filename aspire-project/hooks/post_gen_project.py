@@ -80,6 +80,16 @@ else:
         ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateSample.sql",
     ])
 
+#GitHub
+if not github_deployment:
+    rm_each([
+        ROOT / ".github/workflows/DbMigrations_Production.yml",
+        ROOT / ".github/workflows/DbMigrations_Staging.yml",
+        ROOT / ".github/workflows/ProdDeployment.yml",    
+        ROOT / ".github/workflows/ProdProvisioning.yml",
+        ROOT / ".github/workflows/StagingDeployment.yml",
+        ROOT / ".github/workflows/StagingProvisioning.yml",
+    ])
 # Azure
 if not include_azure_key_vault:
     rm_each([
