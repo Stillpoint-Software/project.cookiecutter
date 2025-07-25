@@ -12,6 +12,7 @@
   "include_azure_application_insights": ["yes", "no"],
   "include_azure_storage": ["yes", "no"],
   "include_azure_service_bus": ["yes", "no"],
+  "github_organization": "Github Organization Name",
   "aspire_deploy": ["yes", "no"],
   "deployment_environment": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}['development', 'staging', 'production']{% else %}''{% endif %}",
   "project_path": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}'Project path'{% else %}''{% endif %}",

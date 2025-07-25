@@ -144,6 +144,6 @@ if not COOKIE_FILE.exists():
 
     ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
     COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
-    print("✅  .cookiecutter.json written")
+    print("✅  .cookiecutter.json written (with cookiecutter key)")
 
 print("🎉 Docker post-gen hook completed successfully")

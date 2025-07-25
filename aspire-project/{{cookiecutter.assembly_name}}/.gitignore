@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+/src/{{cookiecutter.assembly_name}}.Migrations/log*.txt
+log*.txt

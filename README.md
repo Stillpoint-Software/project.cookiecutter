@@ -90,7 +90,7 @@ cookiecutter path/to/local/project.cookiecutter
 
 During setup, you'll choose between two project modes:
 
-- **Aspire** (default)
+- **Aspire** 
 - **Docker**
 
 ---
@@ -153,6 +153,47 @@ During setup, you'll choose between two project modes:
 6. Run `docker-compose` in Debug mode  
 7. (If using OAuth) Add credentials to **Manage User Secrets**
 </details>
+
+---
+## 🛠️ GitHub Setup
+
+This project relies on two reusable workflows stored in the [`shared-workflows`](https://github.com/your-org/shared-workflows) repository:
+
+- `validate_template_inputs.yml`
+- `template_update.yml`
+
+To ensure they function correctly, configure your GitHub project settings as follows:
+
+### 1. Enable Reusable Workflows
+
+Navigate to: **Settings** > **Actions** > **General**
+
+- Under **Actions permissions**, select:
+  > ✅ **Allow all actions and reusable workflows**
+
+- Under **Workflow permissions**, select:
+  > ✅ **Read repository contents and packages**
+
+### 2. Define Required Repository Variable
+
+Navigate to: **Settings** > **Secrets and variables** > **Actions** > **Variables** tab
+
+- Add a variable named: `TemplateUpdateBranch`
+- Set its value to the name of the branch you want updated by the template (e.g., `main`, `template`, etc.)
+
+### 3. Scheduled Template Updates
+
+By default, the workflow is scheduled to run every **Monday at 7:00 AM (UTC)**.  
+It will:
+
+- Look for the `TemplateUpdateBranch` repository variable.
+- Fail if the variable is missing.
+- Create a pull request if there are any changes detected in the upstream template.
+
+### 4. Manual Update
+
+You can also trigger the update manually via the **Actions** tab.  
+When run manually, the workflow will prompt you to specify which branch should be updated.
 
 ---
 
