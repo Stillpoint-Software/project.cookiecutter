@@ -195,13 +195,9 @@ It will:
 You can also trigger the update manually via the **Actions** tab.  
 When run manually, the workflow will prompt you to specify which branch should be updated.
 
-> ⚠️ **Note:** If your repo is private or hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows.  
-> To re-enable scheduling:
+> ⚠️ **Note:** If your repo is public and  hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows. [see documentation re-enable scheduling](https://docs.github.com/en/enterprise-server@3.17/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows#enabling-a-workflow)
 >
-> - Make any small commit (e.g., update README) **or**
-> - Open a new issue
->
-> This "wakes" the repository and restores the scheduled triggers.
+> Certain repository events change the actor associated with the workflow. For example, a user who changes the default branch of the repository, which changes the branch on which scheduled workflows run, becomes actor for those scheduled workflows.
 
 ---
 
