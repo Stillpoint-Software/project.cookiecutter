@@ -8,6 +8,7 @@
   "database_name": "{{ cookiecutter.assembly_name|lower }}",
   "include_audit": ["yes", "no"],
   "include_oauth": ["yes", "no"],
+  "github_organization": "Github Organization Name",
   "include_azure_key_vault": ["yes", "no"],
   "include_azure_application_insights": ["yes", "no"],
   "include_azure_storage": ["yes", "no"],

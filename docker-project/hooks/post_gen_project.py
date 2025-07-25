@@ -52,6 +52,7 @@ aspire_deploy        = _yes("{{ cookiecutter.aspire_deploy }}")
 github_deploy        = _yes("{{ cookiecutter.github_deployment }}")
 project_path         = "{{ cookiecutter.project_path }}"
 template_path        = "{{ cookiecutter.template_path }}"
+github_organization  = "{{ cookiecutter.github_organization }}"
 
 # ──────────────────────────────────────────── #
 # 1️⃣  Conditional clean-up (same logic as before)
@@ -125,6 +126,7 @@ if not COOKIE_FILE.exists():
         "root_namespace": "{{ cookiecutter.root_namespace }}",
         "database": "{{ cookiecutter.database }}",
         "database_name": "{{ cookiecutter.database_name }}",
+        "github_organization": github_organization,
 
         # toggles
         "is_docker": "yes",
@@ -139,8 +141,6 @@ if not COOKIE_FILE.exists():
         # mandatory SHA
         "template_sha": template_sha,
     }
-
-    # …add OAuth / Azure extras here if needed …
 
     ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
     COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
