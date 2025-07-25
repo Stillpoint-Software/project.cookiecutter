@@ -227,4 +227,9 @@ if not COOKIE_FILE.exists():
     COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
     print("✅  .cookiecutter.json written (with cookiecutter key)")
 
+workflow = ROOT / ".github" / "workflows" / "Project_Template_Update.yml.j2"
+if workflow.exists():
+    workflow.rename(workflow.with_suffix(""))  # strips .j2
+    print("✅ Renamed .yml.j2 → .yml")
+    
 print("🎉 Aspire post-gen hook completed successfully")

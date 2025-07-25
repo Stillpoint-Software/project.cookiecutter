@@ -195,6 +195,14 @@ It will:
 You can also trigger the update manually via the **Actions** tab.  
 When run manually, the workflow will prompt you to specify which branch should be updated.
 
+> ⚠️ **Note:** If your repo is private or hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows.  
+> To re-enable scheduling:
+>
+> - Make any small commit (e.g., update README) **or**
+> - Open a new issue
+>
+> This "wakes" the repository and restores the scheduled triggers.
+
 ---
 
 ## 📄 Additional Info
