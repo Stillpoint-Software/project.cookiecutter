@@ -69,7 +69,6 @@ github_organization                = "{{ cookiecutter.github_organization }}"
 # ──────────────────────────────────────────── #
 # 2️⃣ Conditional cleanup
 # ──────────────────────────────────────────── #
-
 # Database
 if not database_is_pg:
     rm_each([

@@ -13,7 +13,7 @@ on:
         default: develop
   schedule:
     - cron: "0 7 * * MON"
-
+{% raw %}
 jobs:
   # 1) Figure out which branch we’re updating, then test for its existence
   check_branch:
@@ -46,7 +46,10 @@ jobs:
   update:
     needs: check_branch
     if: needs.check_branch.outputs.branch_exists == 'true'
+    {% endraw %}
     uses: {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/template_update.yml@main
     with:
       template_repo: "https://github.com/{{cookiecutter.github_organization}}/project.cookiecutter.git"
+      {% raw %}
       repo_branch: ${{ needs.check_branch.outputs.branch_name }}
+      {% endraw %}
