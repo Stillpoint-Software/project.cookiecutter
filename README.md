@@ -195,10 +195,10 @@ It will:
 You can also trigger the update manually via the **Actions** tab.  
 When run manually, the workflow will prompt you to specify which branch should be updated.
 
-> ⚠️ **Note:** If your repo is public and  hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows. [see documentation re-enable scheduling](https://docs.github.com/en/enterprise-server@3.17/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows#enabling-a-workflow)
+> ⚠️ **Note:** If your repo is public and  hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows. 
+> 
+> For additional information on the scheduled action [see documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 >
-> Certain repository events change the actor associated with the workflow. For example, a user who changes the default branch of the repository, which changes the branch on which scheduled workflows run, becomes actor for those scheduled workflows.
-
 ---
 
 ## 📄 Additional Info
