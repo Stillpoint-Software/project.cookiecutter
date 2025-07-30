@@ -16,14 +16,14 @@
             }
         }
 
-        public async Task<SampleDefinition> UpdateSampleAsync( FilterDefinition<Sample> existing, string sampleId, string name, string description )
+        public async Task<SampleDefinition> UpdateSampleAsync( Sample existing, string sampleId, string name, string description )
     {
 
         try
         {
             if ( existing is null )
             {
-                throw new ServiceException( nameof( UpdateSampleAsync ), "Sample not found." );
+                throw new ServiceException( nameof( UpdateSampleAsync ), "Sample not found.", null );
             }
 
             var update = Builders<Sample>.Update.Set( x => x.Name, name ).Set( x => x.Description, description );

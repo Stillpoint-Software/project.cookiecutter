@@ -10,7 +10,7 @@ using {{ cookiecutter.assembly_name }}.Core.Identity;
 using {{ cookiecutter.assembly_name }}.Core.Validators;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
-using {{ cookiecutter.assembly_name }}.Data.PostgreSql.Services;
+using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}.Services;
 using {{ cookiecutter.assembly_name }}.Infrastructure.Configuration;
 using {{ cookiecutter.assembly_name }}.Infrastructure.Extensions;
 using {{ cookiecutter.assembly_name }}.ServiceDefaults;
@@ -33,7 +33,7 @@ public class Startup : IStartupRegistry
         {% if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name}}");
         {% elif cookiecutter.database == "MongoDb" %}
-        {% include 'templates/api/mongo_service.cs' %}
+        {% include 'templates/api/mongodb_service.cs' %}
         {% endif %}
         {% if cookiecutter.include_azure_service_bus == "yes" %}
         builder.AddOpenTelemetry();

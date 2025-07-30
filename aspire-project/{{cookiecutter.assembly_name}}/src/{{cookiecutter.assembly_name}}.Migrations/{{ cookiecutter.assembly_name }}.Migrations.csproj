@@ -7,7 +7,7 @@
 {% if cookiecutter.database == "PostgreSql" %}
   <EmbeddedResource Include="Resources\1000-Initial\CreateSchema.sql" />
 {% elif cookiecutter.database == "MongoDb" %}
-  <EmbeddedResource Include= "Resources\1000-Initial\sample\sample.json" />
+  <EmbeddedResource Include= "Resources\1000-Initial\{{ cookiecutter.database_name }}\sample\sample.json" />
 {% endif %}
   </ItemGroup >
   <ItemGroup >

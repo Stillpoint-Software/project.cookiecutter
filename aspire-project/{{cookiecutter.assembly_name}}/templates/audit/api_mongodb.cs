@@ -3,5 +3,4 @@ Audit.Core.Configuration
         .UseMongoDB( config => config
             .ConnectionString( connectionString )
             .Database("{{cookiecutter.database_name}}")
-            .Collection( "audit_event" )
-            .SerializeAsBson( true ) );
+            .Collection( "audit_event" ));

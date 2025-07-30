@@ -27,34 +27,24 @@ public static class SampleEndpoints
             return result.ToResult();
         });
 
-        group.MapGet("/{sampleId:int}", async (
-            [FromServices] IGetSampleCommand command,
-            int sampleId,
-            CancellationToken cancellationToken) =>
-        {
-            var result = await command.ExecuteAsync(sampleId, cancellationToken);
-            return result.ToResult();
-        });
+        {% if cookiecutter.database == "PostgreSql" %}
+        {% include 'templates/api/postgresql_sample_endpoints.cs' %}
+        {% endif %}
+        {% if cookiecutter.database == "MongoDb" %}
+        {% include 'templates/api/mongodb_sample_endpoints.cs' %}
+        {% endif %}
 
-        group.MapPut("/{sampleId:int}", async (
-            [FromServices] IUpdateSampleCommand command,
-            int sampleId,
-            [FromBody] SampleRequest request,
-            CancellationToken cancellationToken) =>
-        {
-            var result = await command.ExecuteAsync(request.ToCommand(sampleId), cancellationToken);
-            return result.ToResult();
-        });
-
-        return group;
-    }
+            return group;
+        }
 
     public record SampleRequest(string Name, string Description)
     {
         public CreateSample ToCommand() => new(Name, Description);
-
+        {% if cookiecutter.database == "PostgreSql" %}
         public UpdateSample ToCommand(int sampleId) => new(sampleId, Name, Description);
-
+        {% endif %}
+        {% if cookiecutter.database == "MongoDb" %}
+        public UpdateSample ToCommand(string sampleId) => new(sampleId, Name, Description);
+        {% endif %}
     }
-
 }

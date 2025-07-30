@@ -14,6 +14,7 @@ using {{ cookiecutter.assembly_name }}.Core.Commands.Middleware;
 using {{ cookiecutter.assembly_name }}.Core.Extensions;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
+using {{ cookiecutter.assembly_name }}.Core.Services;
 
 namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 

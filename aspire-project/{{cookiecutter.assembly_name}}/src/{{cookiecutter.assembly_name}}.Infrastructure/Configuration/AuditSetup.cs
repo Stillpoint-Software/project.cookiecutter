@@ -11,7 +11,7 @@ using Audit.MongoDB.Providers;
 using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
 using Microsoft.EntityFrameworkCore;
 using {{ cookiecutter.assembly_name }}.Core.Security;
-using {{ cookiecutter.assembly_name }}.Data.PostgreSql;
+using Microsoft.Extensions.Configuration;
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
 
@@ -21,9 +21,8 @@ public static class AuditSetup
 
     public static void ConfigureAudit(IHostApplicationBuilder builder)
     {
-
-        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         {% if cookiecutter.database == "PostgreSql" %}
+        var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
         {% endif %}

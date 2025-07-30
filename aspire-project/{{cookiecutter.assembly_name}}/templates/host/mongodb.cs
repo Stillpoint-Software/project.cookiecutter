@@ -1,4 +1,4 @@
-ar dbUsername = builder.AddParameter("DbUser", "mongodb", true);
+var dbUsername = builder.AddParameter("DbUser", "mongodb", true);
 var dbPassword = builder.AddParameter("DbPassword", "mongodb", secret: true);
 
 var dbServer = builder.AddMongoDB("mongo", userName: dbUsername, password: dbPassword)

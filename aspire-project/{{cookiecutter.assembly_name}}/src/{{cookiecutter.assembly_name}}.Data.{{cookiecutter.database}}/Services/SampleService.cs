@@ -6,7 +6,8 @@ using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
 using Microsoft.Extensions.Logging;
 {% if cookiecutter.database == "PostgreSql" %}
 using Microsoft.EntityFrameworkCore;
-{% elif cookiecutter.database == "MongoDb" %}
+{%endif %}
+{% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -16,6 +17,7 @@ namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}.Servi
 
 {% if cookiecutter.database == "PostgreSql" %}
 {% include "templates/data/sample_svc_postgresql.cs" %}
-{% elif cookiecutter.database == "MongoDb" %}
+{% endif %}
+{% if cookiecutter.database == "MongoDb" %}
 {% include "templates/data/sample_svc_mongodb.cs" %}
 {% endif %}

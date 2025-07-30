@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
+using MongoDB.Bson.Serialization.Conventions;
 {% endif %}
 
 namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
@@ -23,6 +24,6 @@ public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options
 {% if cookiecutter.database == "PostgreSql" %}
 {% include 'templates/audit/data_postgresql_encryption.cs' %}
 {% elif cookiecutter.database == "MongoDb" %}
-{% include 'templates/data/mongo_context.cs' %}
+{% include 'templates/data/mongodb_context.cs' %}
 {% endif %}
 }

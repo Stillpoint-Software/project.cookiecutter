@@ -2,7 +2,11 @@
     {
         using (AuditScope.Create("Sample:Create", () => sample))
         {
-            sample.Id = await _sampleService.CreateSampleAsync(sample);
+            {% if cookiecutter.database =="MongoDb" %}
+            sample.Id = ObjectId.Parse(await _sampleService.CreateSampleAsync(sample));
+            {% else %}
+            var sampleId = await _sampleService.CreateSampleAsync(sample);
+            {% endif %}
 
             var sampleDefinition = new SampleDefinition
             (

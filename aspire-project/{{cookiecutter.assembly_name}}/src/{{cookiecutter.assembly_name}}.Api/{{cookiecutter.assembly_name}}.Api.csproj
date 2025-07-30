@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.PostgreSql\{{cookiecutter.assembly_name}}.Data.PostgreSql.csproj" />
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj" />
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.ServiceDefaults\{{cookiecutter.assembly_name}}.ServiceDefaults.csproj" />
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Core\{{cookiecutter.assembly_name}}.Core.csproj" />
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Infrastructure\{{cookiecutter.assembly_name}}.Infrastructure.csproj" />

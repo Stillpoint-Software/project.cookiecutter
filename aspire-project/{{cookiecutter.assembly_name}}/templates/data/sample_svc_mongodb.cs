@@ -34,7 +34,7 @@ public class SampleService : ISampleService
     }
 
 
-    public async Task<ObjectId> CreateSampleAsync(Sample sample)
+    public async Task<string> CreateSampleAsync(Sample sample)
     {
         try
         {
@@ -45,9 +45,9 @@ public class SampleService : ISampleService
             {
                 await _dbContext.Samples.AddAsync(sample);
                 await _dbContext.SaveChangesAsync();
-                return sample.Id;
+                return sample.Id.ToString();
             }
-            return existingSample.Id;
+            return existingSample.Id.ToString();
         }
         catch (Exception ex)
         {
@@ -55,35 +55,70 @@ public class SampleService : ISampleService
         }
     }
 
+    {% if cookiecutter.include_audit == "yes" %}
     public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
+{
+    try
     {
-        try
+        if (existing is null)
         {
-            if (existing is null)
-            {
-                throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
-            }
-
-            var update = Builders<Sample>.Update.Set(x => x.Name, name).Set(x => x.Description, description);
-
-            _dbContext.Entry(existing).CurrentValues.SetValues(new
-            {
-                Name = name,
-                Description = description
-            });
-
-            await _dbContext.SaveChangesAsync();
-
-            return new SampleDefinition
-            (
-                existing.Id.ToString(),
-                existing.Name ?? string.Empty,
-                existing.Description ?? string.Empty
-            );
+            throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
         }
-        catch (Exception ex)
+
+        var update = Builders<Sample>.Update.Set(x => x.Name, name).Set(x => x.Description, description);
+
+        _dbContext.Entry(existing).CurrentValues.SetValues(new
         {
-            throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
-        }
+            Name = name,
+            Description = description
+        });
+
+        await _dbContext.SaveChangesAsync();
+
+        return new SampleDefinition
+        (
+            existing.Id.ToString(),
+            existing.Name ?? string.Empty,
+            existing.Description ?? string.Empty
+        );
     }
+    catch (Exception ex)
+    {
+        throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
+    }
+}
+{% else %}
+public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
+{
+    try
+    {
+        if (existing is null)
+        {
+            throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
+        }
+
+        var update = Builders<Sample>.Update.Set(x => x.Name, name).Set(x => x.Description, description);
+
+        _dbContext.Entry(existing).CurrentValues.SetValues(new
+        {
+            Name = name,
+            Description = description
+        });
+
+        await _dbContext.SaveChangesAsync();
+
+        return new SampleDefinition
+        (
+            existing.Id.ToString(),
+            existing.Name ?? string.Empty,
+            existing.Description ?? string.Empty
+        );
+    }
+    catch (Exception ex)
+    {
+        throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
+    }
+
+    }
+    {% endif %}
 }

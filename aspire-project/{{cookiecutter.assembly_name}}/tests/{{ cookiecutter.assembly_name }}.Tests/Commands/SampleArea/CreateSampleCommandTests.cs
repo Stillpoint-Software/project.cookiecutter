@@ -18,7 +18,7 @@ public class CreateSampleCommandTests
 {
 
    {% if cookiecutter.database == "MongoDb" %}
-       {% include 'templates/tests/mongo_setup.cs' %}
+       {% include 'templates/tests/mongodb_setup.cs' %}
    {% endif %}
     // test support
     private static ICreateSampleCommand CreateCommand()

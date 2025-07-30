@@ -13,19 +13,15 @@
   "include_azure_application_insights": ["yes", "no"],
   "include_azure_storage": ["yes", "no"],
   "include_azure_service_bus": ["yes", "no"],
-  "aspire_deploy": ["yes", "no"],
-  "deployment_environment": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}['development', 'staging', 'production']{% else %}''{% endif %}",
-  "project_path": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}'Project path'{% else %}''{% endif %}",
-  "github_deployment": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}[yes, no]{% else %}''{% endif %}",
-  "template_path": "{% if cookiecutter.get('aspire_deploy', 'no') == 'yes' %}'Template path'{% else %}''{% endif %}",
+  "deployment_environment": ["development", "staging", "production"],
+  "project_path": "Project path",
+  "template_path": "Template path",
   "__prompts__": {
     "assembly_name": "Enter the name of the project.",
     "api_app_name": "Enter the name of the project api",
     "api_web_url": "Enter the full Uri",
     "database_name": "Enter the name for the database",
-    "aspire_deploy": "Do you want to deploy the project using aspire?",
-    "deployment_environment": "If you want to deploy using aspire, please select the environment.",
-    "github_deployment": "Do you want to deploy the project using github?",
+    "deployment_environment": "Select the deployment environment.",
     "project_path": "Enter the path to your project(c:/path/to/your/project)",
     "template_path": "Enter the path to the cookiecutter folder (c:/path/to/your/template)"
   }

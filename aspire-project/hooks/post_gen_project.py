@@ -59,8 +59,6 @@ include_azure_service_bus          = _yes("{{ cookiecutter.include_azure_service
 database_is_pg                     = "{{ cookiecutter.database }}" == "PostgreSql"
 include_audit                      = _yes("{{ cookiecutter.include_audit }}")
 include_oauth                      = _yes("{{ cookiecutter.include_oauth }}")
-aspire_deploy                      = _yes("{{ cookiecutter.aspire_deploy }}")
-github_deployment                  = _yes("{{ cookiecutter.github_deployment }}")
 project_path                       = "{{ cookiecutter.project_path }}"
 template_path                      = "{{ cookiecutter.template_path }}"
 deployment_environment             = "{{ cookiecutter.deployment_environment }}"
@@ -72,24 +70,14 @@ github_organization                = "{{ cookiecutter.github_organization }}"
 # Database
 if not database_is_pg:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/samples",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateSchema.sql",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Configuration/DatabaseConfigurationPostgres.cs",
     ])
 else:
     rm_each([
-        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateSample.sql",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/{{ cookiecutter.database_name }}",
     ])
 
-#GitHub
-if not github_deployment:
-    rm_each([
-        ROOT / ".github/workflows/DbMigrations_Production.yml",
-        ROOT / ".github/workflows/DbMigrations_Staging.yml",
-        ROOT / ".github/workflows/ProdDeployment.yml",    
-        ROOT / ".github/workflows/ProdProvisioning.yml",
-        ROOT / ".github/workflows/StagingDeployment.yml",
-        ROOT / ".github/workflows/StagingProvisioning.yml",
-    ])
 # Azure
 if not include_azure_key_vault:
     rm_each([
@@ -118,6 +106,7 @@ if not include_audit:
     rm_each([
         ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Security/SecureAttribute.cs",
         ROOT / "src/{{ cookiecutter.assembly_name }}.Core/Security/SecurityHelper.cs",
+        ROOT / "src/{{ cookiecutter.assembly_name }}.Infrastructure/Configuration/AuditSetup.cs",
     ])
 
 if not include_oauth:
@@ -132,26 +121,27 @@ if not include_oauth:
 rm(ROOT / "templates")  # always drop template snippets
 
 # ──────────────────────────────────────────── #
-# 3️⃣ Optional deployment helper
+# 3️⃣ Optional deployment helper (MongoDb only)
 # ──────────────────────────────────────────── #
-if aspire_deploy and project_path:
-    try:
-        subprocess.run(
-            [
-                sys.executable,
-                str(ROOT / "deployment.py"),
-                deployment_environment,
-                "{{ cookiecutter.assembly_name }}",
-                str(github_deployment).lower(),
-                "{{ cookiecutter.database }}",
-                project_path,
-                template_path,
-            ],
-            check=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        print(f"❌ Deployment helper failed: {exc}")
-        sys.exit(exc.returncode)
+# database_is_mongo = "{{ cookiecutter.database }}" == "MongoDb"
+
+# if database_is_mongo :
+#     try:
+#         subprocess.run(
+#             [
+#                 sys.executable,
+#                 str(ROOT / "deployment.py"),
+#                  str(deployment_environment).lower(),
+#                 "{{ cookiecutter.assembly_name }}",
+#                 "{{ cookiecutter.database }}",
+#                 project_path,
+#                 template_path,
+#             ],
+#             check=True,
+#         )
+#     except subprocess.CalledProcessError as exc:
+#         print(f"❌ Deployment helper failed: {exc}")
+#         sys.exit(exc.returncode)
 
 # ──────────────────────────────────────────── #
 # 4️⃣ Capture template SHA – mandatory, but skip in CI
@@ -193,8 +183,6 @@ if not COOKIE_FILE.exists():
         "api_web_url": "{{ cookiecutter.api_web_url }}",
         "database": "{{ cookiecutter.database }}",
         "database_name": "{{ cookiecutter.database_name }}",
-        "aspire_deploy": "{{ cookiecutter.aspire_deploy }}",
-        "github_deployment": "{{ cookiecutter.github_deployment }}",
         "github_organization": github_organization,
         "deployment_environment": deployment_environment,
         "project_path": project_path,

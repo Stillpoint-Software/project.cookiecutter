@@ -8,20 +8,10 @@ namespace {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 public interface ISampleService
 {
    {% if cookiecutter.database == "PostgreSql" %}
-   Task<int> CreateSampleAsync( Sample sample );
-   Task<SampleDefinition> GetSampleAsync(int sampleId );
-   {% if cookiecutter.include_audit == "yes"%}
-   Task <SampleDefinition> UpdateSampleAsync(  Sample existing, int sampleId, string name, string description );
-   {% else %}
-   Task UpdateSampleAsync( int sampleId, string name, string description );
+   {% include 'templates/abstractions/postgresql_service.cs' %}
    {% endif %}
-   {% elif cookiecutter.database == "MongoDb" %}
-   Task<string> CreateSampleAsync( Sample sample );
-   Task<SampleDefinition> GetSampleAsync(string sampleId );
-   {% if cookiecutter.include_audit == "yes"%}
-   Task<SampleDefinition> UpdateSampleAsync(FilterDefinition<Sample> existing, string sampleId, string name, string description );
-   {% else %}
-   Task UpdateSampleAsync(string sampleId, string name, string description );
-   {% endif %}
+ 
+   {% if cookiecutter.database == "MongoDb" %}
+   {% include 'templates/abstractions/mongodb_service.cs' %}
    {% endif %}
 }

@@ -40,6 +40,11 @@ public static class LamarSetup
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
             registry.AddSingleton<IValidatorProvider, ValidatorProvider>();
             registry.AddSingleton<ISampleService, SampleService>();
+            {% if cookiecutter.include_audit == "yes" %}
+             registry.AddSingleton<IAuditScopeFactory, AuditScopeFactory>();
+            {% endif %}
+           
+
 
             // MVC + JSON settings
             registry.AddControllers()
