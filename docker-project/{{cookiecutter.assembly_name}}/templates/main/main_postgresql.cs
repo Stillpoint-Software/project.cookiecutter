@@ -1,1 +1,0 @@
-   <PackageReference Include = "AspNetCore.HealthChecks.NpgSql" Version = "9.0.0" />

@@ -1,16 +1,24 @@
 {
-  "templates": {
-    "aspire-project": {
-      "path": "./aspire-project",
-      "title": "Aspire Project",
-      "description": "A cookiecutter template for an aspire project",
-      "_template": "aspire-project"
-    },
-    "docker-project": {
-      "path": "./docker-project",
-      "title": "Docker Project",
-      "description": "A cookiecutter template for a docker project",
-      "_template": "docker-project"
-    }
+  "_copy_without_render": [".github/workflows/*.yml", ".github/README.md"],
+  "assembly_name": "Project Name",
+  "root_namespace": "{{ cookiecutter.assembly_name|lower }}",
+ "api_app_name": ["{{ cookiecutter.assembly_name | replace('_', ' ') | replace('-', ' ') | title | replace(' ', '') }}.Api"],
+  "api_web_url": ["https://wwww.{{ cookiecutter.assembly_name|lower  }}.com/"],
+  "database": ["PostgreSql", "MongoDb"],
+  "database_name": "{{ cookiecutter.assembly_name | lower | replace(' ', '_') }}",
+  "github_organization": "Github Organization Name",
+  "include_audit": ["yes", "no"],
+  "include_oauth": ["yes", "no"],
+  "include_azure_key_vault": ["yes", "no"],
+  "include_azure_application_insights": ["yes", "no"],
+  "include_azure_storage": ["yes", "no"],
+  "include_azure_service_bus": ["yes", "no"],
+  "deployment_environment": ["development", "staging", "production"],
+  "__prompts__": {
+    "assembly_name": "Enter the name of the project.",
+    "api_app_name": "Enter the name of the project api",
+    "api_web_url": "Enter the full Uri",
+    "database_name": "Enter the name for the database",
+    "deployment_environment": "Select the deployment environment."
   }
 }

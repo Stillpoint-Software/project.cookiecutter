@@ -1,206 +1,135 @@
-# `project.cookiecutter`
+# project.cookiecutter
 
-A template for scaffolding a modern .NET 9 Web API solution with support for:
+A Cookiecutter template for scaffolding a **modern .NET 9 Web API** solution with first-class support for **[Aspire](https://learn.microsoft.com/dotnet/aspire)**. It ships with:
 
-- [OAuth 2.0](https://oauth.net/2/)
-- [Azure services](https://azure.microsoft.com/)
-- Auditing
-- Deployment options for both [Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/) and Docker environments
+- 🔐 OAuth 2.0 authentication  
+- ☁️ Azure integrations (Key Vault, Storage, Service Bus, Application Insights, etc.)  
+- 📋 Field-level encryption & auditing (PostgreSQL **or** MongoDB)  
+- 🤖 GitHub Actions that keep your generated repo in sync with upstream template changes  
+
+When the upstream template updates, a scheduled workflow will:
+
+1. Create a new branch  
+2. Re-generate your solution on that branch  
+3. Open a pull request for review  
+
+*(The workflow runs every **Monday at 07:00 UTC** by default and can also be triggered manually.)*
 
 ---
 
 ## 🧱 Solution Structure
 
-The generated solution contains the following projects:
+| Project                      | Purpose                                                  |
+| ---------------------------- | -------------------------------------------------------- |
+| **Core**                     | Domain models and core business logic                    |
+| **Infrastructure**           | Azure integrations, telemetry, encryption helpers        |
+| **API**                      | ASP.NET Core Web API endpoints                           |
+| **Abstractions**             | Shared DTOs, interfaces and contracts                    |
+| **AppHost**  | Aspire host process                                      |
+| **ServiceDefaults**          | Common Aspire setup (OpenTelemetry, health checks, etc.) |
+| **Database**                 | EF Core `DbContext`, entity configuration, seed data     |
+| **Migrations**               | EF Core migration scripts                                |
+| **Tests**                    | Unit & integration test projects                         |
 
-| Project           | Description                              |
-| ----------------- | ---------------------------------------- |
-| `Core`            | Core application logic                   |
-| `Infrastructure`  | Azure, logging, storage, telemetry, etc. |
-| `API`             | Web API endpoints                        |
-| `Abstractions`    | Shared contracts and interfaces          |
-| `HostingApp`      | Aspire host process (Aspire only)        |
-| `ServiceDefaults` | Aspire extensions and configuration      |
-| `Database`        | Entity definitions and configuration     |
-| `Migrations`      | EF Core migrations                       |
-| `Tests`           | Unit/integration test projects           |
 
 ---
 
 ## 🛠 Prerequisites
 
-### Required Software
+| Tool                                                     | Purpose                  |
+| -------------------------------------------------------- | ------------------------ |
+| **Cookiecutter**                                         | Template generation      |
+| &nbsp;&nbsp;`python3 -m pip install --user cookiecutter` |
+| **.NET 9.x SDK**                                         | Build & run the solution |
 
-- [Cookiecutter](https://cookiecutter.readthedocs.io/)
-  ```bash
-  python3 -m pip install --user cookiecutter
-  ```
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [.NET 9.x SDK](https://dotnet.microsoft.com/)
+### Optional (for OAuth / Azure)
 
-### Optional: OAuth & Azure Integration
-
-If you plan to enable OAuth or Azure integrations (Key Vault, Application Insights, Storage, Service Bus), you'll need the following information available for **each environment**.
-
-#### OAuth Configuration
-
-- Application Name
-- Audience (per environment)
-- Domain (per environment)
-
-#### Azure Configuration
-
-- Tenant ID
-- Subscription ID
-- Region/Location
-
-##### Key Vault
-
-- Key Vault Name (per environment)
-
-##### Storage
-
-- Connection string
-- Storage container name
-- Storage account name
-
-##### Service Bus
-
-- Service Bus namespace name
+| Service         | Required values                                        |
+| --------------- | ------------------------------------------------------ |
+| **OAuth**       | Application name, audience (per-env), domain (per-env) |
+| **Azure**       | Tenant ID, Subscription ID, Region                     |
+| **Key Vault**   | Vault name (per-env)                                   |
+| **Storage**     | Account name, container name, connection string             |
+| **Service Bus** | Namespace name                                         |
 
 ---
 
-## 🚀 Project Setup
+## ⚡️ Quick Start
 
-You can generate the solution from either:
-
-- The GitHub repository URL
-- A local clone of `project.cookiecutter`
-
-Example:
 ```bash
-cookiecutter gh:your-org/project.cookiecutter
-# or
-cookiecutter path/to/local/project.cookiecutter
+cookiecutter gh:your-org/project.cookiecutter   # or local path
+cd <MyApp>
+dotnet build
+dotnet run --project AppHost   # or HostingApp
 ```
 
----
-
-## 🧰 Project Modes
-
-During setup, you'll choose between two project modes:
-
-- **Aspire** 
-- **Docker**
+*(In Visual Studio, simply set **AppHost/HostingApp** as the startup project and press ▶️ Run.)*
 
 ---
 
-## 🌱 Aspire Mode
+## 🗄 Database Support
 
-### Setup Steps
+### PostgreSQL (✨ recommended for auditing)
 
-<details>
-<summary><strong>Command Line Setup</strong></summary>
+- Aspire provisions the database container automatically.  
+- **Schema is not created automatically** – run the supplied `createSample.sql` (or EF migrations).
 
-1. Create a project folder  
-2. Navigate to the folder  
-3. Run Cookiecutter  
-   ```bash
-   cookiecutter gh:your-org/project.cookiecutter
-   ```
-4. Open the generated solution in Visual Studio  
-5. Run the `HostingApp` project
-</details>
+#### Field-level encryption & audit trail
 
-<details>
-<summary><strong>Using a Local Clone</strong></summary>
+`createSample.sql` installs the `pgcrypto` extension, defines helper functions for `pgp_sym_encrypt/decrypt`, creates an audit table and grants the required permissions.
 
-1. Clone the `project.cookiecutter` repository  
-2. Create a project folder  
-3. Run Cookiecutter from that path  
-4. Open the solution in Visual Studio  
-5. Run the `HostingApp` project
-</details>
+If you prefer to manually configure `pgcrypto`:
+
+1. Open your DB client  
+2. Enable **pgcrypto** on the database.
+3. Grant **public** execute on `pgp_sym_encrypt`
 
 ---
 
-## 🐳 Docker Mode
+### MongoDB
 
-### Setup Steps
+- Aspire does **not** create databases or collections.  
+- Provision them manually
 
-<details>
-<summary><strong>Command Line Setup</strong></summary>
+#### Cosmos DB for MongoDB – Aspire limitation
 
-1. Create a project folder  
-2. Navigate to the folder  
-3. Run Cookiecutter  
-   ```bash
-   cookiecutter gh:your-org/project.cookiecutter
-   ```
-4. Open the solution in Visual Studio  
-5. Run `docker-compose` in Debug mode  
-6. (If using OAuth) Add credentials to **Manage User Secrets**
-</details>
-
-<details>
-<summary><strong>Using a Local Clone</strong></summary>
-
-1. Clone the `project.cookiecutter` repository  
-2. Create a project folder  
-3. Navigate to the folder  
-4. Run Cookiecutter  
-5. Open the solution in Visual Studio  
-6. Run `docker-compose` in Debug mode  
-7. (If using OAuth) Add credentials to **Manage User Secrets**
-</details>
+As of **April 4 2025** Aspire cannot deploy Cosmos DB (MongoDB API). 
 
 ---
-## 🛠️ GitHub Setup
+## 🛠️ GitHub Setup (Reusable Workflows)
 
-This project relies on two reusable workflows stored in the [`shared-workflows`](https://github.com/your-org/shared-workflows) repository:
+This template depends on a workflow stored in **`shared-workflows`**:
 
-- `validate_template_inputs.yml`
-- `template_update.yml`
+| Workflow                       | Purpose                                                     |
+| ------------------------------ | ----------------------------------------------------------- |
+| `template_update.yml`          | Regenerates the solution when the upstream template changes |
 
-To ensure they function correctly, configure your GitHub project settings as follows:
+### Repository settings
 
-### 1. Enable Reusable Workflows
+1. **Settings → Actions → General**  
+   - **Actions permissions:** ✅ *Allow all actions and reusable workflows*  
+   - **Workflow permissions:** ✅ *Read repository contents and packages*  
 
-Navigate to: **Settings** > **Actions** > **General**
+2. **Settings → Secrets and variables → Actions → Variables**  
+   - `TemplateUpdateBranch = <branch-to-update>`
 
-- Under **Actions permissions**, select:
-  > ✅ **Allow all actions and reusable workflows**
+### Scheduled update behaviour
 
-- Under **Workflow permissions**, select:
-  > ✅ **Read repository contents and packages**
+- Runs **every Monday 07:00 UTC**.  
+- Fails if `TemplateUpdateBranch` is missing.  
+- Opens a pull request whenever the upstream template SHA changes – even if the only diff is the SHA.
 
-### 2. Define Required Repository Variable
+> ℹ️ Public repositories without activity for 60 days have their schedules paused automatically by GitHub.
 
-Navigate to: **Settings** > **Secrets and variables** > **Actions** > **Variables** tab
-
-- Add a variable named: `TemplateUpdateBranch`
-- Set its value to the name of the branch you want updated by the template (e.g., `main`, `template`, etc.)
-
-### 3. Scheduled Template Updates
-
-By default, the workflow is scheduled to run every **Monday at 7:00 AM (UTC)**.  
-It will:
-
-- Look for the `TemplateUpdateBranch` repository variable.
-- Fail if the variable is missing.
-- Create a pull request if there are any changes detected in the upstream template.
-
-### 4. Manual Update
-
-You can also trigger the update manually via the **Actions** tab.  
-When run manually, the workflow will prompt you to specify which branch should be updated.
-
-> ⚠️ **Note:** If your repo is public and  hasn’t had any commits/issues/discussions in the past 60 days, GitHub silently disables scheduled workflows. 
-> 
-> For additional information on the scheduled action [see documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
->
 ---
 
-## 📄 Additional Info
+## 🚀 Deployment Notes
 
-Each mode (`Aspire`, `Docker`) includes a dedicated `README.md` within its generated folder for environment-specific setup and configuration instructions.
+| Scenario                | Notes                                                        |
+| ----------------------- | ------------------------------------------------------------ |
+| **Aspire + PostgreSQL** | No automatic schema; apply migrations or `createSample.sql`. |
+| **Aspire + MongoDB**    | Use the Bicep template if you need Cosmos DB-compatible API. |
+
+---
+
+Happy coding — and happy template-syncing! 🚀
