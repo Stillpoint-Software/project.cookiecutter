@@ -27,7 +27,7 @@ When the upstream template updates, a scheduled workflow will:
 | **Abstractions**             | Shared DTOs, interfaces and contracts                    |
 | **AppHost**  | Aspire host process                                      |
 | **ServiceDefaults**          | Common Aspire setup (OpenTelemetry, health checks, etc.) |
-| **Database**                 | EF Core `DbContext`, entity configuration, seed data     |
+| **Database**                 | EF Core `DbContext`, entity configuration     |
 | **Migrations**               | EF Core migration scripts                                |
 | **Tests**                    | Unit & integration test projects                         |
 
