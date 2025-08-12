@@ -1,4 +1,5 @@
-name: project_template_update
+{% raw %}
+name: Project Template Update
 
 permissions:
   contents: write
@@ -13,7 +14,7 @@ on:
         default: develop
   schedule:
     - cron: "0 7 * * 1"
-{% raw %}
+
 jobs:
   # 1) Figure out which branch we’re updating, then test for its existence
   check_branch:

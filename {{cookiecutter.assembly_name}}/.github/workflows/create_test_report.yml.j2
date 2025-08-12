@@ -1,0 +1,41 @@
+{% raw %}
+name: Create Test Report
+on:
+  # ① Automatic – when the Test workflow ends on main / develop
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:     [completed]
+    branches:  [main, develop]
+
+permissions:
+  contents: read
+  actions:  read
+  checks:   write
+  
+jobs:
+  discover-auto:
+    runs-on: ubuntu-latest   
+    if: ${{ github.event_name == 'workflow_run' }}
+    outputs:
+      branch_name: ${{ steps.meta.outputs.branch }}
+      sha:         ${{ steps.meta.outputs.sha }}
+      run_id:      ${{ steps.meta.outputs.run_id }}
+    steps:
+      - id: meta
+        run: |
+          echo "branch=${{ github.event.workflow_run.head_branch }}" >> "$GITHUB_OUTPUT"
+          echo "sha=${{    github.event.workflow_run.head_sha    }}" >> "$GITHUB_OUTPUT"
+          echo "run_id=${{ github.event.workflow_run.id }}"          >> "$GITHUB_OUTPUT"
+        
+  report-auto:
+    needs: discover-auto
+    if: ${{ github.event_name == 'workflow_run' &&
+          needs.discover-auto.result == 'success' }}
+  {% endraw %}
+    uses: {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/test_report.yml@main
+    {% raw %}
+    with:
+      test_run_id: ${{ needs.discover-auto.outputs.run_id }}
+      branch:      ${{ needs.discover-auto.outputs.branch_name }}
+    secrets: inherit
+  {% endraw %}
