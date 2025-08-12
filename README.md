@@ -10,7 +10,7 @@ A Cookiecutter template for scaffolding a **modern .NET 9 Web API** solution wit
 When the upstream template updates, a scheduled workflow will:
 
 1. Create a new branch  
-2. Re-generate your solution on that branch  
+2. Re-generate your solution on that branch based on your configuration from the .cookiecutter.json file.  
 3. Open a pull request for review  
 
 *(The workflow runs every **Monday at 07:00 UTC** by default and can also be triggered manually.)*
@@ -60,10 +60,10 @@ When the upstream template updates, a scheduled workflow will:
 cookiecutter gh:your-org/project.cookiecutter   # or local path
 cd <MyApp>
 dotnet build
-dotnet run --project AppHost   # or HostingApp
+dotnet run --project AppHost   
 ```
 
-*(In Visual Studio, simply set **AppHost/HostingApp** as the startup project and press ▶️ Run.)*
+*(In Visual Studio, simply set **AppHost** as the startup project and press ▶️ Run.)*
 
 ---
 
@@ -93,7 +93,7 @@ If you prefer to manually configure `pgcrypto`:
 
 #### Cosmos DB for MongoDB – Aspire limitation
 
-As of **April 4 2025** Aspire cannot deploy Cosmos DB (MongoDB API). 
+Aspire cannot deploy Cosmos DB for MongoDB. 
 
 ---
 ## 🛠️ GitHub Setup (Reusable Workflows)
@@ -102,7 +102,21 @@ This template depends on a workflow stored in **`shared-workflows`**:
 
 | Workflow                       | Purpose                                                     |
 | ------------------------------ | ----------------------------------------------------------- |
-| `template_update.yml`          | Regenerates the solution when the upstream template changes |
+| `project_template_update.yml`          | Regenerates the solution when the upstream template changes.  Will create a pull request with the changes. |
+| `staging_provisioning.yml`      | Provisions Azure resources for the Staging environment.     |
+| `staging_deployment.yml`      | Builds and deploys the application to the Staging environment on pushes to the develop branch or via manual dispatch.   |
+| `production_provisioning.yml`      |Provisions Azure resources for the Production environment.    |
+| `prod_deployment.yml`      |Builds and deploys the application to the Production environment on pushes to the master branch or via manual dispatch.   |
+| `prod_deployment.yml`      |Builds and deploys the application to the Production environment on pushes to the master branch or via manual dispatch.   |
+| `dbmigrations_production.yml`      |Runs database migrations in production.|
+| `dbmigrations_staging.yml`      |Runs database migrations in staging.|
+| `create_release.yml`      |Creating the release to publish to Nuget.  |
+| `create_test_report.yml`      |Turns uploaded .trx into a GitHub Checks report.|
+| `run_tests.yml`      |Builds and tests the solution. Uploads .trx as artifacts.|
+| `pack_and_publish.yml`      |Packs and Publishes artifacts to Nuget.|
+| `format.yml`      |Automatically formats C# with 
+| `issue_branch.yml`      |Creates a branch when issues.|
+
 
 ### Repository settings
 
@@ -111,13 +125,15 @@ This template depends on a workflow stored in **`shared-workflows`**:
    - **Workflow permissions:** ✅ *Read repository contents and packages*  
 
 2. **Settings → Secrets and variables → Actions → Variables**  
-   - `TemplateUpdateBranch = <branch-to-update>`
+   - `TEMPLATE_UPDATE_BRANCH = <branch-to-update>`
+   - `SOLUTION_NAME = <solutionname.sln>`
 
 ### Scheduled update behaviour
 
-- Runs **every Monday 07:00 UTC**.  
-- Fails if `TemplateUpdateBranch` is missing.  
+- Runs **every Monday 07:00 GITHUB UTC**.  
+- Fails if `TEMPLATE_UPDATE_BRANCH` is missing.  
 - Opens a pull request whenever the upstream template SHA changes – even if the only diff is the SHA.
+- You can also run the update manually.
 
 > ℹ️ Public repositories without activity for 60 days have their schedules paused automatically by GitHub.
 

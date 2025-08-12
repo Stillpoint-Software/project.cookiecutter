@@ -16,14 +16,20 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{86031609-E2F9-4727-935E-7DC3FE04A88E}"
 	ProjectSection(SolutionItems) = preProject
 	{% if cookiecutter.include_azure_key_vault == "yes" or cookiecutter.include_azure_storage=="yes" or cookiecutter.include_azure_service_bus=="yes" or cookiecutter.include_azure_application_insights =="yes" %}
-		.github\workflows\DbMigrations_Production.yml = .github\workflows\DbMigrations_Production.yml
-		.github\workflows\DbMigrations_Staging.yml = .github\workflows\DbMigrations_Staging.yml
-		.github\workflows\ProdDeployment.yml = .github\workflows\ProdDeployment.yml
-		.github\workflows\ProdProvisioning.yml = .github\workflows\ProdProvisioning.yml
-		.github\workflows\StagingDeployment.yml = .github\workflows\StagingDeployment.yml
-		.github\workflows\StagingProvisioning.yml = .github\workflows\StagingProvisioning.yml
+		.github\workflows\dbmigrations_production.yml = .github\workflows\dbmigrations_production.yml
+		.github\workflows\dbmigrations_staging.yml = .github\workflows\dbmigrations_staging.yml
+		.github\workflows\prod_deployment.yml = .github\workflows\prod_deployment.yml
+		.github\workflows\prod_provisioning.yml = .github\workflows\prod_provisioning.yml
+		.github\workflows\staging_deployment.yml = .github\workflows\staging_deployment.yml
+		.github\workflows\staging_provisioning.yml = .github\workflows\staging_provisioning.yml
 	{% endif %}
 	.github\workflows\project_template_update.yml = .github\workflows\project_template_update.yml
+	.github\workflows\create_release.yml = .github\workflows\create_release.yml
+	.github\workflows\create_test_report.yml = .github\workflows\create_test_report.yml
+	.github\workflows\format.yml = .github\workflows\format.yml
+	.github\workflows\issue_branch.yml = .github\workflows\issue_branch.yml
+	.github\workflows\pack_and_publish.yml = .github\workflows\pack_and_publish.yml
+	.github\workflows\run_tests.yml = .github\workflows\run_tests.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "{{cookiecutter.assembly_name}}.Api", "src\{{cookiecutter.assembly_name}}.Api\{{cookiecutter.assembly_name}}.Api.csproj", "{1CF06017-4D04-463B-94DC-752A32FEAB33}"

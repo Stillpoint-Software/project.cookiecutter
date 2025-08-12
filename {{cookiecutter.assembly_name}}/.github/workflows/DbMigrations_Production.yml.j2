@@ -5,8 +5,8 @@ env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   {% endraw %}
   SOLUTION_NAME: '{{cookiecutter.assembly_name}}.sln'
+    {% raw %}
   BUILD_CONFIGURATION: Release_migration
-  {% raw %}
   LPOINT_URL: ${{secrets.LPOINT}}
   NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 

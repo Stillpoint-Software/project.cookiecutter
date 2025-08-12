@@ -51,7 +51,7 @@ jobs:
   test:
     needs: discover
 {% endraw %}
-    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/test.yml@main
+    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/run_tests.yml@main
 {% raw %}
     with:
       branch: ${{ needs.discover.outputs.branch_name }}
