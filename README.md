@@ -105,8 +105,7 @@ This template depends on a workflow stored in **`shared-workflows`**:
 | `project_template_update.yml`          | Regenerates the solution when the upstream template changes.  Will create a pull request with the changes. |
 | `staging_provisioning.yml`      | Provisions Azure resources for the Staging environment.     |
 | `staging_deployment.yml`      | Builds and deploys the application to the Staging environment on pushes to the develop branch or via manual dispatch.   |
-| `production_provisioning.yml`      |Provisions Azure resources for the Production environment.    |
-| `prod_deployment.yml`      |Builds and deploys the application to the Production environment on pushes to the master branch or via manual dispatch.   |
+| `prod_provisioning.yml`      |Builds and deploys the application to the Production environment on pushes to the master branch or via manual dispatch.   |
 | `prod_deployment.yml`      |Builds and deploys the application to the Production environment on pushes to the master branch or via manual dispatch.   |
 | `dbmigrations_production.yml`      |Runs database migrations in production.|
 | `dbmigrations_staging.yml`      |Runs database migrations in staging.|
