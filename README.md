@@ -54,14 +54,25 @@ When the upstream template updates, a scheduled workflow will:
 
 ---
 
-## ⚡️ Quick Start
+### ⚡️ Quick Start
 
-```bash
-cookiecutter gh:your-org/project.cookiecutter   # or local path
+#### Option A - run directly from Github
+
+```
+cookiecutter gh:your-org/project.cookiecutter --checkout main  
 cd <MyApp>
 dotnet build
 dotnet run --project AppHost   
 ```
+
+#### Option B - clone locally
+Clone the template repo locally and point Cookiecutter at the folder:
+```
+cookiecutter /path/to/project.cookiecutter
+cd <MyApp>
+dotnet build
+dotnet run --project AppHost   
+```   
 
 *(In Visual Studio, simply set **AppHost** as the startup project and press ▶️ Run.)*
 
