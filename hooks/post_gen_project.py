@@ -111,6 +111,8 @@ include_azure_application_insights = as_bool("{{ cookiecutter.include_azure_appl
 include_azure_storage              = as_bool("{{ cookiecutter.include_azure_storage }}")
 include_audit                      = as_bool("{{ cookiecutter.include_audit }}")
 include_oauth                      = as_bool("{{ cookiecutter.include_oauth }}")
+use_existing_azure_key_vault       = as_bool("{{ cookiecutter.use_existing_azure_key_vault }}")
+use_existing_azure_storage         = as_bool("{{ cookiecutter.use_existing_azure_storage }}")
 
 oauth_app_name = "{{ cookiecutter.oauth_app_name }}"
 oauth_audience = "{{ cookiecutter.oauth_audience }}"
@@ -127,10 +129,8 @@ azure_subscription_id = "{{ cookiecutter.azure_subscription_id }}"
 azure_location = "{{ cookiecutter.azure_location }}"
 azure_application_insights_name = "{{ cookiecutter.azure_application_insights_name }}"
 azure_application_insights_connection = "{{ cookiecutter.azure_application_insights_connection }}"
-use_existing_azure_key_vault = as_bool("{{ cookiecutter.use_existing_azure_key_vault }}")
 azure_key_vault_name  = "{{ cookiecutter.azure_key_vault_name }}"
 azure_key_vault_connection = "{{ cookiecutter.azure_key_vault_connection }}"
-use_existing_azure_storage = as_bool("{{ cookiecutter.use_existing_azure_storage }}")
 azure_storage_account_name = "{{ cookiecutter.azure_storage_account_name }}"
 azure_storage_connection = "{{ cookiecutter.azure_storage_connection }}"
 azure_storage_blob_name = "{{ cookiecutter.azure_storage_blob_name }}"
@@ -334,9 +334,6 @@ if not include_azure_storage:
 COOKIE_FILE = ROOT / ".cookiecutter.json"
 
 if not COOKIE_FILE.exists():
-    template_source = {{ cookiecutter._template | tojson }}
-    template_checkout = {{ cookiecutter._checkout | default('', true) | tojson }}    
-       
     ctx: dict[str, str | None] = {
         "assembly_name": "{{ cookiecutter.assembly_name }}",
         "root_namespace": "{{ cookiecutter.assembly_name | lower | replace(' ', '_') | replace('-', '_') }}",
@@ -350,9 +347,11 @@ if not COOKIE_FILE.exists():
         "include_azure_key_vault": "{{ cookiecutter.include_azure_key_vault | default(false) }}",
         "include_azure_application_insights": "{{ cookiecutter.include_azure_application_insights | default(false) }}",
         "include_azure_storage": "{{ cookiecutter.include_azure_storage | default(false)  }}",
+        "use_existing_azure_key_vault": "{{ cookiecutter.use_existing_azure_key_vault | default(false) }}",
+        "use_existing_azure_storage": "{{ cookiecutter.use_existing_azure_storage | default(false) }}",
         # Template source
-        "template_source": template_source,
-        "template_ref": template_checkout
+        "template_source": "{{ cookiecutter._template }}",
+        "template_ref": "{{ cookiecutter._checkout | default('') }}", 
     }
     
     ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
@@ -453,9 +452,7 @@ def resolve_template_sha_from_remote(template_ref: str, checkout: str | None) ->
     return None
 
 
-template_source = {{ cookiecutter._template | tojson }}
-
-_template_ref = template_source
+_template_ref =  "{{ cookiecutter._template }}"
 _checkout_ref = "{{ cookiecutter._checkout | default('') }}".strip() or None
 template_sha = resolve_template_sha_from_remote(_template_ref, _checkout_ref)
 
