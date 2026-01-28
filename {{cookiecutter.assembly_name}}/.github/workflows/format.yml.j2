@@ -49,7 +49,6 @@ jobs:
     uses: {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/format.yml@main
 {%raw%}
     with:
-      dotnet_version: "9.0.x"
       branch: ${{ needs.discover.outputs.branch_name }}
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}

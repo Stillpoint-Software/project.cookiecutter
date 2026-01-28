@@ -9,6 +9,6 @@ public class Initial( MongoDBResourceRunner<Initial> resourceRunner ) : Migratio
 {
     public override async Task UpAsync( CancellationToken cancellationToken = default )
     {
-        await resourceRunner.DocumentsFromAsync( ["{{cookiecutter.database_name}}/sample/sample.json"], cancellationToken );
+        await resourceRunner.DocumentsFromAsync( ["{{cookiecutter.database_name| lower}}/sample/sample.json"], cancellationToken );
     }
 }

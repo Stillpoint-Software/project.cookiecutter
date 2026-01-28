@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace {{cookiecutter.assembly_name}}.Infrastructure.Extensions;
 
-
 public static class WebApplicationBuilderExtensions
 {
     private static readonly ConcurrentDictionary<IHostApplicationBuilder, StartupRegistryCollection> _startupCollections = new();

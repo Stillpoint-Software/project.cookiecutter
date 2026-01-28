@@ -22,16 +22,12 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
             .Build();
     }
 
-    {% if cookiecutter.include_audit == 'yes' %}
+    {% if cookiecutter.include_audit  %}
 {% include 'templates/audit/api_sample_get_postgresql.cs' %}
 {%else%}
 private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, int sampleId)
 {
-    var sample = await _sampleService.GetSampleAsync(sampleId);
-
-    context.AddValidationResult(new ValidationFailure(nameof(sample), "Sample does not exist"));
-    context.CancelAfter();
-    return null;
+    return await _sampleService.GetSampleAsync(sampleId);
 }
 {% endif %}
 }

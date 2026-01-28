@@ -1,0 +1,77 @@
+﻿<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug_api" />
+    <BuildType Name="Debug_migration" />
+    <BuildType Name="Release" />
+    <BuildType Name="Release_api" />
+    <BuildType Name="Release_migration" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".cookiecutter.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="version.json" />
+  </Folder>
+   <Folder Name="/Solution Items/.github/" />
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/create_release.yml" />
+    <File Path=".github/workflows/create_test_report.yml" />
+    <File Path=".github/workflows/format.yml" />
+    <File Path=".github/workflows/issue_branch.yml" />
+    <File Path=".github/workflows/pack_and_publish.yml" />
+    <File Path=".github/workflows/project_template_update.yml" />
+    <File Path=".github/workflows/run_tests.yml" />
+    <File Path=".github/workflows/unlist_package.yml" />
+  </Folder>
+  <Folder Name="/Solution Tests/">
+    <Project Path="tests/{{cookiecutter.assembly_name}}.Tests/{{cookiecutter.assembly_name}}.Tests.csproj">
+      <Build Solution="Debug_migration|*" Project="false" />
+      <Build Solution="Release_migration|*" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Api/{{cookiecutter.assembly_name}}.Api.csproj">
+    <Build Solution="Debug_migration|*" Project="false" />
+    <Build Solution="Release_migration|*" Project="false" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.AppHost/{{cookiecutter.assembly_name}}.AppHost.csproj">
+    <BuildType Solution="Debug_api|*" Project="Debug" />
+    <BuildType Solution="Debug_migration|*" Project="Debug" />
+    <BuildType Solution="Release_api|*" Project="Release" />
+    <BuildType Solution="Release_migration|*" Project="Release" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Core/{{cookiecutter.assembly_name}}.Core.csproj">
+    <BuildType Solution="Debug_api|*" Project="Debug" />
+    <BuildType Solution="Debug_migration|*" Project="Debug" />
+    <BuildType Solution="Release_api|*" Project="Release" />
+    <BuildType Solution="Release_migration|*" Project="Release" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Data.Abstractions/{{cookiecutter.assembly_name}}.Data.Abstractions.csproj">
+    <Build Solution="Debug_migration|*" Project="false" />
+    <Build Solution="Release_migration|*" Project="false" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}/{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj">
+    <Build Solution="Debug_migration|*" Project="false" />
+    <Build Solution="Release_migration|*" Project="false" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Infrastructure/{{cookiecutter.assembly_name}}.Infrastructure.csproj">
+    <BuildType Solution="Debug_api|*" Project="Debug" />
+    <BuildType Solution="Debug_migration|*" Project="Debug" />
+    <BuildType Solution="Release_api|*" Project="Release" />
+    <BuildType Solution="Release_migration|*" Project="Release" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.Migrations/{{cookiecutter.assembly_name}}.Migrations.csproj">
+    <BuildType Solution="Debug_api|*" Project="Debug" />
+    <BuildType Solution="Debug_migration|*" Project="Debug" />
+    <BuildType Solution="Release_api|*" Project="Release" />
+    <BuildType Solution="Release_migration|*" Project="Release" />
+  </Project>
+  <Project Path="src/{{cookiecutter.assembly_name}}.ServiceDefaults/{{cookiecutter.assembly_name}}.ServiceDefaults.csproj">
+    <BuildType Solution="Debug_api|*" Project="Debug" />
+    <BuildType Solution="Debug_migration|*" Project="Debug" />
+    <BuildType Solution="Release_api|*" Project="Release" />
+    <BuildType Solution="Release_migration|*" Project="Release" />
+  </Project>
+</Solution>

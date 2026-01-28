@@ -10,7 +10,7 @@
 
 using System.Security.Cryptography;
 
-namespace {{cookiecutter.assembly_name}}.Api.Identity;
+namespace {{cookiecutter.assembly_name}}.Core.Identity;
 
 public class CryptoRandom : Random
 {

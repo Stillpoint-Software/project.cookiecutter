@@ -3,14 +3,15 @@ using {{ cookiecutter.assembly_name }}.Core.Services;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Entity;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services.Models;
-using Microsoft.Extensions.Logging;
 {% if cookiecutter.database == "PostgreSql" %}
 using Microsoft.EntityFrameworkCore;
-{%endif %}
+{% endif %}
 {% if cookiecutter.database == "MongoDb" %}
-using MongoDB.Bson;
+using Microsoft.EntityFrameworkCore;
+{% if cookiecutter.include_audit %}
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+{% endif %}
+using MongoDB.Bson;
 {% endif %}
 
 namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}.Services;

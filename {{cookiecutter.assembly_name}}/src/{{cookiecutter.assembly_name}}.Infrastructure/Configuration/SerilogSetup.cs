@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Sinks.OpenTelemetry;
+
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
 
@@ -7,12 +9,18 @@ public static class SerilogSetup
 {
     public static void ConfigureSerilog(IHostApplicationBuilder builder)
     {
-        builder.Services.AddSerilog((ctx, lc) => lc
+        builder.Services.AddSerilog((services, lc) => lc
                 .Enrich.FromLogContext()
+                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Services(services)
                 .WriteTo.OpenTelemetry(options =>
                 {
                     options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+
+                    options.Protocol = OtlpProtocol.HttpProtobuf;
+
                     var headers = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"]?.Split(',') ?? [];
+
                     foreach (var header in headers)
                     {
                         var (key, value) = header.Split('=') switch

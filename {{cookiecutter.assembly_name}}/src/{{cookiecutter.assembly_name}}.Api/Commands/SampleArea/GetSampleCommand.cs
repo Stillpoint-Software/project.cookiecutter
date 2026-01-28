@@ -1,4 +1,4 @@
-﻿{% if cookiecutter.include_audit == 'yes' %}
+﻿{% if cookiecutter.include_audit %}
 using Audit.Core;
 {% endif %}
 using FluentValidation.Results;

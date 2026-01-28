@@ -1,4 +1,4 @@
-﻿{% if cookiecutter.include_audit == 'yes' %}
+﻿{% if cookiecutter.include_audit %}
 using Audit.Core;
 {% endif %}
 using Hyperbee.Pipeline;
@@ -12,8 +12,7 @@ using {{ cookiecutter.assembly_name }}.Data.Abstractions.Entity;
 using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
 using {{ cookiecutter.assembly_name }}.Core.Extensions;
 using Microsoft.Extensions.Logging;
-
-{% if cookiecutter.database=='MongoDb' %}
+{% if cookiecutter.database == 'MongoDb' %}
 using MongoDB.Bson;
 {% endif %}
 namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
@@ -60,23 +59,22 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         });
     }
 
-    {% if cookiecutter.include_audit == "yes" %}
-    {% include 'templates/audit/api_sample_create.cs' %} 
-    {% else %}
-    private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context, Sample sample)
+    {% if cookiecutter.include_audit %}
+{% include 'templates/audit/api_sample_create.cs' %}
+{% else %}
+private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context, Sample sample)
 {
-
     var sampleId = await _sampleService.CreateSampleAsync(sample);
 
     return new SampleDefinition(
-    {% if cookiecutter.database == "PostgreSql" %}
-        sample.Id,   
-    {% elif cookiecutter.database == "MongoDb" %}
-        sample.Id.ToString(),
+        {% if cookiecutter.database == "PostgreSql" %}
+sample.Id,   
+        {% elif cookiecutter.database == "MongoDb" %}
+sample.Id.ToString(),
+        {% endif %}
+sample.Name,
+            sample.Description
+        );
+    }
     {% endif %}
-        sample.Name,
-        sample.Description
-    );
-}
-{% endif %}
 }

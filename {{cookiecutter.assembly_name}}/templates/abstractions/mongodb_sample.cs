@@ -3,7 +3,7 @@ private string _description;
 [Key]
 public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 public required string Name { get; set; }
-{% if cookiecutter.include_audit == "yes" %}
+{% if cookiecutter.include_audit %}
 [Secure]
 public required string Description
 {

@@ -1,5 +1,5 @@
 
-{% if cookiecutter.include_audit == 'yes' %}
+{% if cookiecutter.include_audit %}
 {% include 'templates/audit/api_sample_update_postgresql.cs' %}
 {% else %}
 public record UpdateSample(int sampleId, string Name, string Description);

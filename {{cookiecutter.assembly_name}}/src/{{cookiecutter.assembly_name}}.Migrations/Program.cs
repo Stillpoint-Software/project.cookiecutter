@@ -8,7 +8,7 @@ using {{ cookiecutter.assembly_name }}.Migrations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 {% endif %}
 
-namespace  {{cookiecutter.assembly_name }}.Migrations;
+namespace {{cookiecutter.assembly_name }}.Migrations;
 
 public class Program
 {
@@ -25,10 +25,10 @@ public class Program
         startupInstance.ConfigureServices(builder.Services);
 
         {% if cookiecutter.database == "PostgreSql" %}
-        builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name}}"); // this allows for telemetry
+        builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}"); // this allows for telemetry
         {% elif cookiecutter.database == "MongoDb" %}
         //mongodb here
-        builder.AddMongoDBClient("{{cookiecutter.database_name}}");
+        builder.AddMongoDBClient("{{cookiecutter.database_name| lower}}");
         {% endif %}
 
         //Setup OpenTelemetry
@@ -41,11 +41,11 @@ public class Program
                 .AddUserSecrets<Program>(optional: true);
 
         //Connection string from aspire
-        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
+        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name| lower}}"];
 
         if (string.IsNullOrEmpty(connectionString))
         {
-            throw new ArgumentNullException(nameof(connectionString), "Connection string for '{{cookiecutter.database_name}}' is not configured.");
+            throw new ArgumentNullException(nameof(connectionString), "Connection string for '{{cookiecutter.database_name| lower}}' is not configured.");
         }
 
         //This line is needed to run migrations.  However, this doesn't allow for telemetry
@@ -63,8 +63,5 @@ public class Program
 
         // Call Startup's Configure method to configure the middleware pipeline
         startupInstance.Configure(app, app.Environment);
-
-        // Run the application
-        app.Run();
     }
 }

@@ -1,21 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-  {% if cookiecutter.database == "MongoDb" %}
-  <PackageReference Include = "Aspire.Hosting.MongoDB" Version = "9.3.1" />
-  <PackageReference Include = "Aspire.MongoDB.Driver.v3" Version = "9.3.1" />
-  <PackageReference Include = "MongoDB.Bson" Version = "3.4.0" />
-  {% endif %}
-   <PackageReference Include="Lamar" Version="15.0.1" />
-  <PackageReference Include="System.Text.Json" Version="9.0.7" />
-  <PackageReference Include = "Microsoft.EntityFrameworkCore" Version = "9.0.7" />
-  <PackageReference Include = "Microsoft.Extensions.Options" Version = "9.0.7" />
-</ItemGroup>
+ {% if cookiecutter.include_audit %} 
  <ItemGroup>
-    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Core\{{cookiecutter.assembly_name}}.Core.csproj" />
-  </ItemGroup>
+  <ProjectReference Include="..\{{ cookiecutter.assembly_name }}.Core\{{ cookiecutter.assembly_name|lower  }}.Core.csproj" />
+</ItemGroup>
+ {% endif %} 
+ {% if cookiecutter.database == "MongoDb" %}
+ <ItemGroup>
+  <PackageReference Include="MongoDB.Bson" />
+  <PackageReference Include="MongoDB.Driver" />
+</ItemGroup>
+ {% endif %}
+
 </Project>

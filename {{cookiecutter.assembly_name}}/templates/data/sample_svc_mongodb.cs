@@ -13,19 +13,16 @@ public class SampleService : ISampleService
     {
         try
         {
-            var sample = await _dbContext.Samples.Where(x => x.Id.ToString() == sampleId)
-              .FirstOrDefaultAsync();
+            if (!ObjectId.TryParse(sampleId, out var existingId))
+                return null;
 
-            if (sample != null)
-            {
-                return new SampleDefinition(
-                    sample.Id.ToString(),
-                    sample.Name,
-                    sample.Description
-              );
-            }
+            var sample = await _dbContext.Samples
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == existingId);
 
-            return new SampleDefinition(sample.Id.ToString(), sample.Name, sample.Description);
+            return sample is null
+               ? null
+               : new SampleDefinition(sample.Id.ToString(), sample.Name, sample.Description);
         }
         catch (Exception ex)
         {
@@ -38,16 +35,10 @@ public class SampleService : ISampleService
     {
         try
         {
-            var existingSample = await _dbContext.Samples.Where(x => x.Id == sample.Id)
-             .FirstOrDefaultAsync();
+            await _dbContext.Samples.AddAsync(sample);
+            await _dbContext.SaveChangesAsync();
 
-            if (existingSample == null)
-            {
-                await _dbContext.Samples.AddAsync(sample);
-                await _dbContext.SaveChangesAsync();
-                return sample.Id.ToString();
-            }
-            return existingSample.Id.ToString();
+            return sample.Id.ToString();
         }
         catch (Exception ex)
         {
@@ -55,8 +46,8 @@ public class SampleService : ISampleService
         }
     }
 
-    {% if cookiecutter.include_audit == "yes" %}
-    public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
+    {% if cookiecutter.include_audit %}
+public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
 {
     try
     {
@@ -88,24 +79,24 @@ public class SampleService : ISampleService
     }
 }
 {% else %}
-public async Task<SampleDefinition> UpdateSampleAsync( string sampleId, string name, string description)
+public async Task<SampleDefinition> UpdateSampleAsync(string sampleId, string name, string description)
 {
     try
     {
-        var existingSample = await _dbContext.Samples.Where(x => x.Id.ToString() == sampleId)
-              .FirstOrDefaultAsync();
+        if (!ObjectId.TryParse(sampleId, out var oid))
+            throw new ServiceException(nameof(UpdateSampleAsync), "Invalid sample id.");
 
+        var existingSample = await _dbContext.Samples.FirstOrDefaultAsync(x => x.Id == oid);
 
-        _dbContext.Entry(existingSample).CurrentValues.SetValues(new
-        {
-            Name = name,
-            Description = description
-        });
+        if (existingSample is null)
+            throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
+
+        existingSample.Name = name;
+        existingSample.Description = description;
 
         await _dbContext.SaveChangesAsync();
 
-        return new SampleDefinition
-        (
+        return new SampleDefinition(
             existingSample.Id.ToString(),
             existingSample.Name ?? string.Empty,
             existingSample.Description ?? string.Empty
@@ -116,6 +107,6 @@ public async Task<SampleDefinition> UpdateSampleAsync( string sampleId, string n
         throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
     }
 
-    }
-    {% endif %}
+}
+{% endif %}
 }

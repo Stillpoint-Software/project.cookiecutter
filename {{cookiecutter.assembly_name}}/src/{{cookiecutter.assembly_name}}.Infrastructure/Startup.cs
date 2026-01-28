@@ -3,22 +3,34 @@ using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Hyperbee.Pipeline;
 using Lamar;
-using {{cookiecutter.assembly_name}}.Core.Validators;
-using {{cookiecutter.assembly_name}}.Infrastructure.Configuration;
-using {{cookiecutter.assembly_name}}.Infrastructure.Data;
-using {{cookiecutter.assembly_name}}.Infrastructure.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-{% if cookiecutter.include_oauth == "yes" %}
+using Microsoft.OpenApi;
+using System;
+using {{ cookiecutter.assembly_name }}.Core.Validators;
+using {{ cookiecutter.assembly_name }}.Infrastructure.Configuration;
+using {{ cookiecutter.assembly_name }}.Infrastructure.Extensions;
+using {{ cookiecutter.assembly_name }}.Infrastructure.Data;
+using {{ cookiecutter.assembly_name }}.Infrastructure.IoC;
+{% if cookiecutter.database == "PostgreSql" %}
+using {{ cookiecutter.assembly_name }}.Data.PostgreSql;
+{% elif cookiecutter.database == "MongoDb" %}
+using {{cookiecutter.assembly_name}}.Data.MongoDb;
+{% endif %}
+
+{% if cookiecutter.include_oauth %}
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Logging;
 using System.Security.Claims;
+using System.Net.Http.Headers;
+{% endif %}
+{% if cookiecutter.include_azure_key_vault %}
+using AzureKeyVaultEmulator.Aspire.Client;
 {% endif %}
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure;
@@ -57,8 +69,8 @@ public class Startup : IStartupRegistry
 
         services.AddDataProtection();
 
+        {% if cookiecutter.include_oauth %}
         //Authorization and Authentication
-        {% if cookiecutter.include_oauth == "yes" %}
         services.AddAuthentication(options => //BF review hyperbee AddSecurity implementation
         {
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -66,8 +78,8 @@ public class Startup : IStartupRegistry
         })
         .AddJwtBearer(options =>
         {
-            options.Authority = $"https://{Configuration["OAuth:Domain"]}/"; // Issuer
-            options.Audience = Configuration["OAuth:Audience"];
+            options.Authority = $"https://{builder.Configuration["OAuth_Domain"]}/"; // Issuer
+            options.Audience = builder.Configuration["OAuth_Audience"];
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 NameClaimType = ClaimTypes.NameIdentifier
@@ -75,24 +87,34 @@ public class Startup : IStartupRegistry
         });
 
         services.AddAuthorization();
+
+        // Configure AuthSettings from environment variables
+        services.Configure<AuthSettings>(options =>
+        {
+            options.Domain = builder.Configuration["OAuth_Domain"];
+            options.Audience = builder.Configuration["OAuth_Audience"];
+            options.ClientId = builder.Configuration["OAuth_Api_ClientId"];
+            options.ClientSecret = builder.Configuration["OAuth_Api_ClientSecret"];
+        });
         {% endif %}
 
-        //Azure Blob Storage and Key Vault
-        {% if cookiecutter.include_azure_key_vault == "yes" %}
-        var connectionString = builder.Configuration["ConnectionStrings:secrets"];
-
-        if (!string.IsNullOrEmpty(connectionString))
+        {% if cookiecutter.include_azure_key_vault %}
+        //Azure Key Vault integration
+        var vaultUri = builder.Configuration.GetConnectionString("keyvault");
+        if (vaultUri != null && vaultUri.Contains("localhost", StringComparison.OrdinalIgnoreCase))
         {
-            //Add Azure Key Vault secret values to app configuration
-            builder.Configuration.AddAzureKeyVaultSecrets("secrets");
-
-            //add Azure Key Vault 'SecretClient' to DI Container
-            builder.AddAzureKeyVaultClient("secrets");
+            //Integration using emulator with Secrets, keys, only implementation
+            builder.Services.AddAzureKeyVaultEmulator(vaultUri, secrets: true, keys: true, certificates: false);
+        }
+        else
+        {
+            builder.Configuration.AddAzureKeyVaultSecrets(connectionName: "keyvault");
         }
         {% endif %}
-        {% if cookiecutter.include_azure_storage == "yes" %}
-        //Add Azure Blob Storage to DI Container
-        builder.AddAzureBlobClient("blobs");
+
+        {% if cookiecutter.include_azure_storage %}
+        //Azure Blob Storage
+        builder.AddAzureBlobServiceClient("test");
         {% endif %}
 
         // Add Pipeline and Proxy Service
@@ -102,16 +124,17 @@ public class Startup : IStartupRegistry
         });
 
         // Add Swagger for API documentation
-        services.AddEndpointsApiExplorer(); //AV this has to go first
+        services.AddEndpointsApiExplorer(); //This has to go first
+        {% if cookiecutter.include_oauth %}
+        services.AddSwagger(builder.Configuration);
+        {% else %}
         services.AddSwaggerGen();
+        {% endif %}
 
         // Add services to the container before calling Build
         builder.Services.AddProblemDetails();
 
-        // Configure Serilog setup
-        SerilogSetup.ConfigureSerilog(builder);
-
-        {% if cookiecutter.include_audit == 'yes' %}
+        {% if cookiecutter.include_audit %}
         // Configure audit setup
         AuditSetup.ConfigureAudit(builder);
         {% endif %}
@@ -119,16 +142,35 @@ public class Startup : IStartupRegistry
 
     public void ConfigureApp(WebApplication app, IWebHostEnvironment env)
     {
+        // Configure the HTTP request pipeline.
+        app.UseExceptionHandler();
+        app.UseSwagger(options =>
+        {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+        });
+
+        {% if cookiecutter.include_oauth %}
+        app.UseAuthentication();
+        app.UseAuthorization();
+        {% endif %}
+
         // Use appropriate middleware based on the environment
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
             app.UseSwaggerUI(c =>
            {
-               c.SwaggerEndpoint("/swagger/v1/swagger.json", "PAspire API v1");
-               c.RoutePrefix = string.Empty;  // Makes Swagger UI available at the root ("/")
+               c.SwaggerEndpoint("/swagger/v1/swagger.json", "{{cookiecutter.assembly_name}} API v1");
+               c.RoutePrefix = string.Empty;
+               {% if cookiecutter.include_oauth %}
+               c.OAuthAppName(app.Configuration["OAuth_Api_AppName"]);
+               c.OAuthScopeSeparator(" ");
+               c.OAuthUsePkce();
 
+               // preset id and secret in dev
+               c.OAuthClientId(app.Configuration["OAuth_Swagger_Id"]);
+               c.OAuthClientSecret(app.Configuration["OAuth_Swagger_Secret"]);
+               {% endif %}
            });
         }
         else
@@ -143,8 +185,6 @@ public class Startup : IStartupRegistry
                 c.AllowAnyMethod();
                 c.AllowAnyHeader();
             });
-
-            app.UseAuthorization();
         }
     }
 

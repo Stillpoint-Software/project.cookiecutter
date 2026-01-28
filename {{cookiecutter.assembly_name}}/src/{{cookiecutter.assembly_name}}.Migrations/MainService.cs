@@ -1,23 +1,22 @@
 ﻿using Hyperbee.Migrations;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace {{cookiecutter.assembly_name }}.Migrations;
 
 public class MainService : BackgroundService
 {
-    //private readonly IHostApplicationLifetime _applicationLifetime;
+    private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<MainService> _logger;
     private readonly IServiceProvider _serviceProvider;
     public const string ActivitySourceName = "Migrations";
     private readonly ActivitySource _activitySource = new(ActivitySourceName);
 
-    public MainService(IServiceProvider serviceProvider, ILogger<MainService> logger)
+    public MainService(IServiceProvider serviceProvider, IHostApplicationLifetime applicationLifetime, ILogger<MainService> logger)
     {
-        _logger = logger;
         _serviceProvider = serviceProvider;
+        _applicationLifetime = applicationLifetime;
+        _logger = logger;
+
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,12 +32,22 @@ public class MainService : BackgroundService
         {
             var runner = provider.GetRequiredService<MigrationRunner>();
             await runner.RunAsync(stoppingToken);
+
+            _logger.LogInformation("Migrations completed successfully.");
+            Environment.ExitCode = 0;
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            _logger.LogInformation("Migrations cancelled due to shutdown.");
         }
         catch (Exception ex)
         {
             _logger.LogCritical(ex, "Migrations encountered an unhandled exception.");
+            Environment.ExitCode = 1;
         }
-
-        // _applicationLifetime.StopApplication();
+        finally
+        {
+            _applicationLifetime.StopApplication();
+        }
     }
 }

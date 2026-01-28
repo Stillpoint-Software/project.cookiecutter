@@ -11,7 +11,7 @@ namespace {{cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
 
 public class DatabaseContext : DbContext
 {
-    {% if cookiecutter.include_audit == 'yes' and cookiecutter.database =="PostgreSql" %}
+    {% if cookiecutter.include_audit and cookiecutter.database =="PostgreSql" %}
     private readonly string encryptionKey = "mysecretkey"; // use azure key vault for this
     {% endif %}
 

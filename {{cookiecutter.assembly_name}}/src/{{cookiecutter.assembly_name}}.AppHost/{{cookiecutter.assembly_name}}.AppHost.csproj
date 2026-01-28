@@ -1,12 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
-
+  <Project Sdk="Aspire.AppHost.Sdk/13.1">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <IsAspireHost>true</IsAspireHost>
   </PropertyGroup>
 
@@ -16,28 +10,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Yarp.ReverseProxy"  />
     {% if cookiecutter.database == "PostgreSql" %}
-    <PackageReference Include="Aspire.Hosting.PostgreSql" Version="9.3.1" />
-    <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="Aspire.Hosting.PostgreSql" />
+    <PackageReference Include="Npgsql" />
     {% elif cookiecutter.database == "MongoDb" %}
-    <PackageReference Include="Aspire.Hosting.MongoDB" Version="9.3.1" />
-    <PackageReference Include="Aspire.MongoDB.Driver.v3" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.MongoDB" />
+    <PackageReference Include="Aspire.MongoDB.Driver.v3"  />
     {% endif %}
-    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
-    {% if cookiecutter.include_azure_application_insights == "yes" %}
-    <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="9.3.1" />
+    {% if cookiecutter.include_azure_application_insights %}
+    <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights"  />
     {% endif %}
-    {% if cookiecutter.include_azure_key_vault == "yes" %}
-    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="9.3.1" />
+    {% if cookiecutter.include_azure_key_vault %}
+    <PackageReference Include="Aspire.Hosting.Azure.KeyVault"  />
+    <PackageReference Include="AzureKeyVaultEmulator.Aspire.Hosting" />
+    <PackageReference Include="AzureKeyVaultEmulator.Client" />
     {% endif %}
-    {% if cookiecutter.include_azure_storage == "yes" %}
-    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="9.3.1" />
+    {% if cookiecutter.include_azure_storage %}
+    <PackageReference Include="Aspire.Hosting.Azure.Storage"  />
     {% endif %}
-    {% if cookiecutter.include_azure_service_bus == "yes" %}
-    <PackageReference Include="Aspire.Hosting.Azure.ServiceBus" Version="9.3.1" />
-    {% endif %}
-
   </ItemGroup>
-
 </Project>

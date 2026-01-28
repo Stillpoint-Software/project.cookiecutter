@@ -11,13 +11,15 @@ public static class SerilogExtensions
     /// Configure Serilog to write to the console and OpenTelemetry for Aspire structured logs.
     /// </summary>
     /// <remarks>
-    /// ⚠ This method MUST be called before the <see cref="OpenTelemetryLoggingExtensions.AddOpenTelemetry(ILoggingBuilder)"/> method to still send structured logs via OpenTelemetry. ⚠
+    /// This method MUST be called before the <see cref="OpenTelemetryLoggingExtensions.AddOpenTelemetry(ILoggingBuilder)"/> method to still send structured logs via OpenTelemetry.  
     /// </remarks>
     internal static IHostApplicationBuilder ConfigureSerilog(this IHostApplicationBuilder builder)
     {
         var otlpExporter = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
         var serviceName = builder.Configuration["OTEL_SERVICE_NAME"] ?? "Unknown";
+
         Log.Logger.Information("App Service name {Name}", serviceName);
+
         builder.Services.AddSerilog((_, loggerConfiguration) =>
         {
             // Configure Serilog as desired here for every project (or use IConfiguration for configuration variations between projects)

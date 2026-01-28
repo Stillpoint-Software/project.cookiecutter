@@ -7,11 +7,14 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     base.OnModelCreating(modelBuilder);
 
-    var sampleIndex = new CreateIndexModel<Sample>(Builders<Sample>.IndexKeys
-                           .Ascending(x => x.Name)
-                           .Ascending(x => x.Description));
+    modelBuilder.Entity<Sample>(entity =>
+         {
+             entity.ToCollection("sample");
+             entity.HasKey(e => e.Id);
 
-    modelBuilder.Entity<Sample>().ToCollection("sample");
+             entity.HasIndex(e => e.Name);
+             entity.HasIndex(e => new { e.Name, e.Description });
+         });
 }
 
 protected override void ConfigureConventions(ModelConfigurationBuilder configBuilder)

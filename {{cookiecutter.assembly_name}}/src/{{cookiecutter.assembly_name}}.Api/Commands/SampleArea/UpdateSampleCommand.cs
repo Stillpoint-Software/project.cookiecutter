@@ -1,6 +1,6 @@
-﻿{% if cookiecutter.include_audit == 'yes' %}
+﻿{% if cookiecutter.include_audit %}
 using Audit.Core;
-using {{ cookiecutter.assembly_name}}.Data.{{ cookiecutter.database}};
+using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database}};
 {% endif %}
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;

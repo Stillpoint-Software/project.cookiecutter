@@ -29,7 +29,7 @@ public class SampleService : ISampleService
         }
     }
 
-    {% if cookiecutter.include_audit == "yes" %}
+    {% if cookiecutter.include_audit %}
 {% include 'templates/audit/data_sample_svc_postgresql.cs' %}
 {% else %}
 public async Task<int> CreateSampleAsync(Sample sample)
@@ -50,6 +50,12 @@ public async Task UpdateSampleAsync(int sampleId, string name, string descriptio
 {
     try
     {
+        var sample = await _databaseContext.Samples.FindAsync(sampleId);
+        if (sample == null)
+        {
+            throw new ServiceException(nameof(UpdateSampleAsync), "Sample not found.");
+        }
+        _databaseContext.Entry(sample).CurrentValues.SetValues(new { Name = name, Description = description });
         await _databaseContext.SaveChangesAsync();
     }
     catch (Exception ex)

@@ -1,8 +1,8 @@
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
-{% if cookiecutter.include_audit == "yes" %}
+{% if cookiecutter.include_audit %}
 using Audit.Core;
-{% endif %} 
+{% endif %}
 {% if cookiecutter.database == "PostgreSql" %}
 using Audit.PostgreSql.Configuration;
 {% elif cookiecutter.database == "MongoDb" %}
@@ -23,11 +23,11 @@ public static class AuditSetup
     {
         {% if cookiecutter.database == "PostgreSql" %}
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name}}"];
+        var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name |lower}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
         {% endif %}
         {% if cookiecutter.database == "MongoDb" %}
-        var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_name}}");
+        var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_name |lower}}");
         {% include 'templates/audit/api_mongodb.cs' %}
         {% endif %}
 
@@ -47,8 +47,8 @@ public static class AuditSetup
         })
         .ToList();
 
-                auditEvent.List = auditList;
-            }
+        auditEvent.List = auditList;
+    }
 
             if (scope.Event.Target?.Type == null || scope.Event.Target?.New == null)
             {
@@ -56,25 +56,25 @@ public static class AuditSetup
             }
 
             SetSecuredProperties(scope.Event, _dbContext);
-        } );
+} );
     }
 
     private static void SetSecuredProperties(AuditEvent auditEvent, DatabaseContext _dbContext)
+{
+    var secureProperties = auditEvent.Target.New?.GetType()
+        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        .Where(p => p.GetCustomAttribute<SecureAttribute>() != null);
+    if (secureProperties != null)
     {
-        var secureProperties = auditEvent.Target.New?.GetType()
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetCustomAttribute<SecureAttribute>() != null);
-        if (secureProperties != null)
+        foreach (var property in secureProperties)
         {
-            foreach (var property in secureProperties)
-            {
-                {% if cookiecutter.database == 'PostgreSql' %}
-                {% include 'templates/audit/api_security_postgresql.cs' %}
-                {% endif %}
-                {% if cookiecutter.database == 'MongoDb' %}
-                {% include 'templates/audit/api_security_mongodb.cs' %}
-                {% endif %}
-            }
+            {% if cookiecutter.database == 'PostgreSql' %}
+            {% include 'templates/audit/api_security_postgresql.cs' %}
+            {% endif %}
+            {% if cookiecutter.database == 'MongoDb' %}
+            {% include 'templates/audit/api_security_mongodb.cs' %}
+            {% endif %}
         }
     }
+}
 }

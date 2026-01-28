@@ -24,7 +24,7 @@ jobs:
   publish:
     needs: set-config
 {% endraw %}
-    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/nbgv_dotnet_pack.yml@main
+    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/pack_and_publish.yml@main
 {% raw %}
     with:
       build_configuration: ${{ needs.set-config.outputs.build_configuration }}

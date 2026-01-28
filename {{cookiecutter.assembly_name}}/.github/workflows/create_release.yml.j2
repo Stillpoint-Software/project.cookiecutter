@@ -55,7 +55,7 @@ jobs:
   set-version:
     needs: validate-inputs
 {% endraw %}
-    uses: {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/nbgv_set_version.yml@main
+    uses: {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/set_version.yml@main
 {% raw %}
     with:
       target_branch: ${{ github.ref_name }}
@@ -69,7 +69,7 @@ jobs:
   create-release:
     needs: set-version
 {% endraw %}
-    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/nbgv_prepare_release.yml@main
+    uses:  {{cookiecutter.github_organization}}/shared-workflows/.github/workflows/prepare_release.yml@main
 {% raw %}
     with:
       target_branch: ${{ github.ref_name }}

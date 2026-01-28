@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Lamar" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.IdentityModel.Logging" />
     {% if cookiecutter.database == "PostgreSql" %}
-    <PackageReference Include = "Aspire.Npgsql" Version = "9.3.1" />
-    <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version = "9.3.1" />
+    <PackageReference Include = "Aspire.Npgsql" />
+    <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"  />
     {% elif cookiecutter.database == "MongoDb" %}
-    <PackageReference Include = "MongoDB.EntityFrameworkCore" Version = "9.0.0" />
+    <PackageReference Include = "MongoDB.EntityFrameworkCore" />
     {% endif %}
-    <PackageReference Include = "System.Text.Json" Version = "9.0.7" />
   </ItemGroup >
-    <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Core\{{cookiecutter.assembly_name}}.Core.csproj" />
   </ItemGroup>
 </Project>

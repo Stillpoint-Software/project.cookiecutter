@@ -16,29 +16,26 @@ using {{ cookiecutter.assembly_name }}.Infrastructure.Extensions;
 using {{ cookiecutter.assembly_name }}.ServiceDefaults;
 {% if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
-using Microsoft.Extensions.DependencyInjection;
 {% endif %}
-
+{% if cookiecutter.include_oauth %}
+using Microsoft.AspNetCore.Authentication;
+using System.Net.Http.Headers;
+{% endif %}
 
 namespace {{cookiecutter.assembly_name }}.Api;
 
 public class Startup : IStartupRegistry
 {
-
     public void ConfigureServices(IHostApplicationBuilder builder, IServiceCollection services)
     {
         builder.UseStartup <{{ cookiecutter.assembly_name }}.Infrastructure.Startup > ();
 
         builder.AddBackgroundServices();
         {% if cookiecutter.database == "PostgreSql" %}
-        builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name}}");
+        builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}");
         {% elif cookiecutter.database == "MongoDb" %}
         {% include 'templates/api/mongodb_service.cs' %}
         {% endif %}
-        {% if cookiecutter.include_azure_service_bus == "yes" %}
-        builder.AddOpenTelemetry();
-        {% endif %}
-
         builder.Configuration
         .AddEnvironmentVariables()
         .AddUserSecrets<Program>(optional: true);
@@ -47,8 +44,11 @@ public class Startup : IStartupRegistry
     public void ConfigureApp(WebApplication app, IWebHostEnvironment env)
     {
         app.MapDefaultEndpoints();
+        {% if cookiecutter.include_oauth %}
+        app.MapSampleEndpoints().RequireAuthorization();
+        {% else %}
         app.MapSampleEndpoints();
-        //app.MapControllers();
+        {% endif %}
     }
 
     public void ConfigureScanner(ServiceRegistry services)
@@ -65,8 +65,10 @@ public class Startup : IStartupRegistry
 
         services.For<ISampleService>().Use<SampleService>();
         services.For<IPrincipalProvider>().Use<PrincipalProvider>();
-        services.For<ICreateSampleCommand>().Use<CreateSampleCommand>();
         services.For<IValidatorProvider>().Use<ValidatorProvider>();
+        services.For<ICreateSampleCommand>().Use<CreateSampleCommand>();
+        services.For<IGetSampleCommand>().Use<GetSampleCommand>();
+        services.For<IUpdateSampleCommand>().Use<UpdateSampleCommand>();
     }
     private static void ContainerDiagnostics(IApplicationBuilder app, IHostEnvironment env)
     {
@@ -95,7 +97,8 @@ public static class StartupExtensions
         services.AddHostedService<HeartbeatService>();       
          */
     }
-    {% if cookiecutter.include_azure_service_bus == "yes" %}
-    {% include "templates/api/service_bus.cs" %}
-{% endif %}
 }
+
+{% if cookiecutter.include_oauth %}
+{% include 'templates/api/authentication.cs' %}
+{% endif %}

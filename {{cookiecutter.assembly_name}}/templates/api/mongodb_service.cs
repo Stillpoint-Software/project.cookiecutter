@@ -1,4 +1,4 @@
-builder.AddMongoDBClient("{{cookiecutter.database_name}}");
+builder.AddMongoDBClient("{{cookiecutter.database_name | lower}}");
 builder.Services.AddScoped<DatabaseContext>(svc =>
 {
     var scope = svc.CreateScope();

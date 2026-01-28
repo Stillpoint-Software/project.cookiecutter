@@ -1,59 +1,67 @@
-using {{cookiecutter.assembly_name}}.AppHost;
-using Microsoft.Extensions.Hosting;
-{% if cookiecutter.include_azure_key_vault == "yes" %}
-using Azure.Provisioning.KeyVault;
-{% endif %}
-{% if cookiecutter.include_azure_storage == "yes" %}
-using Azure.Provisioning.Storage;
-{% endif %}
+
+using {{ cookiecutter.assembly_name}}.AppHost.Extensions;
+using Aspire.Hosting.ApplicationModel;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-{% if cookiecutter.include_azure_key_vault == "yes" %}
-{% include 'templates/host/key_vault.cs' %}
+{% if cookiecutter.include_oauth %}
+//get's user secrets
+var issuer = builder.Configuration["OAuth:Domain"];
+var audience = builder.Configuration["OAuth:Audience"];
+var apiAppName = builder.Configuration["OAuth:AppName"];
+var apiClientId = builder.Configuration["OAuth:Api:ClientId"];
+var apiClientSecret = builder.Configuration["OAuth:Api:ClientSecret"];
+var swaggerClientId = builder.Configuration["OAuth:Swagger:ClientId"];
+var swaggerClientSecret = builder.Configuration["OAuth:Swagger:ClientSecret"];{% endif %}
+{% if cookiecutter.include_azure_key_vault %}
+//Key Vault Resource
+var keyVault = builder.AddKeyVaultResource();
 {% endif %}
-
-{% if cookiecutter.include_azure_application_insights == "yes" %}
-{% include 'templates/host/application_insights.cs' %}
+{% if cookiecutter.include_azure_storage %}
+//Storage Resource
+var storageResource = builder.AddStorageResource();
 {% endif %}
-
-{% if cookiecutter.include_azure_storage == "yes" %}
-{% include 'templates/host/storage.cs' %}
+{% if cookiecutter.include_azure_application_insights %}
+// Application Insights Resource
+var insights = builder.AddAppInsightsResource();
 {% endif %}
-
-{% if cookiecutter.include_azure_service_bus == "yes" %}
-
-{% include 'templates/host/service_bus.cs' %}
-{% endif %}
-
 {% if cookiecutter.database == "PostgreSql" %}
-{% include 'templates/host/postgresql.cs' %}
+//Database Resource
+var projectdb = builder.AddPostgreSQLResource();
 {% elif cookiecutter.database == "MongoDb" %}
-{% include 'templates/host/mongodb.cs' %}
+var projectdb = builder.AddMongoDBResource();
 {% endif %}
 
-var projectdb = dbServer.AddDatabase("{{cookiecutter.database_name}}");
-
-var apiService = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name|lower }}-api")
+var apiServiceBuilder = builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Api>("{{cookiecutter.assembly_name|lower }}-api")
+    .WaitFor(projectdb)
     .WithReference(projectdb)
     .WithExternalHttpEndpoints()
-    {% if cookiecutter.include_azure_key_vault == "yes" %}
-    .WithReference(secrets)
+    {% if cookiecutter.include_azure_key_vault %}
+    .WaitFor(keyVault)
+    .WithReference(keyVault)
     {% endif %}
-    {% if cookiecutter.include_azure_application_insights == "yes" %}
-    .WithReference(appInsights)
+{% if cookiecutter.include_azure_storage %}
+    .WaitFor(storageResource.Blobs)
+    .WithReference(storageResource.Blobs)
     {% endif %}
-    {% if cookiecutter.include_azure_service_bus == "yes" %}
-    .WithReference( serviceBus ).WaitFor( serviceBus )
+{% if cookiecutter.include_oauth %}
+    .WithEnvironment("OAuth_Domain", issuer)
+    .WithEnvironment("OAuth_Audience", audience)
+    .WithEnvironment("OAuth_Api_AppName", apiAppName)
+    .WithEnvironment("OAuth_Api_ClientId", apiClientId)
+    .WithEnvironment("OAuth_Api_ClientSecret", apiClientSecret)
+    .WithEnvironment("OAuth_Swagger_Id", swaggerClientId)
+    .WithEnvironment("OAuth_Swagger_Secret", swaggerClientSecret)
     {% endif %}
-    .WithSwaggerUI()
+    .WithHttpHealthCheck("/alive")
     .WithHttpHealthCheck("/health");
 
-builder.AddProject<Projects.{{cookiecutter.assembly_name}}_Migrations>("{{cookiecutter.assembly_name|lower }}-migrations")
+var migrationsBuilder = builder.AddProject<Projects.{{ cookiecutter.assembly_name }}_Migrations>("{{cookiecutter.assembly_name|lower }}-migrations")
     .WaitFor(projectdb)
-     {% if cookiecutter.include_azure_application_insights == "yes" %}
-     .WithReference( appInsights )
-     {% endif %}
-    .WithReference( projectdb );  
-
+    .WithReference(projectdb);
+{% if cookiecutter.include_azure_application_insights %}
+apiServiceBuilder = apiServiceBuilder.WaitFor(insights);
+apiServiceBuilder = apiServiceBuilder.WithReference(insights);
+migrationsBuilder = migrationsBuilder.WithReference(insights);
+{% endif %}
 builder.Build().Run();
