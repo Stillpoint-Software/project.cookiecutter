@@ -27,6 +27,7 @@ trim_trailing_whitespace = true
 [*.{cs,vb}]
 # Organize usings
 dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
 # this. preferences
 dotnet_style_qualification_for_field = false:silent
 dotnet_style_qualification_for_property = false:silent
@@ -71,6 +72,10 @@ dotnet_naming_symbols.constant_fields.required_modifiers          = const
 # C# Coding Conventions       #
 ###############################
 [*.cs]
+# Using directive preferences
+csharp_using_directive_placement = outside_namespace:warning
+# Enable IDE rules for organizing usings
+dotnet_diagnostic.IDE0005.severity = warning
 # var preferences
 csharp_style_var_for_built_in_types = true:silent
 csharp_style_var_when_type_is_apparent = true:silent
