@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
  {% if cookiecutter.include_audit %} 
  <ItemGroup>
-  <ProjectReference Include="..\{{ cookiecutter.assembly_name }}.Core\{{ cookiecutter.assembly_name|lower  }}.Core.csproj" />
+  <ProjectReference Include="..\{{ cookiecutter.assembly_name }}.Core\{{ cookiecutter.assembly_name }}.Core.csproj" />
 </ItemGroup>
  {% endif %} 
  {% if cookiecutter.database == "MongoDb" %}
