@@ -38,9 +38,5 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
 
-  {% if cookiecutter.include_oauth %}
-  <ItemGroup>
-  <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-</ItemGroup>
-  {% endif %}
+
 </Project>
