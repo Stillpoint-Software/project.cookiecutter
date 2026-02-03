@@ -18,6 +18,5 @@
     "azure_key_vault_name": "",
     "azure_key_vault_connection": "",
     "azure_storage_account_name": "",
-    "azure_storage_connection": "",
-    "azure_storage_blob_name": ""
+    "azure_storage_connection": ""
 }
