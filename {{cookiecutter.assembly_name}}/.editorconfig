@@ -18,7 +18,9 @@ indent_size = 2
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
-charset = utf-8-bom
+charset = utf-8
+max_line_length = 100
+trim_trailing_whitespace = true
 ###############################
 # .NET Coding Conventions     #
 ###############################
