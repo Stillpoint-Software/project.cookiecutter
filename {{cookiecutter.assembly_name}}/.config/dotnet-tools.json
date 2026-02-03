@@ -5,7 +5,7 @@
         "csharpier": {
             "version": "1.2.5",
             "commands": [
-                "dotnet-csharpier"
+                "csharpier"
             ]
         }
     }
