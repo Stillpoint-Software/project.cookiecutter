@@ -333,6 +333,18 @@ if not include_azure_storage:
 # ────────────────────────────────────────────
 COOKIE_FILE = ROOT / ".cookiecutter.json"
 
+# Prune deprecated keys if the template provides them (works for fresh gen + reruns)
+try:
+    from prune_cookiecutter_json import load_deprecation_keys, prune_cookiecutter_file
+    dep_file = ROOT / "templates" / "deprecations.json"
+    if dep_file.exists() and COOKIE_FILE.exists():
+        keys = load_deprecation_keys(dep_file)
+        removed = prune_cookiecutter_file(COOKIE_FILE, keys)
+        if removed:
+            print(f"🧹 Pruned deprecated keys from .cookiecutter.json: {', '.join(removed)}")
+except Exception as e:
+    print(f"⚠️  Deprecations prune skipped: {e}")
+
 if not COOKIE_FILE.exists():
     ctx: dict[str, str | None] = {
         "assembly_name": "{{ cookiecutter.assembly_name }}",

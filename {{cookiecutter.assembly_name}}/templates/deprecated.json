@@ -1,0 +1,4 @@
+{
+    "deployment_environment": "development",
+    "include_azure_service_bus": "no"
+}
