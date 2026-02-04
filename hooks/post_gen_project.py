@@ -4,9 +4,10 @@ Post-gen hook for Cookiecutter
 
 Flow:
 1) Perform cleanup & write .cookiecutter.json (without template_sha initially)
-2) Rename workflow files (*.j2 → no suffix)
-3) ALWAYS initialize a Git repo & create the initial commit
-4) THEN resolve the template commit SHA from the remote
+2) Set user secrets from secrets-config.json (SKIP in CI)
+3) Rename workflow files (*.j2 → no suffix)
+4) Initialize a Git repo & create the initial commit (SKIP in CI)
+5) Resolve the template commit SHA from the remote (SKIP in CI)
    - If found: write it into .cookiecutter.json and commit that change
    - If missing: print a notice that the template SHA needs to be added
 """
@@ -20,36 +21,112 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
-
-# ════════════════════════════════════════════════════════════════════════════════
-# CONFIGURATION
-# ════════════════════════════════════════════════════════════════════════════════
+from typing import Iterable
 
 ROOT = Path.cwd()
 HOOKS_DIR = Path(__file__).parent
 SECRETS_CONFIG_FILE = HOOKS_DIR / "secrets-config.json"
 
-# ────────────────────────────────────────────────────────────────────────────────
-# Cookiecutter context values
-# ────────────────────────────────────────────────────────────────────────────────
-CONTEXT = {
+# ────────────────────────────────────────────
+# Shell helpers
+# ────────────────────────────────────────────
+def run_out(args: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
+    try:
+        cp = subprocess.run(
+            args,
+            cwd=str(cwd) if cwd else None,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        return cp.returncode, (cp.stdout or "").strip(), (cp.stderr or "").strip()
+    except Exception as e:
+        return 1, "", str(e)
+
+
+def run(cmd: list[str], cwd: Path | None = None) -> None:
+    p = subprocess.run(cmd, cwd=str(cwd) if cwd else None, text=True, capture_output=True)
+    if p.returncode != 0:
+        print(f"❌ Command failed: {' '.join(cmd)}", file=sys.stderr)
+        if p.stdout.strip():
+            print(p.stdout, file=sys.stderr)
+        if p.stderr.strip():
+            print(p.stderr, file=sys.stderr)
+        raise SystemExit(p.returncode)
+
+
+def git_available() -> bool:
+    return run_out(["git", "--version"])[0] == 0
+
+
+def is_git_repo(path: Path) -> bool:
+    return run_out(["git", "-C", str(path), "rev-parse", "--is-inside-work-tree"])[0] == 0
+
+
+def env_truthy(name: str) -> bool:
+    return (os.getenv(name) or "").strip().lower() in ("1", "true", "yes", "y")
+
+
+def should_skip_user_secrets() -> bool:
+    """Check if running in CI environment (GitHub Actions, etc.)"""
+    return env_truthy("GITHUB_ACTIONS") or env_truthy("CI")
+
+
+def as_bool(v) -> bool:
+    """Handles bools and stringified bools (True/False, true/false, etc.)"""
+    if isinstance(v, bool):
+        return v
+    s = str(v).strip().lower()
+    return s in ("true", "1", "y", "yes")
+
+
+# ────────────────────────────────────────────
+# Filesystem helpers
+# ────────────────────────────────────────────
+def rm(item: Path | str) -> None:
+    p = Path(item)
+    try:
+        if p.exists():
+            if p.is_dir():
+                shutil.rmtree(p, ignore_errors=True)
+                print(f"🗑️  Removed dir:  {p}")
+            else:
+                try:
+                    p.unlink()
+                except FileNotFoundError:
+                    pass
+                print(f"🗑️  Removed file: {p}")
+    except Exception as e:
+        print(f"⚠️  Failed to remove {p}: {e}")
+
+
+def rm_each(paths: Iterable[Path | str]) -> None:
+    for p in paths:
+        rm(p)
+
+
+# ────────────────────────────────────────────
+# 1) Cookiecutter answers (rendered by Jinja2)
+# ────────────────────────────────────────────
+# All cookiecutter variables - Jinja2 renders these at generation time
+COOKIECUTTER_CONTEXT = {
+    # Core
     "assembly_name": "{{ cookiecutter.assembly_name }}",
-    "database": "{{ cookiecutter.database }}",
-    "database_name": "{{ cookiecutter.database_name }}",
-    "github_organization": "{{ cookiecutter.github_organization }}",
+    "root_namespace": "{{ cookiecutter.assembly_name | lower | replace(' ', '_') | replace('-', '_') }}",
     "api_app_name": "{{ cookiecutter.api_app_name }}",
     "api_web_url": "{{ cookiecutter.api_web_url }}",
+    "database": "{{ cookiecutter.database }}",
+    "database_name": "{{ cookiecutter.database_name | lower }}",
+    "github_organization": "{{ cookiecutter.github_organization }}",
+    # Feature flags
+    "include_audit": "{{ cookiecutter.include_audit }}",
+    "include_oauth": "{{ cookiecutter.include_oauth }}",
     "include_azure_key_vault": "{{ cookiecutter.include_azure_key_vault }}",
     "include_azure_application_insights": "{{ cookiecutter.include_azure_application_insights }}",
     "include_azure_storage": "{{ cookiecutter.include_azure_storage }}",
-    "include_audit": "{{ cookiecutter.include_audit }}",
-    "include_oauth": "{{ cookiecutter.include_oauth }}",
     "use_existing_azure_key_vault": "{{ cookiecutter.use_existing_azure_key_vault }}",
     "use_existing_azure_storage": "{{ cookiecutter.use_existing_azure_storage }}",
-    "_template": "{{ cookiecutter._template }}",
-    "_checkout": "{{ cookiecutter._checkout | default('') }}",
-    # Secrets (only used when not skipping)
+    # User secrets (only used locally, not stored in .cookiecutter.json)
     "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
     "oauth_audience": "{{ cookiecutter.oauth_audience }}",
     "oauth_domain": "{{ cookiecutter.oauth_domain }}",
@@ -69,308 +146,63 @@ CONTEXT = {
     "azure_storage_account_name": "{{ cookiecutter.azure_storage_account_name }}",
     "azure_storage_connection": "{{ cookiecutter.azure_storage_connection }}",
     "azure_storage_blob_name": "{{ cookiecutter.azure_storage_blob_name }}",
+    # Template source
+    "_template": "{{ cookiecutter._template }}",
+    "_checkout": "{{ cookiecutter._checkout | default('') }}",
 }
 
-# ────────────────────────────────────────────────────────────────────────────────
-# Validation rules: declarative schema for required fields
-# ────────────────────────────────────────────────────────────────────────────────
-VALIDATION_RULES = [
-    # OAuth (secrets - skip during template update)
-    {"field": "oauth_app_name", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_audience", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_domain", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_api_audience", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_api_client_id", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_api_client_secret", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_swagger_client_id", "required_when": ["include_oauth"], "is_secret": True},
-    {"field": "oauth_swagger_client_secret", "required_when": ["include_oauth"], "is_secret": True},
-    # Azure Application Insights (secrets - skip during template update)
-    {"field": "azure_application_insights_name", "required_when": ["include_azure_application_insights"], "is_secret": True},
-    {"field": "azure_application_insights_connection", "required_when": ["include_azure_application_insights"], "is_secret": True},
-    # Azure Key Vault (secrets - skip during template update)
-    {"field": "azure_key_vault_name", "required_when": ["include_azure_key_vault", "use_existing_azure_key_vault"], "is_secret": True},
-    {"field": "azure_key_vault_connection", "required_when": ["include_azure_key_vault", "use_existing_azure_key_vault"], "is_secret": True},
-    # Azure Storage (secrets - skip during template update)
-    {"field": "azure_storage_account_name", "required_when": ["include_azure_storage", "use_existing_azure_storage"], "is_secret": True},
-    {"field": "azure_storage_connection", "required_when": ["include_azure_storage", "use_existing_azure_storage"], "is_secret": True},
-    # Azure Storage blob name (secret - skip during template update)
-    {"field": "azure_storage_blob_name", "required_when": ["include_azure_storage"], "is_secret": True},
-    # Azure common (secrets - skip during template update)
-    {
-        "field": "azure_tenant_id",
-        "is_secret": True,
-        "required_when_any": [
-            ["include_azure_key_vault", "use_existing_azure_key_vault"],
-            ["include_azure_application_insights"],
-            ["include_azure_storage", "use_existing_azure_storage"],
-        ],
-    },
-    {
-        "field": "azure_subscription_id",
-        "is_secret": True,
-        "required_when_any": [
-            ["include_azure_key_vault", "use_existing_azure_key_vault"],
-            ["include_azure_application_insights"],
-            ["include_azure_storage", "use_existing_azure_storage"],
-        ],
-    },
-    {
-        "field": "azure_location",
-        "is_secret": True,
-        "required_when_any": [
-            ["include_azure_key_vault", "use_existing_azure_key_vault"],
-            ["include_azure_application_insights"],
-            ["include_azure_storage", "use_existing_azure_storage"],
-        ],
-    },
-    {
-        "field": "azure_resource_group",
-        "is_secret": True,
-        "required_when_any": [
-            ["include_azure_key_vault", "use_existing_azure_key_vault"],
-            ["include_azure_application_insights"],
-            ["include_azure_storage", "use_existing_azure_storage"],
-        ],
-    },
-]
-
-# ────────────────────────────────────────────────────────────────────────────────
-# Cleanup rules: files to remove based on feature flags
-# ────────────────────────────────────────────────────────────────────────────────
-CLEANUP_RULES = {
-    "database_is_pg": {
-        "remove_if_true": [
-            "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/{{ cookiecutter.database_name }}",
-        ],
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.Migrations/Resources/1000-Initial/CreateSchema.sql",
-            "src/{{ cookiecutter.assembly_name }}.Core/Configuration/DatabaseConfigurationPostgres.cs",
-        ],
-    },
-    "include_azure_key_vault": {
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AzureSecretsExtensions.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Configuration/AzureKeyVaultConfiguration.cs",
-            "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Production.json",
-            "src/{{ cookiecutter.assembly_name }}.Migrations/appsettings.Staging.json",
-            "src/{{ cookiecutter.assembly_name }}.Migrations/Extensions/AzureSecretsExtensions.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Vault",
-            "src/{{ cookiecutter.assembly_name }}.AppHost/Extensions/KeyVaultExtensions.cs",
-        ],
-    },
-    "include_azure_application_insights": {
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.Core/Extensions/ApplicationInsightsExtensions.cs",
-            "src/{{ cookiecutter.assembly_name }}.AppHost/Extensions/ApplicationInsightExtensions.cs",
-        ],
-    },
-    "include_audit": {
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.Core/Security/SecureAttribute.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Security/SecurityHelper.cs",
-            "src/{{ cookiecutter.assembly_name }}.Infrastructure/Configuration/AuditSetup.cs",
-            "src/{{ cookiecutter.assembly_name }}.Infrastructure/Configuration/ListAuditEvent.cs",
-            "src/{{ cookiecutter.assembly_name }}.Infrastructure/Configuration/ListAuditModel.cs",
-        ],
-    },
-    "include_oauth": {
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.Core/Configuration/CryptoRandom.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Extensions/AuthPolicyExtensions.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Identity/AuthService.cs",
-            "src/{{ cookiecutter.assembly_name }}.Core/Identity/CryptoRandom.cs",
-            "src/{{ cookiecutter.assembly_name }}.Infrastructure/Configuration/AuthService.cs",
-            "src/{{ cookiecutter.assembly_name }}.Data/Abstractions/IAuthService.cs",
-        ],
-    },
-    "include_azure_storage": {
-        "remove_if_false": [
-            "src/{{ cookiecutter.assembly_name }}.AppHost/Extensions/StorageExtensions.cs",
-        ],
-    },
-}
-
-# ════════════════════════════════════════════════════════════════════════════════
-# HELPER FUNCTIONS
-# ════════════════════════════════════════════════════════════════════════════════
+# Convenience accessors
+assembly_name = COOKIECUTTER_CONTEXT["assembly_name"]
+database_is_pg = COOKIECUTTER_CONTEXT["database"] == "PostgreSql"
+include_azure_key_vault = as_bool(COOKIECUTTER_CONTEXT["include_azure_key_vault"])
+include_azure_application_insights = as_bool(COOKIECUTTER_CONTEXT["include_azure_application_insights"])
+include_azure_storage = as_bool(COOKIECUTTER_CONTEXT["include_azure_storage"])
+include_audit = as_bool(COOKIECUTTER_CONTEXT["include_audit"])
+include_oauth = as_bool(COOKIECUTTER_CONTEXT["include_oauth"])
+use_existing_azure_key_vault = as_bool(COOKIECUTTER_CONTEXT["use_existing_azure_key_vault"])
+use_existing_azure_storage = as_bool(COOKIECUTTER_CONTEXT["use_existing_azure_storage"])
 
 
-def as_bool(value: Any) -> bool:
-    """Convert various truthy representations to bool."""
-    if isinstance(value, bool):
-        return value
-    return str(value).strip().lower() in ("true", "1", "y", "yes")
+def get_context_value(key: str) -> str:
+    """Get a value from the cookiecutter context."""
+    return COOKIECUTTER_CONTEXT.get(key, "")
 
 
-def get_flag(name: str) -> bool:
-    """Get a boolean flag from the context."""
-    return as_bool(CONTEXT.get(name, False))
+def get_context_bool(key: str) -> bool:
+    """Get a boolean value from the cookiecutter context."""
+    return as_bool(COOKIECUTTER_CONTEXT.get(key, "false"))
 
 
-def get_value(name: str) -> str:
-    """Get a string value from the context."""
-    return CONTEXT.get(name, "")
-
-
-def is_empty(value: str | None) -> bool:
-    """Check if a value is empty or None."""
-    return value is None or str(value).strip() == ""
-
-
-def env_truthy(name: str) -> bool:
-    """Check if an environment variable is truthy."""
-    return (os.getenv(name) or "").strip().lower() in ("1", "true", "yes", "y", "on")
-
-
-def should_skip_user_secrets() -> bool:
-    """Determine if user secrets setup should be skipped."""
-    return (
-        env_truthy("CC_TEMPLATE_UPDATE")
-        or env_truthy("COOKIECUTTER_NO_INPUT")
-        or env_truthy("GITHUB_ACTIONS")
-        or env_truthy("CI")
-    )
-
-
-# ────────────────────────────────────────────────────────────────────────────────
-# Shell/subprocess helpers
-# ────────────────────────────────────────────────────────────────────────────────
-
-
-def run_out(args: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
-    """Run a command and return (return_code, stdout, stderr)."""
-    try:
-        cp = subprocess.run(
-            args,
-            cwd=str(cwd) if cwd else None,
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        return cp.returncode, (cp.stdout or "").strip(), (cp.stderr or "").strip()
-    except Exception as e:
-        return 1, "", str(e)
-
-
-def run(cmd: list[str], cwd: Path | None = None) -> None:
-    """Run a command, raising SystemExit on failure."""
-    p = subprocess.run(cmd, cwd=str(cwd) if cwd else None, text=True, capture_output=True)
-    if p.returncode != 0:
-        print(f"❌ Command failed: {' '.join(cmd)}", file=sys.stderr)
-        if p.stdout.strip():
-            print(p.stdout, file=sys.stderr)
-        if p.stderr.strip():
-            print(p.stderr, file=sys.stderr)
-        raise SystemExit(p.returncode)
-
-
-def git_available() -> bool:
-    """Check if git is available on PATH."""
-    return run_out(["git", "--version"])[0] == 0
-
-
-def is_git_repo(path: Path) -> bool:
-    """Check if a path is inside a git repository."""
-    return run_out(["git", "-C", str(path), "rev-parse", "--is-inside-work-tree"])[0] == 0
-
-
-# ────────────────────────────────────────────────────────────────────────────────
-# Filesystem helpers
-# ────────────────────────────────────────────────────────────────────────────────
-
-
-def rm(item: Path | str) -> None:
-    """Remove a file or directory."""
-    p = Path(item)
-    try:
-        if p.exists():
-            if p.is_dir():
-                shutil.rmtree(p, ignore_errors=True)
-                print(f"🗑️  Removed dir:  {p}")
-            else:
-                try:
-                    p.unlink()
-                except FileNotFoundError:
-                    pass
-                print(f"🗑️  Removed file: {p}")
-    except Exception as e:
-        print(f"⚠️  Failed to remove {p}: {e}")
-
-
-# ════════════════════════════════════════════════════════════════════════════════
-# VALIDATION
-# ════════════════════════════════════════════════════════════════════════════════
-
-
-def check_conditions(conditions: list[str]) -> bool:
-    """Check if ALL conditions in a list are true."""
-    return all(get_flag(c) for c in conditions)
-
-
-def check_any_conditions(condition_groups: list[list[str]]) -> bool:
-    """Check if ANY group of conditions is fully satisfied."""
-    return any(check_conditions(group) for group in condition_groups)
-
-
-def validate_required_fields() -> None:
-    """Validate required fields based on declarative rules."""
-    skip_secrets = should_skip_user_secrets()
+# ────────────────────────────────────────────
+# 2) User secrets from secrets-config.json
+# ────────────────────────────────────────────
+def evaluate_condition(condition) -> bool:
+    """
+    Evaluate a condition from secrets-config.json.
     
-    for rule in VALIDATION_RULES:
-        # Skip secret fields during template updates
-        if skip_secrets and rule.get("is_secret", False):
-            continue
-            
-        field = rule["field"]
-        
-        # Determine if field is required
-        is_required = False
-        if "required_when" in rule:
-            is_required = check_conditions(rule["required_when"])
-        elif "required_when_any" in rule:
-            is_required = check_any_conditions(rule["required_when_any"])
-
-        if is_required and is_empty(get_value(field)):
-            print(f"❌ Cookiecutter value '{field}' is required.", file=sys.stderr)
-            raise SystemExit(1)
+    - Single string: "include_oauth" → check if that flag is true
+    - List (AND): ["include_azure_key_vault", "use_existing_azure_key_vault"] → all must be true
+    """
+    if isinstance(condition, str):
+        return get_context_bool(condition)
+    elif isinstance(condition, list):
+        # AND condition - all must be true
+        return all(get_context_bool(c) for c in condition)
+    return False
 
 
-# ════════════════════════════════════════════════════════════════════════════════
-# CLEANUP
-# ════════════════════════════════════════════════════════════════════════════════
+def evaluate_condition_any(conditions: list) -> bool:
+    """
+    Evaluate a condition_any from secrets-config.json.
+    
+    List of conditions where ANY can be true (OR logic).
+    Each item in the list is itself a condition (AND logic within).
+    """
+    return any(evaluate_condition(c) for c in conditions)
 
 
-def perform_cleanup() -> None:
-    """Remove files based on cleanup rules."""
-    # Compute derived flags
-    flags = {
-        "database_is_pg": get_value("database") == "PostgreSql",
-        "include_azure_key_vault": get_flag("include_azure_key_vault"),
-        "include_azure_application_insights": get_flag("include_azure_application_insights"),
-        "include_audit": get_flag("include_audit"),
-        "include_oauth": get_flag("include_oauth"),
-        "include_azure_storage": get_flag("include_azure_storage"),
-    }
-
-    for flag_name, rules in CLEANUP_RULES.items():
-        flag_value = flags.get(flag_name, False)
-
-        if flag_value and "remove_if_true" in rules:
-            for path in rules["remove_if_true"]:
-                rm(ROOT / path)
-
-        if not flag_value and "remove_if_false" in rules:
-            for path in rules["remove_if_false"]:
-                rm(ROOT / path)
-
-
-# ════════════════════════════════════════════════════════════════════════════════
-# USER SECRETS
-# ════════════════════════════════════════════════════════════════════════════════
-
-
-def load_secrets_config() -> dict[str, Any]:
-    """Load secrets configuration from external JSON file."""
+def load_secrets_config() -> dict:
+    """Load the secrets configuration from JSON file."""
     if not SECRETS_CONFIG_FILE.exists():
         print(f"⚠️  Secrets config not found: {SECRETS_CONFIG_FILE}")
         return {}
@@ -382,129 +214,224 @@ def load_secrets_config() -> dict[str, Any]:
         return {}
 
 
-def should_apply_secret_group(group_config: dict[str, Any]) -> bool:
-    """Determine if a secret group should be applied based on its conditions."""
-    if "condition" in group_config:
-        cond = group_config["condition"]
-        if isinstance(cond, list):
-            return check_conditions(cond)
-        return get_flag(cond)
-    
-    if "condition_any" in group_config:
-        return check_any_conditions(group_config["condition_any"])
-    
-    return True
-
-
-def set_user_secret(project_path: Path, secret_name: str, secret_value: str) -> None:
-    """Set a single user secret."""
-    run(["dotnet", "user-secrets", "set", secret_name, secret_value, "--project", str(project_path)])
-
-
-def setup_user_secrets() -> None:
-    """Initialize and configure user secrets for the AppHost project."""
-    if should_skip_user_secrets():
+def set_user_secrets(apphost_csproj: Path) -> None:
+    """Set user secrets based on secrets-config.json."""
+    config = load_secrets_config()
+    if not config:
         return
-
-    assembly_name = get_value("assembly_name")
-    apphost_csproj = ROOT / f"src/{assembly_name}.AppHost" / f"{assembly_name}.AppHost.csproj"
-
-    print(f"ℹ️  AppHost project path: {apphost_csproj}")
-
-    if not apphost_csproj.exists():
-        print(f"⚠️  AppHost project not found: {apphost_csproj}")
-        return
-
-    print("⚠️  Please wait... initializing user-secrets")
-    run(["dotnet", "user-secrets", "init", "--project", str(apphost_csproj)])
-
-    secrets_config = load_secrets_config()
     
-    for group_name, group_config in secrets_config.items():
-        if not should_apply_secret_group(group_config):
+    print("🔐 Setting user secrets...")
+    
+    for section_name, section in config.items():
+        # Check if this section's condition is met
+        should_apply = False
+        
+        if "condition" in section:
+            should_apply = evaluate_condition(section["condition"])
+        elif "condition_any" in section:
+            should_apply = evaluate_condition_any(section["condition_any"])
+        else:
+            # No condition means always apply
+            should_apply = True
+        
+        if not should_apply:
             continue
+        
+        print(f"  📦 {section_name}")
+        
+        secrets = section.get("secrets", {})
+        for secret_key, context_key in secrets.items():
+            value = get_context_value(context_key)
+            if value and value.strip():
+                run([
+                    "dotnet", "user-secrets", "set", secret_key, value,
+                    "--project", str(apphost_csproj)
+                ])
+            else:
+                print(f"    ⚠️  Skipping {secret_key} (empty value)")
 
-        secrets = group_config.get("secrets", {})
-        for secret_name, context_key in secrets.items():
-            value = get_value(context_key)
-            if not is_empty(value):
-                set_user_secret(apphost_csproj, secret_name, value)
 
-
-# ════════════════════════════════════════════════════════════════════════════════
-# COOKIECUTTER JSON
-# ════════════════════════════════════════════════════════════════════════════════
-
-
-def prune_deprecated_keys() -> None:
-    """Prune deprecated keys from .cookiecutter.json if deprecations file exists."""
-    cookie_file = ROOT / ".cookiecutter.json"
-    dep_file = ROOT / "templates" / "deprecations.json"
-
-    if not dep_file.exists() or not cookie_file.exists():
+def require_secrets_non_empty() -> None:
+    """Validate that required secrets have values based on enabled features."""
+    config = load_secrets_config()
+    if not config:
         return
+    
+    errors = []
+    
+    for section_name, section in config.items():
+        # Check if this section's condition is met
+        should_validate = False
+        
+        if "condition" in section:
+            should_validate = evaluate_condition(section["condition"])
+        elif "condition_any" in section:
+            should_validate = evaluate_condition_any(section["condition_any"])
+        
+        if not should_validate:
+            continue
+        
+        secrets = section.get("secrets", {})
+        for secret_key, context_key in secrets.items():
+            value = get_context_value(context_key)
+            if not value or not value.strip():
+                errors.append(f"{context_key} (required for {section_name})")
+    
+    if errors:
+        print("❌ Missing required values:", file=sys.stderr)
+        for err in errors:
+            print(f"   - {err}", file=sys.stderr)
+        raise SystemExit(1)
 
-    try:
-        from prune_cookiecutter_json import load_deprecation_keys, prune_cookiecutter_file
 
-        keys = load_deprecation_keys(dep_file)
-        removed = prune_cookiecutter_file(cookie_file, keys)
-        if removed:
-            print(f"🧹 Pruned deprecated keys from .cookiecutter.json: {', '.join(removed)}")
-    except Exception as e:
-        print(f"⚠️  Deprecations prune skipped: {e}")
+# ────────────────────────────────────────────
+# 3) AppHost user-secrets (skip in CI)
+# ────────────────────────────────────────────
+apphost_csproj = ROOT / f"src/{assembly_name}.AppHost" / f"{assembly_name}.AppHost.csproj"
+
+print(f"ℹ️  AppHost project path: {apphost_csproj}")
+
+if not apphost_csproj.exists():
+    print(f"⚠️  AppHost project not found: {apphost_csproj}")
+
+if should_skip_user_secrets():
+    print("ℹ️  Running in CI environment - skipping user secrets")
+else:
+    # Validate required secrets
+    require_secrets_non_empty()
+    
+    if apphost_csproj.exists():
+        print("⏳ Please wait... initializing user-secrets")
+        run(["dotnet", "user-secrets", "init", "--project", str(apphost_csproj)])
+        set_user_secrets(apphost_csproj)
 
 
-def write_cookiecutter_json() -> None:
-    """Write .cookiecutter.json with project context (without template_sha initially)."""
-    cookie_file = ROOT / ".cookiecutter.json"
+# ────────────────────────────────────────────
+# 4) Conditional cleanup
+# ────────────────────────────────────────────
+# Database
+if not database_is_pg:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Migrations/Resources/1000-Initial/CreateSchema.sql",
+        ROOT / f"src/{assembly_name}.Core/Configuration/DatabaseConfigurationPostgres.cs",
+    ])
+else:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Migrations/Resources/1000-Initial/{COOKIECUTTER_CONTEXT['database_name']}",
+    ])
 
-    if cookie_file.exists():
-        return
+# Azure Key Vault
+if not include_azure_key_vault:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Core/Extensions/AzureSecretsExtensions.cs",
+        ROOT / f"src/{assembly_name}.Core/Configuration/AzureKeyVaultConfiguration.cs",
+        ROOT / f"src/{assembly_name}.Migrations/appsettings.Production.json",
+        ROOT / f"src/{assembly_name}.Migrations/appsettings.Staging.json",
+        ROOT / f"src/{assembly_name}.Migrations/Extensions/AzureSecretsExtensions.cs",
+        ROOT / f"src/{assembly_name}.Core/Vault",
+        ROOT / f"src/{assembly_name}.AppHost/Extensions/KeyVaultExtensions.cs",
+    ])
 
-    assembly_name = get_value("assembly_name")
-    root_ns = assembly_name.lower().replace(" ", "_").replace("-", "_")
+# Azure Application Insights
+if not include_azure_application_insights:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Core/Extensions/ApplicationInsightsExtensions.cs",
+        ROOT / f"src/{assembly_name}.AppHost/Extensions/ApplicationInsightExtensions.cs",
+    ])
 
+# Audit
+if not include_audit:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Core/Security/SecureAttribute.cs",
+        ROOT / f"src/{assembly_name}.Core/Security/SecurityHelper.cs",
+        ROOT / f"src/{assembly_name}.Infrastructure/Configuration/AuditSetup.cs",
+        ROOT / f"src/{assembly_name}.Infrastructure/Configuration/ListAuditEvent.cs",
+        ROOT / f"src/{assembly_name}.Infrastructure/Configuration/ListAuditModel.cs",
+    ])
+
+# OAuth
+if not include_oauth:
+    rm_each([
+        ROOT / f"src/{assembly_name}.Core/Configuration/CryptoRandom.cs",
+        ROOT / f"src/{assembly_name}.Core/Extensions/AuthPolicyExtensions.cs",
+        ROOT / f"src/{assembly_name}.Core/Identity/AuthService.cs",
+        ROOT / f"src/{assembly_name}.Core/Identity/CryptoRandom.cs",
+        ROOT / f"src/{assembly_name}.Infrastructure/Configuration/AuthService.cs",
+        ROOT / f"src/{assembly_name}.Data/Abstractions/IAuthService.cs"
+    ])
+
+# Azure Storage
+if not include_azure_storage:
+    rm_each([
+        ROOT / f"src/{assembly_name}.AppHost/Extensions/StorageExtensions.cs",
+    ])
+
+
+# ────────────────────────────────────────────
+# 5) Persist minimal replay context (without template_sha)
+# ────────────────────────────────────────────
+COOKIE_FILE = ROOT / ".cookiecutter.json"
+
+# Prune deprecated keys if the template provides them
+try:
+    import importlib.util
+    prune_script = HOOKS_DIR / "prune_cookiecutter_json.py"
+    if prune_script.exists():
+        spec = importlib.util.spec_from_file_location("prune_cookiecutter_json", prune_script)
+        prune_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(prune_module)
+        
+        dep_file = HOOKS_DIR / "deprecated.json"
+        if dep_file.exists() and COOKIE_FILE.exists():
+            keys = prune_module.load_deprecation_keys(dep_file)
+            removed = prune_module.prune_cookiecutter_file(COOKIE_FILE, keys)
+            if removed:
+                print(f"🧹 Pruned deprecated keys from .cookiecutter.json: {', '.join(removed)}")
+except Exception as e:
+    print(f"⚠️  Deprecations prune skipped: {e}")
+
+if not COOKIE_FILE.exists():
+    # Only store non-secret values
     ctx = {
-        "assembly_name": assembly_name,
-        "root_namespace": root_ns,
-        "api_app_name": get_value("api_app_name"),
-        "api_web_url": get_value("api_web_url"),
-        "database": root_ns,
-        "database_name": get_value("database_name").lower(),
-        "github_organization": get_value("github_organization"),
-        "include_audit": get_value("include_audit"),
-        "include_oauth": get_value("include_oauth"),
-        "include_azure_key_vault": get_value("include_azure_key_vault"),
-        "include_azure_application_insights": get_value("include_azure_application_insights"),
-        "include_azure_storage": get_value("include_azure_storage"),
-        "use_existing_azure_key_vault": get_value("use_existing_azure_key_vault"),
-        "use_existing_azure_storage": get_value("use_existing_azure_storage"),
-        "template_source": get_value("_template"),
-        "template_ref": get_value("_checkout"),
+        "assembly_name": COOKIECUTTER_CONTEXT["assembly_name"],
+        "root_namespace": COOKIECUTTER_CONTEXT["root_namespace"],
+        "api_app_name": COOKIECUTTER_CONTEXT["api_app_name"],
+        "api_web_url": COOKIECUTTER_CONTEXT["api_web_url"],
+        "database": COOKIECUTTER_CONTEXT["database"],
+        "database_name": COOKIECUTTER_CONTEXT["database_name"],
+        "github_organization": COOKIECUTTER_CONTEXT["github_organization"],
+        "include_audit": COOKIECUTTER_CONTEXT["include_audit"],
+        "include_oauth": COOKIECUTTER_CONTEXT["include_oauth"],
+        "include_azure_key_vault": COOKIECUTTER_CONTEXT["include_azure_key_vault"],
+        "include_azure_application_insights": COOKIECUTTER_CONTEXT["include_azure_application_insights"],
+        "include_azure_storage": COOKIECUTTER_CONTEXT["include_azure_storage"],
+        "use_existing_azure_key_vault": COOKIECUTTER_CONTEXT["use_existing_azure_key_vault"],
+        "use_existing_azure_storage": COOKIECUTTER_CONTEXT["use_existing_azure_storage"],
+        # NOTE: User secrets are NOT stored here - they are in secrets-config.json
     }
-
-    # Remove empty values
+    
+    # Only store template_source if it's a remote URL (not a local path)
+    template_source = COOKIECUTTER_CONTEXT["_template"]
+    if template_source and template_source.startswith(("gh:", "git@", "http://", "https://")):
+        ctx["template_source"] = template_source
+        
+    # Only store template_ref if it has a real value
+    template_ref = COOKIECUTTER_CONTEXT["_checkout"]
+    if template_ref and template_ref.strip() and template_ref.lower() not in ("none", ""):
+        ctx["template_ref"] = template_ref
+    
     ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
-
-    cookie_file.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
+    COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
     print("✅  .cookiecutter.json written (without template_sha)")
 
 
-# ════════════════════════════════════════════════════════════════════════════════
-# WORKFLOW FILES
-# ════════════════════════════════════════════════════════════════════════════════
-
-
-def rename_workflow_files() -> None:
-    """Rename workflow files from *.j2 to remove the suffix."""
-    workflows_dir = ROOT / ".github" / "workflows"
-
-    if not workflows_dir.exists():
-        return
-
+# ────────────────────────────────────────────
+# 6) Rename workflow files (*.j2 → no suffix)
+# ────────────────────────────────────────────
+workflows_dir = ROOT / ".github" / "workflows"
+if workflows_dir.exists():
     for jf in workflows_dir.rglob("*.j2"):
-        target = jf.with_suffix("")
+        target = jf.with_suffix("")  # drop only .j2
         if target.exists():
             print(f"⚠️  Skipped {jf.relative_to(ROOT)} (already exists: {target.name})")
             continue
@@ -515,17 +442,13 @@ def rename_workflow_files() -> None:
             print(f"⚠️  Failed to rename {jf}: {e}")
 
 
-# ════════════════════════════════════════════════════════════════════════════════
-# GIT INITIALIZATION
-# ════════════════════════════════════════════════════════════════════════════════
-
-
+# ────────────────────────────────────────────
+# 7) Initialize Git repo (SKIP in CI)
+# ────────────────────────────────────────────
 def ensure_project_git(project_dir: Path, branch: str = "main") -> None:
-    """Initialize git repository and create initial commit."""
     if not git_available():
         print("⚠️  Git not found on PATH; skipping repo init.")
         return
-
     if is_git_repo(project_dir):
         print("ℹ️  Git repo already present; skipping init.")
         return
@@ -536,7 +459,7 @@ def ensure_project_git(project_dir: Path, branch: str = "main") -> None:
         run_out(["git", "init"], cwd=project_dir)
         run_out(["git", "branch", "-M", branch], cwd=project_dir)
 
-    # Set local identity if none exists
+    # Set a local identity if none exists
     _, name, _ = run_out(["git", "config", "--get", "user.name"], cwd=project_dir)
     _, email, _ = run_out(["git", "config", "--get", "user.email"], cwd=project_dir)
     if not name:
@@ -545,37 +468,26 @@ def ensure_project_git(project_dir: Path, branch: str = "main") -> None:
         run_out(["git", "config", "user.email", "scaffolder@example.com"], cwd=project_dir)
 
     run_out(["git", "add", "-A"], cwd=project_dir)
-    code, _, err = run_out(
-        ["git", "commit", "-m", "chore(scaffold): initial commit from cookiecutter"],
-        cwd=project_dir,
-    )
+    code, _, err = run_out(["git", "commit", "-m", "chore(scaffold): initial commit from cookiecutter"], cwd=project_dir)
     if code == 0:
         print("✅  Git repo initialized and initial commit created.")
     else:
         print(f"⚠️  Git commit failed (continuing): {err}")
 
 
-# ════════════════════════════════════════════════════════════════════════════════
-# TEMPLATE SHA RESOLUTION
-# ════════════════════════════════════════════════════════════════════════════════
+if not should_skip_user_secrets():
+    ensure_project_git(ROOT)
+else:
+    print("ℹ️  Skipping git initialization (CI environment)")
 
+
+# ────────────────────────────────────────────
+# 8) Resolve template SHA (SKIP in CI)
+# ────────────────────────────────────────────
 _SHA_RE = re.compile(r"^[0-9a-f]{7,40}$", re.I)
 
 
-def is_local_path(template_ref: str) -> bool:
-    """Check if template reference is a local path."""
-    s = (template_ref or "").strip()
-    if not s:
-        return False
-    # Remote indicators
-    if s.startswith(("gh:", "git@", "http://", "https://", "git+http://", "git+https://")):
-        return False
-    # Looks like a local path
-    return True
-
-
 def to_git_url(template_ref: str) -> str | None:
-    """Convert template reference to git URL."""
     s = (template_ref or "").strip()
     if not s:
         return None
@@ -587,47 +499,27 @@ def to_git_url(template_ref: str) -> str | None:
     return None
 
 
-def resolve_sha_from_local(template_path: str, checkout: str | None) -> str | None:
-    """Resolve template commit SHA from a local git repository."""
-    if not git_available():
-        return None
-
-    path = Path(template_path)
-    if not path.exists():
-        return None
-
-    # Check if it's a git repo
-    if not is_git_repo(path):
-        return None
-
-    # If checkout is already a SHA, return it
-    if checkout and _SHA_RE.fullmatch(checkout):
-        return checkout.lower()
-
-    # Get the SHA for the specified ref or HEAD
-    ref = checkout if checkout and checkout.lower() != "none" else "HEAD"
-    code, sha, _ = run_out(["git", "rev-parse", ref], cwd=path)
-    
-    if code == 0 and sha and _SHA_RE.fullmatch(sha):
-        return sha.lower()
-
-    return None
-
-
-def resolve_sha_from_remote(template_ref: str, checkout: str | None) -> str | None:
-    """Resolve template commit SHA from remote repository."""
+def resolve_template_sha(template_ref: str, checkout: str | None) -> str | None:
     if not git_available():
         return None
 
     if checkout and _SHA_RE.fullmatch(checkout):
         return checkout.lower()
 
+    # Check if template_ref is a local git repo
+    local_path = Path(template_ref)
+    if local_path.exists() and is_git_repo(local_path):
+        code, sha, _ = run_out(["git", "rev-parse", "HEAD"], cwd=local_path)
+        if code == 0 and sha and _SHA_RE.fullmatch(sha):
+            return sha.lower()
+
+    # Fall back to remote URL logic
     git_url = to_git_url(template_ref)
     if not git_url:
         return None
 
     targets: list[str] = []
-    if checkout and checkout.lower() != "none":
+    if checkout:
         targets += [checkout, f"refs/heads/{checkout}", f"refs/tags/{checkout}"]
     else:
         targets.append("HEAD")
@@ -643,80 +535,30 @@ def resolve_sha_from_remote(template_ref: str, checkout: str | None) -> str | No
     return None
 
 
-def resolve_template_sha(template_ref: str, checkout: str | None) -> str | None:
-    """Resolve template commit SHA from local path or remote repository."""
-    # Normalize "None" string to None
-    if checkout and checkout.lower() == "none":
-        checkout = None
-
-    if is_local_path(template_ref):
-        return resolve_sha_from_local(template_ref, checkout)
-    else:
-        return resolve_sha_from_remote(template_ref, checkout)
-
-
-def update_cookiecutter_json_with_sha() -> None:
-    """Resolve template SHA and update .cookiecutter.json."""
-    template_ref = get_value("_template")
-    checkout_ref = get_value("_checkout") or None
-    template_sha = resolve_template_sha(template_ref, checkout_ref)
-
-    cookie_file = ROOT / ".cookiecutter.json"
+if not should_skip_user_secrets():
+    _template_ref = COOKIECUTTER_CONTEXT["_template"]
+    _checkout_ref = COOKIECUTTER_CONTEXT["_checkout"].strip() or None
+    template_sha = resolve_template_sha(_template_ref, _checkout_ref)
 
     if template_sha:
         print(f"✅ Template commit SHA: {template_sha}")
         try:
-            data = json.loads(cookie_file.read_text())
+            data = json.loads(COOKIE_FILE.read_text())
             data.setdefault("cookiecutter", {})["template_sha"] = template_sha
-            cookie_file.write_text(json.dumps(data, indent=4))
+            COOKIE_FILE.write_text(json.dumps(data, indent=4))
             print("📝  Updated .cookiecutter.json with template_sha")
 
             if git_available() and is_git_repo(ROOT):
-                run_out(["git", "add", str(cookie_file)], cwd=ROOT)
+                run_out(["git", "add", str(COOKIE_FILE)], cwd=ROOT)
                 short = template_sha[:12]
-                run_out(
-                    ["git", "commit", "-m", f"chore(scaffold): record template SHA {short}"],
-                    cwd=ROOT,
-                )
+                run_out(["git", "commit", "-m", f"chore(scaffold): record template SHA {short}"], cwd=ROOT)
                 print("✅  Committed template_sha to git.")
         except Exception as e:
             print(f"⚠️  Could not update/commit template_sha: {e}")
     else:
         print("⚠️  Template SHA not detected. Please add it to .cookiecutter.json as `template_sha`,")
         print("    or re-run Cookiecutter with `--checkout <branch|tag|commit>` for determinism.")
+else:
+    print("ℹ️  Skipping template SHA resolution (CI environment)")
 
-
-# ════════════════════════════════════════════════════════════════════════════════
-# MAIN
-# ════════════════════════════════════════════════════════════════════════════════
-
-
-def main() -> None:
-    """Main entry point for post-gen hook."""
-    # 1. Validate required fields
-    validate_required_fields()
-
-    # 2. Setup user secrets (if not skipped)
-    setup_user_secrets()
-
-    # 3. Perform conditional cleanup
-    perform_cleanup()
-
-    # 4. Prune deprecated keys and write .cookiecutter.json
-    prune_deprecated_keys()
-    write_cookiecutter_json()
-
-    # 5. Rename workflow files
-    rename_workflow_files()
-
-    # 6. Initialize git repository
-    ensure_project_git(ROOT)
-
-    # 7. Resolve and commit template SHA
-    update_cookiecutter_json_with_sha()
-
-    print("🎉 Post-gen hook completed")
-
-
-if __name__ == "__main__":
-    main()
+print("🎉 Post-gen hook completed")
