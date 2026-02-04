@@ -1,7 +1,7 @@
 
-{% if cookiecutter.include_audit %}
+{%- if cookiecutter.include_audit %}
 {% include 'templates/audit/api_sample_update_mongodb.cs' %}
-{% else %}
+{%- else %}
 
 public record UpdateSample(string sampleId, string Name, string Description);
 
@@ -39,4 +39,4 @@ public class UpdateSampleCommand : ServiceCommandFunction<UpdateSample, SampleDe
         );
     }
 }
-{% endif %}
+{%- endif %}

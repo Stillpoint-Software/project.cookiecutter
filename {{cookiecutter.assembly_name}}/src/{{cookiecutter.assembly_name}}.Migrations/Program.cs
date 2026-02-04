@@ -1,12 +1,13 @@
-﻿using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
-using {{ cookiecutter.assembly_name }}.ServiceDefaults;
-{% if cookiecutter.database == "PostgreSql" %}
+﻿using {{cookiecutter.assembly_name }}.Data.{{cookiecutter.database }}
+;
+using {{cookiecutter.assembly_name }}.ServiceDefaults;
+{%- if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
-using {{ cookiecutter.assembly_name }}.Migrations.Extensions;
+using {{cookiecutter.assembly_name }}.Migrations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-{% endif %}
+{%- endif %}
 
 namespace {{cookiecutter.assembly_name }}.Migrations;
 
@@ -24,12 +25,12 @@ public class Program
         var startupInstance = new Startup(builder.Configuration);
         startupInstance.ConfigureServices(builder.Services);
 
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}"); // this allows for telemetry
         {% elif cookiecutter.database == "MongoDb" %}
         //mongodb here
         builder.AddMongoDBClient("{{cookiecutter.database_name| lower}}");
-        {% endif %}
+        {%- endif %}
 
         //Setup OpenTelemetry
         builder.Services.AddOpenTelemetry()
@@ -49,12 +50,12 @@ public class Program
         }
 
         //This line is needed to run migrations.  However, this doesn't allow for telemetry
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
         builder.Services.AddNpgsqlDataSource(connectionString);
         builder.Services.AddPostgresMigrations();
         {% elif cookiecutter.database == "MongoDb" %}
         builder.Services.AddMongoDbMigrations(builder.Configuration);
-        {% endif %}
+        {%- endif %}
         builder.Services.AddHostedService<MainService>();
         builder.Services.AddDataProtection();
 

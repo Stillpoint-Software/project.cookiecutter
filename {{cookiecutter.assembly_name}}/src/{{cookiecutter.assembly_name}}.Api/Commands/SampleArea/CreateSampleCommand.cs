@@ -1,20 +1,20 @@
-﻿{% if cookiecutter.include_audit %}
+﻿{%- if cookiecutter.include_audit %}
 using Audit.Core;
-{% endif %}
+{%- endif %}
 using Hyperbee.Pipeline;
 using Hyperbee.Pipeline.Commands;
 using Hyperbee.Pipeline.Context;
-using {{ cookiecutter.assembly_name }}.Core.Commands;
-using {{ cookiecutter.assembly_name }}.Core.Commands.Middleware;
-using {{ cookiecutter.assembly_name }}.Core.Identity;
-using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services;
-using {{ cookiecutter.assembly_name }}.Data.Abstractions.Entity;
-using {{ cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
-using {{ cookiecutter.assembly_name }}.Core.Extensions;
+using {{cookiecutter.assembly_name }}.Core.Commands;
+using {{cookiecutter.assembly_name }}.Core.Commands.Middleware;
+using {{cookiecutter.assembly_name }}.Core.Identity;
+using {{cookiecutter.assembly_name }}.Data.Abstractions.Services;
+using {{cookiecutter.assembly_name }}.Data.Abstractions.Entity;
+using {{cookiecutter.assembly_name }}.Data.Abstractions.Services.Models;
+using {{cookiecutter.assembly_name }}.Core.Extensions;
 using Microsoft.Extensions.Logging;
-{% if cookiecutter.database == 'MongoDb' %}
+{%- if cookiecutter.database == 'MongoDb' %}
 using MongoDB.Bson;
-{% endif %}
+{%- endif %}
 namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 
 public record CreateSample(string Name, string Description);
@@ -59,22 +59,22 @@ public class CreateSampleCommand : ServiceCommandFunction<CreateSample, SampleDe
         });
     }
 
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
 {% include 'templates/audit/api_sample_create.cs' %}
-{% else %}
+{%- else %}
 private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context, Sample sample)
 {
     var sampleId = await _sampleService.CreateSampleAsync(sample);
 
     return new SampleDefinition(
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
 sample.Id,   
         {% elif cookiecutter.database == "MongoDb" %}
 sample.Id.ToString(),
-        {% endif %}
+        {%- endif %}
 sample.Name,
             sample.Description
         );
     }
-    {% endif %}
+    {%- endif %}
 }

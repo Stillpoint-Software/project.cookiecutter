@@ -22,12 +22,12 @@ public class GetSampleCommand : ServiceCommandFunction<int, SampleDefinition>, I
             .Build();
     }
 
-    {% if cookiecutter.include_audit  %}
+    {%- if cookiecutter.include_audit  %}
 {% include 'templates/audit/api_sample_get_postgresql.cs' %}
 {%else%}
 private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, int sampleId)
 {
     return await _sampleService.GetSampleAsync(sampleId);
 }
-{% endif %}
+{%- endif %}
 }

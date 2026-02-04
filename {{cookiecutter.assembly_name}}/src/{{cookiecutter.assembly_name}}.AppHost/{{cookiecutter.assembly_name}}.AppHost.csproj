@@ -12,23 +12,23 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Yarp.ReverseProxy"  />
-    {% if cookiecutter.database == "PostgreSql" %}
+    {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Aspire.Hosting.PostgreSql" />
     <PackageReference Include="Npgsql" />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.Hosting.MongoDB" />
     <PackageReference Include="Aspire.MongoDB.Driver.v3"  />
-    {% endif %}
-    {% if cookiecutter.include_azure_application_insights %}
+    {%- endif %}
+    {%- if cookiecutter.include_azure_application_insights %}
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights"  />
-    {% endif %}
-    {% if cookiecutter.include_azure_key_vault %}
+    {%- endif %}
+    {%- if cookiecutter.include_azure_key_vault %}
     <PackageReference Include="Aspire.Hosting.Azure.KeyVault"  />
     <PackageReference Include="AzureKeyVaultEmulator.Aspire.Hosting" />
     <PackageReference Include="AzureKeyVaultEmulator.Client" />
-    {% endif %}
-    {% if cookiecutter.include_azure_storage %}
+    {%- endif %}
+    {%- if cookiecutter.include_azure_storage %}
     <PackageReference Include="Aspire.Hosting.Azure.Storage"  />
-    {% endif %}
+    {%- endif %}
   </ItemGroup>
 </Project>

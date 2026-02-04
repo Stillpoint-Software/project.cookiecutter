@@ -15,9 +15,9 @@
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.OpenTelemetry" />
-    {% if cookiecutter.include_azure_application_insights %}
+    {%- if cookiecutter.include_azure_application_insights %}
     <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" />
-    {% endif %}
+    {%- endif %}
   </ItemGroup>
 
 </Project>

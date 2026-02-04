@@ -46,7 +46,7 @@ public class SampleService : ISampleService
         }
     }
 
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
 public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sampleId, string name, string description)
 {
     try
@@ -78,7 +78,7 @@ public async Task<SampleDefinition> UpdateSampleAsync(Sample existing, string sa
         throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
     }
 }
-{% else %}
+{%- else %}
 public async Task<SampleDefinition> UpdateSampleAsync(string sampleId, string name, string description)
 {
     try
@@ -108,5 +108,5 @@ public async Task<SampleDefinition> UpdateSampleAsync(string sampleId, string na
     }
 
 }
-{% endif %}
+{%- endif %}
 }

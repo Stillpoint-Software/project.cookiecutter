@@ -26,35 +26,35 @@
     <PackageReference Include="Hyperbee.Migrations.Providers.Postgres" />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" />
-    {% endif %}
-    {% if cookiecutter.include_audit %}
+    {%- endif %}
+    {%- if cookiecutter.include_audit %}
     <PackageReference Include="Audit.NET"  />
-    {% if cookiecutter.database =="PostgreSql" %}
+    {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB"  />
-    {% endif %} 
-    {% endif %}
-    {% if cookiecutter.include_azure_key_vault %}
+    {%- endif %} 
+    {%- endif %}
+    {%- if cookiecutter.include_azure_key_vault %}
     <PackageReference Include="AzureKeyVaultEmulator.Client" />
     <PackageReference Include="Aspire.Azure.Security.KeyVault" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets"  />
-    {% endif %}
-  {% if cookiecutter.include_azure_storage %}
+    {%- endif %}
+  {%- if cookiecutter.include_azure_storage %}
   <PackageReference Include="Aspire.Azure.Storage.Blobs"  />
-  {% endif %}
-  {% if cookiecutter.include_oauth %}
+  {%- endif %}
+  {%- if cookiecutter.include_oauth %}
   <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-  {% endif %}
+  {%- endif %}
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.ServiceDefaults\{{cookiecutter.assembly_name}}.ServiceDefaults.csproj" />
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}\{{cookiecutter.assembly_name}}.Data.{{cookiecutter.database}}.csproj" />
-  {% if cookiecutter.include_oauth %}
+  {%- if cookiecutter.include_oauth %}
   <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
-  {% endif %}
+  {%- endif %}
   </ItemGroup>
 
 </Project>

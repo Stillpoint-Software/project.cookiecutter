@@ -10,20 +10,20 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
         .UseIdentityAlwaysColumn()
         .HasColumnName("id");
     sampleTableBuilder.Property(x => x.Name).HasColumnName("name");
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
     sampleTableBuilder.Property(x => x.Description).HasColumnName("description")
     .HasColumnType("bytea")
     .HasConversion(
         val => EncryptData(val ?? string.Empty),
         val => DecryptData(val));
-    {% else %}
+    {%- else %}
     sampleTableBuilder.Property(x => x.Description).HasColumnName("description");
-    {% endif %}
+    {%- endif %}
     sampleTableBuilder.Property(x => x.CreatedBy).HasColumnName("created_by");
     sampleTableBuilder.Property(x => x.CreatedDate).HasColumnName("created_date");
 }
 
-{% if cookiecutter.include_audit and cookiecutter.database == 'PostgreSql' %}
+{%- if cookiecutter.include_audit and cookiecutter.database == 'PostgreSql' %}
 public byte[] EncryptData(string text)
 {
     using var command = this.Database.GetDbConnection().CreateCommand();
@@ -70,4 +70,4 @@ public string DecryptData(byte[] cipher)
     return decrypted ?? throw new InvalidOperationException("Decryption failed, result is null.");
 
 }
-{% endif %}
+{%- endif %}

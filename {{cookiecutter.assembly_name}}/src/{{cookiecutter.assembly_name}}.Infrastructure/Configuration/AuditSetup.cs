@@ -1,16 +1,17 @@
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
-{% if cookiecutter.include_audit %}
+{%- if cookiecutter.include_audit %}
 using Audit.Core;
-{% endif %}
-{% if cookiecutter.database == "PostgreSql" %}
+{%- endif %}
+{%- if cookiecutter.database == "PostgreSql" %}
 using Audit.PostgreSql.Configuration;
 {% elif cookiecutter.database == "MongoDb" %}
 using Audit.MongoDB.Providers;
-{% endif %}
-using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }};
+{%- endif %}
+using {{cookiecutter.assembly_name }}.Data.{{cookiecutter.database }}
+;
 using Microsoft.EntityFrameworkCore;
-using {{ cookiecutter.assembly_name }}.Core.Security;
+using {{cookiecutter.assembly_name }}.Core.Security;
 using Microsoft.Extensions.Configuration;
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
@@ -21,15 +22,15 @@ public static class AuditSetup
 
     public static void ConfigureAudit(IHostApplicationBuilder builder)
     {
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
         var connectionString = builder.Configuration["ConnectionStrings:{{cookiecutter.database_name |lower}}"];
         {% include 'templates/audit/api_postgresql.cs' %}
-        {% endif %}
-        {% if cookiecutter.database == "MongoDb" %}
+        {%- endif %}
+        {%- if cookiecutter.database == "MongoDb" %}
         var connectionString = builder.Configuration.GetConnectionString("{{ cookiecutter.database_name |lower}}");
         {% include 'templates/audit/api_mongodb.cs' %}
-        {% endif %}
+        {%- endif %}
 
         Audit.Core.Configuration.AddOnSavingAction(scope =>
         {
@@ -39,11 +40,11 @@ public static class AuditSetup
                     .Cast<object>()
                     .Select(item => new ListAuditModel
                     {
-            {% if cookiecutter.database == "PostgreSql" %}
+            {%- if cookiecutter.database == "PostgreSql" %}
             Id = (int)item.GetType().GetProperty("Id")!.GetValue(item)!
             {% elif cookiecutter.database == "MongoDb" %}
             Id = (string)item.GetType().GetProperty("Id")!.GetValue(item)!
-            {% endif %}
+            {%- endif %}
         })
         .ToList();
 
@@ -68,12 +69,12 @@ public static class AuditSetup
     {
         foreach (var property in secureProperties)
         {
-            {% if cookiecutter.database == 'PostgreSql' %}
+            {%- if cookiecutter.database == 'PostgreSql' %}
             {% include 'templates/audit/api_security_postgresql.cs' %}
-            {% endif %}
-            {% if cookiecutter.database == 'MongoDb' %}
+            {%- endif %}
+            {%- if cookiecutter.database == 'MongoDb' %}
             {% include 'templates/audit/api_security_mongodb.cs' %}
-            {% endif %}
+            {%- endif %}
         }
     }
 }

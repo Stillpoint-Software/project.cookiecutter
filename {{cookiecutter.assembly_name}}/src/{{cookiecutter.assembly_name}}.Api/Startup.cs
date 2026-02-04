@@ -14,13 +14,13 @@ using {{ cookiecutter.assembly_name }}.Data.{{ cookiecutter.database }}.Services
 using {{ cookiecutter.assembly_name }}.Infrastructure.Configuration;
 using {{ cookiecutter.assembly_name }}.Infrastructure.Extensions;
 using {{ cookiecutter.assembly_name }}.ServiceDefaults;
-{% if cookiecutter.database == "MongoDb" %}
+{%- if cookiecutter.database == "MongoDb" %}
 using MongoDB.Driver;
-{% endif %}
-{% if cookiecutter.include_oauth %}
+{%- endif %}
+{%- if cookiecutter.include_oauth %}
 using Microsoft.AspNetCore.Authentication;
 using System.Net.Http.Headers;
-{% endif %}
+{%- endif %}
 
 namespace {{cookiecutter.assembly_name }}.Api;
 
@@ -28,14 +28,14 @@ public class Startup : IStartupRegistry
 {
     public void ConfigureServices(IHostApplicationBuilder builder, IServiceCollection services)
     {
-        builder.UseStartup <{{ cookiecutter.assembly_name }}.Infrastructure.Startup > ();
+        builder.UseStartup <{{cookiecutter.assembly_name }}.Infrastructure.Startup > ();
 
         builder.AddBackgroundServices();
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}");
         {% elif cookiecutter.database == "MongoDb" %}
         {% include 'templates/api/mongodb_service.cs' %}
-        {% endif %}
+        {%- endif %}
         builder.Configuration
         .AddEnvironmentVariables()
         .AddUserSecrets<Program>(optional: true);
@@ -44,11 +44,11 @@ public class Startup : IStartupRegistry
     public void ConfigureApp(WebApplication app, IWebHostEnvironment env)
     {
         app.MapDefaultEndpoints();
-        {% if cookiecutter.include_oauth %}
+        {%- if cookiecutter.include_oauth %}
         app.MapSampleEndpoints().RequireAuthorization();
-        {% else %}
+        {%- else %}
         app.MapSampleEndpoints();
-        {% endif %}
+        {%- endif %}
     }
 
     public void ConfigureScanner(ServiceRegistry services)
@@ -99,6 +99,6 @@ public static class StartupExtensions
     }
 }
 
-{% if cookiecutter.include_oauth %}
+{%- if cookiecutter.include_oauth %}
 {% include 'templates/api/authentication.cs' %}
-{% endif %}
+{%- endif %}

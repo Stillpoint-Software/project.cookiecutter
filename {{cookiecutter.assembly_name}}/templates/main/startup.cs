@@ -49,7 +49,7 @@ public class Startup : IStartupRegistry
             x.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
 
-        {% if cookiecutter.database == "PostgreSql" %}
+        {%- if cookiecutter.database == "PostgreSql" %}
         services.AddHealthChecks()
             .AddNpgSql(Configuration["{{cookiecutter.database}}:ConnectionString"]!);
         {% elif cookiecutter.database == "MongoDb" %}
@@ -59,7 +59,7 @@ public class Startup : IStartupRegistry
                 name: "MongoDb Health",
                 failureStatus: HealthStatus.Degraded
             );
-        {% endif %}
+        {%- endif %}
 
         services.AddApiVersioning(options =>
         {
@@ -75,7 +75,7 @@ public class Startup : IStartupRegistry
 
         services.AddDataProtection();
 
-        {% if cookiecutter.include_oauth %}
+        {%- if cookiecutter.include_oauth %}
         // security
         services.AddAuthentication(options => //BF review hyperbee AddSecurity implementation
         {
@@ -93,7 +93,7 @@ public class Startup : IStartupRegistry
         });
 
         services.AddAuthorization();
-        {% endif %}
+        {%- endif %}
 
         services.AddPipeline((factoryServices, rootProvider) =>
         {
@@ -163,19 +163,19 @@ public class Startup : IStartupRegistry
                 c.RoutePrefix = string.Empty; // serve the Swagger UI at the app root (http://localhost:<port>/)
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "{{cookiecutter.assembly_name}} API V1");
 
-                {% if cookiecutter.include_oauth %}
+                {%- if cookiecutter.include_oauth %}
                 c.OAuthAppName(Configuration["Api:AppName"]);
                 c.OAuthScopeSeparator(" ");
                 c.OAuthUsePkce();
-                {% endif %}
+                {%- endif %}
 
                 if (!env.IsDevelopment()) return;
 
-                {% if cookiecutter.include_oauth %}
+                {%- if cookiecutter.include_oauth %}
                 // preset id and secret in dev
                 c.OAuthClientId(Configuration["OAuth:Swagger:ClientId"]);
                 c.OAuthClientSecret(Configuration["OAuth:Swagger:ClientSecret"]);
-                {% endif %}
+                {%- endif %}
             });
         }
     }

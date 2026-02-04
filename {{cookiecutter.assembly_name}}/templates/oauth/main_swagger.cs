@@ -1,14 +1,14 @@
 public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration config)
 {
     //https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/test/WebSites/OAuth2Integration/Startup.cs
-    {% if cookiecutter.include_oauth %}
+    {%- if cookiecutter.include_oauth %}
     var authorizationUrl = $"https://{config["OAuth:Domain"]}/authorize?audience={config["OAuth:Audience"]}";
     var tokenUrl = $"https://{config["OAuth:Domain"]}/oauth/token";
-    {% endif %}
+    {%- endif %}
     services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-        {% if cookiecutter.include_oauth %}
+        {%- if cookiecutter.include_oauth %}
         c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
             Type = SecuritySchemeType.OAuth2,
@@ -39,7 +39,7 @@ public static IServiceCollection AddSwagger(this IServiceCollection services, IC
         });
 
         c.OperationFilter<SecurityRequirementsOperationFilter>();
-        {% endif %}
+        {%- endif %}
         c.DocumentFilter<HealthChecksFilter>(); // filter to generate health check endpoint
     });
 

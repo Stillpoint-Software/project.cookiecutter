@@ -7,12 +7,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.IdentityModel.Logging" />
-    {% if cookiecutter.database == "PostgreSql" %}
+    {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include = "Aspire.Npgsql" />
     <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"  />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include = "MongoDB.EntityFrameworkCore" />
-    {% endif %}
+    {%- endif %}
   </ItemGroup >
   <ItemGroup>
     <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />

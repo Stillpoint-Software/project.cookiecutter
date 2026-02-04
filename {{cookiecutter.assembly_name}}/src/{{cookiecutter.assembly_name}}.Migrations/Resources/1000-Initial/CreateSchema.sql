@@ -1,6 +1,6 @@
 ﻿CREATE SCHEMA IF NOT EXISTS {{cookiecutter.database_name| lower}};
 
-{% if cookiecutter.include_audit  %}
+{%- if cookiecutter.include_audit  %}
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS {{cookiecutter.database_name| lower}}.audit_event
@@ -23,17 +23,17 @@ BEGIN
    RETURN pgp_sym_decrypt(t,k);
 END;
 $function$ LANGUAGE plpgsql;	
-{% endif %}
+{%- endif %}
 
 CREATE TABLE IF NOT EXISTS {{cookiecutter.database_name| lower}}.sample
 (
     id      SERIAL PRIMARY KEY,
     name         TEXT,
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
     description   BYTEA NOT NULL,
-    {% else %}
+    {%- else %}
     description  TEXT NOT NULL,
-    {% endif %}
+    {%- endif %}
     created_by   TEXT NOT NULL,
     created_date TIMESTAMP WITH TIME ZONE NOT NULL
 );

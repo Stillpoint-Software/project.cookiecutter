@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
-{% if cookiecutter.database == "PostgreSql" %}
+{%- if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
 {% elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
 using MongoDB.Driver;
-{% endif %}
+{%- endif %}
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
@@ -26,9 +26,9 @@ internal static class StartupExtensions
             .AddJsonFile(ConfigurationHelper.EnvironmentAppSettingsName, optional: true);
     }
 
-{% if cookiecutter.database =="MongoDb" %}
+{%- if cookiecutter.database =="MongoDb" %}
 {% include 'templates/migration/startup_ext.cs' %}
-{% endif %}
+{%- endif %}
 }
 
 internal static class ConfigurationHelper

@@ -9,29 +9,29 @@
     <PackageReference Include="Serilog" />
     <PackageReference Include="FluentValidation"  />
     <PackageReference Include="Hyperbee.Pipeline"  />
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
     <PackageReference Include="Audit.NET"  />
-      {% if cookiecutter.database =="PostgreSql" %}
+      {%- if cookiecutter.database =="PostgreSql" %}
       <PackageReference Include="Audit.NET.PostgreSql" />
       {% elif cookiecutter.database == "MongoDb" %}
       <PackageReference Include="Audit.NET.MongoDB" />
-      {% endif %} 
-    {% endif %}
-    {% if cookiecutter.include_azure_storage %}
+      {%- endif %} 
+    {%- endif %}
+    {%- if cookiecutter.include_azure_storage %}
     <PackageReference Include="Aspire.Azure.Storage.Blobs" />
-    {% endif %}
-    {% if cookiecutter.database =="PostgreSql" %}
+    {%- endif %}
+    {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Aspire.Npgsql" />
     {% elif cookiecutter.database =="MongoDb" %}
     <PackageReference Include="Aspire.MongoDB.Driver.v3" />
-    {% endif %}
-    {% if cookiecutter.include_oauth %}
+    {%- endif %}
+    {%- if cookiecutter.include_oauth %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"  />
-    {% endif %}
-    {% if cookiecutter.include_azure_key_vault %}
+    {%- endif %}
+    {%- if cookiecutter.include_azure_key_vault %}
     <PackageReference Include="Aspire.Azure.Security.KeyVault" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" />
-  {% endif %}
+  {%- endif %}
   </ItemGroup>
 
   <ItemGroup>

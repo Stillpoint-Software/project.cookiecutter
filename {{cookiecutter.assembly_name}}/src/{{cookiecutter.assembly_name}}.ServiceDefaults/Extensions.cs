@@ -9,9 +9,9 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
-{% if cookiecutter.include_azure_application_insights %}
+{%- if cookiecutter.include_azure_application_insights %}
 using Azure.Monitor.OpenTelemetry.AspNetCore;
-{% endif %}
+{%- endif %}
 
 namespace {{cookiecutter.assembly_name }}.ServiceDefaults;
 
@@ -98,14 +98,14 @@ public static class Extensions
             builder.Services.AddOpenTelemetry().UseOtlpExporter();
         }
 
-        {% if cookiecutter.include_azure_application_insights %}
+        {%- if cookiecutter.include_azure_application_insights %}
         // Uncomment the following lines to enable the Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
         if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
         {
             builder.Services.AddOpenTelemetry()
                .UseAzureMonitor();
         }
-        {% endif %}
+        {%- endif %}
 
         return builder;
     }

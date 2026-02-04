@@ -2,7 +2,7 @@ using Aspire.Hosting.ApplicationModel;
 
 namespace {{cookiecutter.assembly_name }}.AppHost.Extensions;
 
-{% if cookiecutter.database == "PostgreSql" %}
+{%- if cookiecutter.database == "PostgreSql" %}
 public static class PostgresDatabaseExtensions
 {
     public static IResourceBuilder<PostgresDatabaseResource> AddPostgreSQLResource(
@@ -47,4 +47,4 @@ public static class MongoDatabaseExtensions
         return dbServer.AddDatabase("{{ cookiecutter.database_name|lower }}");
     }
 }
-{% endif %}
+{%- endif %}

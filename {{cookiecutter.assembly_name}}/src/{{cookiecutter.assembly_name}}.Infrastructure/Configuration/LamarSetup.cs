@@ -4,24 +4,24 @@ using System.Text.Json.Serialization;
 using FluentValidation;
 using Hyperbee.Pipeline.Context;
 using Lamar.Microsoft.DependencyInjection;
-using {{ cookiecutter.assembly_name}}.Core.Identity;
-using {{ cookiecutter.assembly_name}}.Core.Validators;
-using {{ cookiecutter.assembly_name}}.Infrastructure.Data;
-using {{ cookiecutter.assembly_name}}.Infrastructure.IoC;
-using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services;
+using {{cookiecutter.assembly_name}}.Core.Identity;
+using {{cookiecutter.assembly_name}}.Core.Validators;
+using {{cookiecutter.assembly_name}}.Infrastructure.Data;
+using {{cookiecutter.assembly_name}}.Infrastructure.IoC;
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-{% if cookiecutter.include_audit %}
+{%- if cookiecutter.include_audit %}
 using Audit.Core;
-{% endif %}
-{% if cookiecutter.database == "PostgreSql" %}
-using {{ cookiecutter.assembly_name}}.Data.PostgreSql.Services;
-{% endif %}
-{% if cookiecutter.database =="MongoDb" %}
-using {{ cookiecutter.assembly_name}}.Data.Abstractions.Services;
-using {{ cookiecutter.assembly_name}}.Data.MongoDb.Services;
-{% endif %}
+{%- endif %}
+{%- if cookiecutter.database == "PostgreSql" %}
+using {{cookiecutter.assembly_name}}.Data.PostgreSql.Services;
+{%- endif %}
+{%- if cookiecutter.database == "MongoDb" %}
+using {{cookiecutter.assembly_name}}.Data.Abstractions.Services;
+using {{cookiecutter.assembly_name}}.Data.MongoDb.Services;
+{%- endif %}
 
 
 namespace {{cookiecutter.assembly_name }}.Infrastructure.Configuration;
@@ -47,9 +47,9 @@ public static class LamarSetup
             registry.AddSingleton<IPipelineContextFactory, PipelineContextFactory>();
             registry.AddSingleton<IValidatorProvider, ValidatorProvider>();
             registry.AddSingleton<ISampleService, SampleService>();
-            {% if cookiecutter.include_audit %}
+            {%- if cookiecutter.include_audit %}
             registry.AddSingleton<IAuditScopeFactory, AuditScopeFactory>();
-            {% endif %}
+            {%- endif %}
 
 
 

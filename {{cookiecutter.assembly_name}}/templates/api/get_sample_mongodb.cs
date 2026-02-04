@@ -22,12 +22,12 @@ public class GetSampleCommand : ServiceCommandFunction<string, SampleDefinition>
             .PipeAsync(GetSampleAsync)
             .Build();
     }
-    {% if cookiecutter.include_audit  %}
+    {%- if cookiecutter.include_audit  %}
 {% include "templates/audit/api_sample_get_mongodb.cs" %}
-{% else %}
+{%- else %}
 private async Task<SampleDefinition> GetSampleAsync(IPipelineContext context, string sampleId)
 {
     return await _sampleService.GetSampleAsync(sampleId);
 }
-{% endif %}
+{%- endif %}
 }

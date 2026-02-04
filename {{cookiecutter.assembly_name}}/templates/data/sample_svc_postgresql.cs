@@ -29,9 +29,9 @@ public class SampleService : ISampleService
         }
     }
 
-    {% if cookiecutter.include_audit %}
+    {%- if cookiecutter.include_audit %}
 {% include 'templates/audit/data_sample_svc_postgresql.cs' %}
-{% else %}
+{%- else %}
 public async Task<int> CreateSampleAsync(Sample sample)
 {
     try
@@ -63,5 +63,5 @@ public async Task UpdateSampleAsync(int sampleId, string name, string descriptio
         throw new ServiceException(nameof(UpdateSampleAsync), "Error updating Sample.", ex);
     }
 }
-{% endif %}
+{%- endif %}
 }

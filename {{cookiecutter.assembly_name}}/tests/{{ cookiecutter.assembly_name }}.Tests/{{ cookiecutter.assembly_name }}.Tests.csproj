@@ -22,13 +22,13 @@
     <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
   </PackageReference>
   <PackageReference Include="Testcontainers" />
-  {% if cookiecutter.database == "PostgreSql" %}
+  {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Testcontainers.PostgreSql" />
   {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.MongoDB.Driver.v3"/>
     <PackageReference Include="MongoDB.Driver"  />
     <PackageReference Include="Testcontainers.MongoDb"/>
-    {% endif %}
+    {%- endif %}
   </ItemGroup>
 
   <ItemGroup>

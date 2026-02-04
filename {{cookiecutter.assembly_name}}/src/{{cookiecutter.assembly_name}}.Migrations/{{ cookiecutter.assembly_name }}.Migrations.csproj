@@ -9,7 +9,7 @@
   <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
   <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />
   <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
-{% if cookiecutter.database == "PostgreSql" %}
+{%- if cookiecutter.database == "PostgreSql" %}
   <EmbeddedResource Include="Resources\1000-Initial\CreateSchema.sql" />
   <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"  />
   <PackageReference Include = "Hyperbee.Migrations.Providers.Postgres" />
@@ -19,10 +19,10 @@
   <PackageReference Include = "Hyperbee.Migrations.Providers.MongoDB"  />
   <PackageReference Include = "Aspire.Hosting.MongoDB" />
   <PackageReference Include = "Aspire.MongoDB.Driver.v3"  />
-{% endif %}
-{% if cookiecutter.include_azure_key_vault  %}
+{%- endif %}
+{%- if cookiecutter.include_azure_key_vault  %}
   <PackageReference Include = "Azure.Identity"  />
-{% endif %}
+{%- endif %}
 </ItemGroup>
 
 <ItemGroup>

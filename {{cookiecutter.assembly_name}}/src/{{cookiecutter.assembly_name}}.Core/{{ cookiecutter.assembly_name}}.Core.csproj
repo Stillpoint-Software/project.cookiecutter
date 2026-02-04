@@ -9,34 +9,38 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" />   
     <PackageReference Include="Azure.Identity" />
-    {% if cookiecutter.include_audit%}
+    {%- if cookiecutter.include_audit%}
     <PackageReference Include="Audit.NET" />
-    {% if cookiecutter.database =="PostgreSql" %}
+    {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" />
     {% elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB"  />
-    {% endif %} 
-    {% endif %}
-    {% if cookiecutter.include_azure_key_vault== "yes" %}
+    {%- endif %} 
+    {%- endif %}
+    {%- if cookiecutter.include_azure_key_vault== "yes" %}
     <PackageReference Include="Aspire.Azure.Security.KeyVault" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" />
-  {% endif %}
-  {% if cookiecutter.include_azure_storage== "yes" %}
+  {%- endif %}
+  {%- if cookiecutter.include_azure_storage== "yes" %}
     <PackageReference Include="Aspire.Azure.Storage.Blobs" />
-  {% endif %}
-  {% if cookiecutter.include_oauth %}
+  {%- endif %}
+  {%- if cookiecutter.include_oauth %}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-  {% endif %}
-  {% if cookiecutter.database =="PostgreSql" %}
+  {%- endif %}
+  {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Npgsql" />
   {% elif cookiecutter.database =="MongoDb" %}
     <PackageReference Include="Aspire.MongoDB.Driver.v3" />
-  {% endif %}
+  {%- endif %}
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
+
+ <ItemGroup>
+   <ProjectReference Include="..\{{cookiecutter.assembly_name}}.Data.Abstractions\{{cookiecutter.assembly_name}}.Data.Abstractions.csproj" />
+ </ItemGroup>
 
 
 </Project>
