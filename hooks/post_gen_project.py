@@ -104,9 +104,8 @@ def rm_each(paths: Iterable[Path | str]) -> None:
     for p in paths:
         rm(p)
 
-
 # ────────────────────────────────────────────
-# 1) Cookiecutter answers (rendered by Jinja2)
+# 1) Cookiecutter answers 
 # ────────────────────────────────────────────
 # All cookiecutter variables - Jinja2 renders these at generation time
 COOKIECUTTER_CONTEXT = {
@@ -126,7 +125,7 @@ COOKIECUTTER_CONTEXT = {
     "include_azure_storage": "{{ cookiecutter.include_azure_storage }}",
     "use_existing_azure_key_vault": "{{ cookiecutter.use_existing_azure_key_vault }}",
     "use_existing_azure_storage": "{{ cookiecutter.use_existing_azure_storage }}",
-    # User secrets (only used locally, not stored in .cookiecutter.json)
+    # User secrets (only used locally, stored in .cookiecutter.json as empty)
     "oauth_app_name": "{{ cookiecutter.oauth_app_name }}",
     "oauth_audience": "{{ cookiecutter.oauth_audience }}",
     "oauth_domain": "{{ cookiecutter.oauth_domain }}",
@@ -391,8 +390,25 @@ except Exception as e:
     print(f"⚠️  Deprecations prune skipped: {e}")
 
 if not COOKIE_FILE.exists():
-    # Only store non-secret values
+    BLANK_FOR_REPLAY_KEYS = {
+        "oauth_app_name",
+        "oauth_audience",
+        "oauth_domain",
+        "oauth_api_audience",
+        "oauth_api_client_id",
+        "oauth_swagger_client_id",
+        "azure_resource_group",
+        "azure_tenant_id",
+        "azure_subscription_id",
+        "azure_location",
+        "azure_application_insights_name",
+        "azure_key_vault_name",
+        "azure_storage_account_name",
+        "azure_storage_blob_name",
+    }
+
     ctx = {
+        # Core
         "assembly_name": COOKIECUTTER_CONTEXT["assembly_name"],
         "root_namespace": COOKIECUTTER_CONTEXT["root_namespace"],
         "api_app_name": COOKIECUTTER_CONTEXT["api_app_name"],
@@ -400,27 +416,39 @@ if not COOKIE_FILE.exists():
         "database": COOKIECUTTER_CONTEXT["database"],
         "database_name": COOKIECUTTER_CONTEXT["database_name"],
         "github_organization": COOKIECUTTER_CONTEXT["github_organization"],
-        "include_audit": COOKIECUTTER_CONTEXT["include_audit"],
-        "include_oauth": COOKIECUTTER_CONTEXT["include_oauth"],
-        "include_azure_key_vault": COOKIECUTTER_CONTEXT["include_azure_key_vault"],
-        "include_azure_application_insights": COOKIECUTTER_CONTEXT["include_azure_application_insights"],
-        "include_azure_storage": COOKIECUTTER_CONTEXT["include_azure_storage"],
-        "use_existing_azure_key_vault": COOKIECUTTER_CONTEXT["use_existing_azure_key_vault"],
-        "use_existing_azure_storage": COOKIECUTTER_CONTEXT["use_existing_azure_storage"],
-        # NOTE: User secrets are NOT stored here - they are in secrets-config.json
+
+        # Feature flags (REAL bools)
+        "include_audit": get_context_bool("include_audit"),
+        "include_oauth": get_context_bool("include_oauth"),
+        "include_azure_key_vault": get_context_bool("include_azure_key_vault"),
+        "include_azure_application_insights": get_context_bool("include_azure_application_insights"),
+        "include_azure_storage": get_context_bool("include_azure_storage"),
+        "use_existing_azure_key_vault": get_context_bool("use_existing_azure_key_vault"),
+        "use_existing_azure_storage": get_context_bool("use_existing_azure_storage"),
     }
-    
-    # Only store template_source if it's a remote URL (not a local path)
+
+    # Add “blank but present” keys for replay (intentionally blank)
+    for k in BLANK_FOR_REPLAY_KEYS:
+        ctx[k] = ""
+
     template_source = COOKIECUTTER_CONTEXT["_template"]
-    if template_source and template_source.startswith(("gh:", "git@", "http://", "https://")):
+    if template_source and str(template_source).startswith(("gh:", "git@", "http://", "https://")):
         ctx["template_source"] = template_source
-        
-    # Only store template_ref if it has a real value
+
     template_ref = COOKIECUTTER_CONTEXT["_checkout"]
-    if template_ref and template_ref.strip() and template_ref.lower() not in ("none", ""):
+    if template_ref and str(template_ref).strip() and str(template_ref).lower() not in ("none", ""):
         ctx["template_ref"] = template_ref
-    
-    ctx = {k: v for k, v in ctx.items() if v not in ("", None)}
+
+    # Drop None and empty strings EXCEPT for keys we intentionally keep blank
+    def keep_item(k, v) -> bool:
+        if v is None:
+            return False
+        if isinstance(v, str) and v.strip() == "":
+            return k in BLANK_FOR_REPLAY_KEYS
+        return True
+
+    ctx = {k: v for k, v in ctx.items() if keep_item(k, v)}
+
     COOKIE_FILE.write_text(json.dumps({"cookiecutter": ctx}, indent=4))
     print("✅  .cookiecutter.json written (without template_sha)")
 

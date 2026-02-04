@@ -14,34 +14,13 @@
   ],
   "database_name": "{{ cookiecutter.assembly_name | lower | replace(' ', '_') }}data",
   "github_organization": "",
-  "include_audit": [
-    false,
-    true
-  ],
-  "include_oauth": [
-    false,
-    true
-  ],
-  "include_azure_key_vault": [
-    false,
-    true
-  ],
-  "use_existing_azure_key_vault": [
-    false,
-    true
-  ],
-  "include_azure_application_insights": [
-    false,
-    true
-  ],
-  "include_azure_storage": [
-    false,
-    true
-  ],
-  "use_existing_azure_storage": [
-    false,
-    true
-  ],
+  "include_audit": false,
+  "include_oauth": false,
+  "include_azure_key_vault": false,
+  "use_existing_azure_key_vault": false,
+  "include_azure_application_insights": false,
+  "include_azure_storage": false,
+  "use_existing_azure_storage": false,
   "oauth_app_name": "",
   "oauth_audience": "",
   "oauth_domain": "",
