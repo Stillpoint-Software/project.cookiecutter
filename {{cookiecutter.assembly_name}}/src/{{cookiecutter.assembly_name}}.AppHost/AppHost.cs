@@ -27,14 +27,14 @@ var insights = builder.AddAppInsightsResource();
 {%- endif %}
 {%- if cookiecutter.database == "PostgreSql" %}
 //Database Resource
-var projectdb = builder.AddPostgreSQLResource();
+var projectDb = builder.AddPostgreSQLResource();
 {% elif cookiecutter.database == "MongoDb" %}
-var projectdb = builder.AddMongoDBResource();
+var projectDb = builder.AddMongoDBResource();
 {%- endif %}
 
-var apiServiceBuilder = builder.AddProject < Projects.{{cookiecutter.assembly_name}}_Api > ("{{cookiecutter.assembly_name|lower }}-api")
-    .WaitFor(projectdb)
-    .WithReference(projectdb)
+var apiServiceBuilder = builder.AddProject <Projects.{{cookiecutter.assembly_name}}_Api> ("{{cookiecutter.assembly_name|lower }}-api")
+    .WaitFor(projectDb)
+    .WithReference(projectDb)
     .WithExternalHttpEndpoints()
     {%- if cookiecutter.include_azure_key_vault %}
     .WaitFor(keyVault)
@@ -57,8 +57,8 @@ var apiServiceBuilder = builder.AddProject < Projects.{{cookiecutter.assembly_na
     .WithHttpHealthCheck("/health");
 
 var migrationsBuilder = builder.AddProject < Projects.{{ cookiecutter.assembly_name }}_Migrations > ("{{cookiecutter.assembly_name|lower }}-migrations")
-    .WaitFor(projectdb)
-    .WithReference(projectdb);
+    .WaitFor(projectDb)
+    .WithReference(projectDb);
 {%- if cookiecutter.include_azure_application_insights %}
 apiServiceBuilder = apiServiceBuilder.WaitFor(insights);
 apiServiceBuilder = apiServiceBuilder.WithReference(insights);

@@ -11,13 +11,13 @@ private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context,
         var sampleDefinition = new SampleDefinition
         (
                 {%- if cookiecutter.database == "PostgreSql" %}
-    sample.Id,
+                sample.Id,
                 {%- else %}
-    sample.Id.ToString(),
+                sample.Id.ToString(),
                 {%- endif %}
-    sample.Name,
+                sample.Name,
                 sample.Description
             );
     return sampleDefinition;
-}
     }
+}
