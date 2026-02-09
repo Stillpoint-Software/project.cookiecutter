@@ -23,9 +23,8 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-ROOT = Path.cwd()
-HOOKS_DIR = Path(__file__).parent
-SECRETS_CONFIG_FILE = HOOKS_DIR / "secrets-config.json"
+ROOT = Path.cwd()  
+SECRETS_CONFIG_FILE = ROOT / "templates" / "secrets-config.json"
 
 # ────────────────────────────────────────────
 # Shell helpers
@@ -171,6 +170,25 @@ def get_context_bool(key: str) -> bool:
     """Get a boolean value from the cookiecutter context."""
     return as_bool(COOKIECUTTER_CONTEXT.get(key, "false"))
 
+def validate_required_values_for_user_secrets() -> None:
+    """Fail fast for required values that matter only when using local user-secrets."""
+    errors: list[str] = []
+
+    # Requirement:
+    # If include_azure_storage=true and use_existing_azure_storage=false,
+    # azure_storage_blob_name must be provided.
+    if get_context_bool("include_azure_storage") and not get_context_bool("use_existing_azure_storage"):
+        blob = (get_context_value("azure_storage_blob_name") or "").strip()
+        if not blob:
+            errors.append(
+                "azure_storage_blob_name (required when include_azure_storage=true and use_existing_azure_storage=false)"
+            )
+
+    if errors:
+        print("❌ Missing required values:", file=sys.stderr)
+        for e in errors:
+            print(f"   - {e}", file=sys.stderr)
+        raise SystemExit(1)
 
 # ────────────────────────────────────────────
 # 2) User secrets from secrets-config.json
@@ -178,15 +196,27 @@ def get_context_bool(key: str) -> bool:
 def evaluate_condition(condition) -> bool:
     """
     Evaluate a condition from secrets-config.json.
-    
-    - Single string: "include_oauth" → check if that flag is true
-    - List (AND): ["include_azure_key_vault", "use_existing_azure_key_vault"] → all must be true
+
+    Supports:
+    - "include_oauth"
+    - "!use_existing_azure_storage" or "not use_existing_azure_storage"
+    - ["include_azure_storage", "!use_existing_azure_storage"]  (AND)
     """
     if isinstance(condition, str):
-        return get_context_bool(condition)
+        token = condition.strip()
+
+        # NOT support
+        if token.startswith("!"):
+            return not get_context_bool(token[1:].strip())
+        if token.lower().startswith("not "):
+            return not get_context_bool(token[4:].strip())
+
+        return get_context_bool(token)
+
     elif isinstance(condition, list):
-        # AND condition - all must be true
-        return all(get_context_bool(c) for c in condition)
+        # AND condition - all must be true (and supports nested / negated tokens)
+        return all(evaluate_condition(c) for c in condition)
+
     return False
 
 
@@ -251,36 +281,43 @@ def set_user_secrets(apphost_csproj: Path) -> None:
 
 
 def require_secrets_non_empty() -> None:
-    """Validate that required secrets have values based on enabled features."""
+    """Validate that required secrets have values based on enabled features.
+
+    Rules are driven by hooks/secrets-config.json:
+      - Each section has a condition (AND) or condition_any (OR of AND groups)
+      - If the section condition is met, every mapped context key must be non-empty
+    """
     config = load_secrets_config()
     if not config:
         return
-    
-    errors = []
-    
+
+    errors: list[str] = []
+
     for section_name, section in config.items():
-        # Check if this section's condition is met
-        should_validate = False
-        
+        # Determine whether this section is active
         if "condition" in section:
             should_validate = evaluate_condition(section["condition"])
         elif "condition_any" in section:
             should_validate = evaluate_condition_any(section["condition_any"])
-        
+        else:
+            should_validate = True  # No condition means always validate
+
         if not should_validate:
             continue
-        
+
+        # Validate required values
         secrets = section.get("secrets", {})
-        for secret_key, context_key in secrets.items():
-            value = get_context_value(context_key)
-            if not value or not value.strip():
+        for _, context_key in secrets.items():
+            value = (get_context_value(context_key) or "").strip()
+            if not value:
                 errors.append(f"{context_key} (required for {section_name})")
-    
+
     if errors:
         print("❌ Missing required values:", file=sys.stderr)
         for err in errors:
             print(f"   - {err}", file=sys.stderr)
         raise SystemExit(1)
+
 
 
 # ────────────────────────────────────────────
