@@ -402,7 +402,7 @@ if not include_azure_storage:
         ROOT / f"src/{assembly_name}.AppHost/Extensions/StorageExtensions.cs",
     ])
 
-
+rm(ROOT / "templates")  # always drop template snippets
 # ────────────────────────────────────────────
 # 5) Persist minimal replay context (without template_sha)
 # ────────────────────────────────────────────
