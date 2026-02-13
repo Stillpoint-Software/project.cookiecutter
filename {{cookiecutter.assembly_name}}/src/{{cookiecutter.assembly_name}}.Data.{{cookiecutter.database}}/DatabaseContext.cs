@@ -24,7 +24,7 @@ public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options
 
 {%- if cookiecutter.database == "PostgreSql" %}
 {% include 'templates/audit/data_postgresql_encryption.cs' %}
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 {% include 'templates/data/mongodb_context.cs' %}
 {%- endif %}
 }

@@ -16,6 +16,6 @@ namespace {{cookiecutter.assembly_name }}.Api.Commands.SampleArea;
 
 {%- if cookiecutter.database == "PostgreSql" %}
 {% include 'templates/api/get_sample_postgresql.cs' %}
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 {% include 'templates/api/get_sample_mongodb.cs' %}
 {%- endif %}

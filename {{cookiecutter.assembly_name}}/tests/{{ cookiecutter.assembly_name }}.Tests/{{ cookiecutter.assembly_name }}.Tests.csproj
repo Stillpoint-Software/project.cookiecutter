@@ -24,7 +24,7 @@
   <PackageReference Include="Testcontainers" />
   {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Testcontainers.PostgreSql" />
-  {% elif cookiecutter.database == "MongoDb" %}
+  {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.MongoDB.Driver.v3"/>
     <PackageReference Include="MongoDB.Driver"  />
     <PackageReference Include="Testcontainers.MongoDb"/>

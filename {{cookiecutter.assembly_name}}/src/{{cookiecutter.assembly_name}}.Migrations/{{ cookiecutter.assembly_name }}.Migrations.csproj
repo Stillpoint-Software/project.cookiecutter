@@ -14,7 +14,7 @@
   <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"  />
   <PackageReference Include = "Hyperbee.Migrations.Providers.Postgres" />
   <PackageReference Include = "Npgsql"  />
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 <EmbeddedResource Include= "Resources\1000-Initial\{{ cookiecutter.database_name | lower}}\sample\sample.json" />
   <PackageReference Include = "Hyperbee.Migrations.Providers.MongoDB"  />
   <PackageReference Include = "Aspire.Hosting.MongoDB" />

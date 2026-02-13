@@ -15,7 +15,7 @@
     {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Aspire.Hosting.PostgreSql" />
     <PackageReference Include="Npgsql" />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Aspire.Hosting.MongoDB" />
     <PackageReference Include="Aspire.MongoDB.Driver.v3"  />
     {%- endif %}

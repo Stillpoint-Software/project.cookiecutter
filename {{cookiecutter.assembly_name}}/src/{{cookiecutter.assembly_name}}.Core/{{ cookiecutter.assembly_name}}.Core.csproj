@@ -13,7 +13,7 @@
     <PackageReference Include="Audit.NET" />
     {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB"  />
     {%- endif %} 
     {%- endif %}
@@ -29,7 +29,7 @@
   {%- endif %}
   {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Npgsql" />
-  {% elif cookiecutter.database =="MongoDb" %}
+  {%- elif cookiecutter.database =="MongoDb" %}
     <PackageReference Include="Aspire.MongoDB.Driver.v3" />
   {%- endif %}
     <PackageReference Include="OpenTelemetry.Exporter.Console" />

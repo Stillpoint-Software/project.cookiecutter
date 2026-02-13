@@ -33,7 +33,7 @@ public class Startup : IStartupRegistry
         builder.AddBackgroundServices();
         {%- if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}");
-        {% elif cookiecutter.database == "MongoDb" %}
+        {%- elif cookiecutter.database == "MongoDb" %}
         {% include 'templates/api/mongodb_service.cs' %}
         {%- endif %}
         builder.Configuration

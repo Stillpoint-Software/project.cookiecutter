@@ -10,9 +10,9 @@ public static class PostgresDatabaseExtensions
     {
         var dbPassword = builder.AddParameter("DbPassword", "postgres", true);
         var dbUser = builder.AddParameter("DbUser", "postgres", true);
+            var dbServer = builder.AddPostgres( "db", userName: dbUser, password: dbPassword );
 
-
-        var dbServer = builder.AddPostgres("postgres", userName: dbUser, password: dbPassword)
+        dbServer 
             .PublishAsConnectionString()
             .WithDataVolume("postgres-data")
             .WithContainerName("postgres-container")
@@ -20,14 +20,15 @@ public static class PostgresDatabaseExtensions
             {
                 pgadmin
             .WithImageTag("latest")
-            .WithImagePullPolicy(ImagePullPolicy.Always);
+            .WithImagePullPolicy(ImagePullPolicy.Always)
+            .WithParentRelationship( dbServer );
             });
 
         return dbServer.AddDatabase("{{ cookiecutter.database_name|lower }}");
     }
 
 }
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 public static class MongoDatabaseExtensions
 {
     public static IResourceBuilder<MongoDBDatabaseResource> AddMongoDBResource(

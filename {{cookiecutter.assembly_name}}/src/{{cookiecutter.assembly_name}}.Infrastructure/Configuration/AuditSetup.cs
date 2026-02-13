@@ -5,7 +5,7 @@ using Audit.Core;
 {%- endif %}
 {%- if cookiecutter.database == "PostgreSql" %}
 using Audit.PostgreSql.Configuration;
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 using Audit.MongoDB.Providers;
 {%- endif %}
 using {{cookiecutter.assembly_name }}.Data.{{cookiecutter.database }}
@@ -42,7 +42,7 @@ public static class AuditSetup
                     {
             {%- if cookiecutter.database == "PostgreSql" %}
             Id = (int)item.GetType().GetProperty("Id")!.GetValue(item)!
-            {% elif cookiecutter.database == "MongoDb" %}
+            {%- elif cookiecutter.database == "MongoDb" %}
             Id = (string)item.GetType().GetProperty("Id")!.GetValue(item)!
             {%- endif %}
         })

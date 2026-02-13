@@ -10,7 +10,7 @@
     {%- if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include = "Aspire.Npgsql" />
     <PackageReference Include = "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"  />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include = "MongoDB.EntityFrameworkCore" />
     {%- endif %}
   </ItemGroup >

@@ -69,7 +69,7 @@ private async Task<SampleDefinition> InsertSampleAsync(IPipelineContext context,
     return new SampleDefinition(
         {%- if cookiecutter.database == "PostgreSql" %}
 sample.Id,   
-        {% elif cookiecutter.database == "MongoDb" %}
+        {%- elif cookiecutter.database == "MongoDb" %}
 sample.Id.ToString(),
         {%- endif %}
 sample.Name,

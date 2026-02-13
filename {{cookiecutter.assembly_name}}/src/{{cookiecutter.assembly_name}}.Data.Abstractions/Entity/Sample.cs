@@ -15,7 +15,7 @@ public record Sample
 {
 {%- if cookiecutter.database == "PostgreSql" %}
 {% include 'templates/abstractions/postgresql_sample.cs' %}
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 {% include 'templates/abstractions/mongodb_sample.cs' %}
 {%- endif %}
 }

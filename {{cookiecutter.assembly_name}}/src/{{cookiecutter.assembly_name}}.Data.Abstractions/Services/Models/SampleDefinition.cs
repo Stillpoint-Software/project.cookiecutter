@@ -3,7 +3,7 @@
 public record SampleDefinition(
     {%- if cookiecutter.database == "PostgreSql" %}
 int? SampleId,
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     string Id,
     {%- endif %}
     string Name,

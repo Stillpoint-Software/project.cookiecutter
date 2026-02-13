@@ -28,7 +28,7 @@ var insights = builder.AddAppInsightsResource();
 {%- if cookiecutter.database == "PostgreSql" %}
 //Database Resource
 var projectDb = builder.AddPostgreSQLResource();
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 var projectDb = builder.AddMongoDBResource();
 {%- endif %}
 

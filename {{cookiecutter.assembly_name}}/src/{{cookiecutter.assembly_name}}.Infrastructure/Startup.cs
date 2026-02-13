@@ -18,7 +18,7 @@ using {{cookiecutter.assembly_name }}.Infrastructure.Data;
 using {{cookiecutter.assembly_name }}.Infrastructure.IoC;
 {%- if cookiecutter.database == "PostgreSql" %}
 using {{cookiecutter.assembly_name }}.Data.PostgreSql;
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 using {{cookiecutter.assembly_name}}.Data.MongoDb;
 {%- endif %}
 

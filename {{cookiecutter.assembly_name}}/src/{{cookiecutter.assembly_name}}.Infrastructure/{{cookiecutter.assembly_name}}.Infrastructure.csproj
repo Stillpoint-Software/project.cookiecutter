@@ -24,14 +24,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
     {%if cookiecutter.database == "PostgreSql" %}
     <PackageReference Include="Hyperbee.Migrations.Providers.Postgres" />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Hyperbee.Migrations.Providers.MongoDB" />
     {%- endif %}
     {%- if cookiecutter.include_audit %}
     <PackageReference Include="Audit.NET"  />
     {%- if cookiecutter.database =="PostgreSql" %}
     <PackageReference Include="Audit.NET.PostgreSql" />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
     <PackageReference Include="Audit.NET.MongoDB"  />
     {%- endif %} 
     {%- endif %}

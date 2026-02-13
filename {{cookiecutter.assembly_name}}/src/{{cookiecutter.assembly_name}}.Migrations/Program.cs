@@ -3,7 +3,7 @@
 using {{cookiecutter.assembly_name }}.ServiceDefaults;
 {%- if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
 using {{cookiecutter.assembly_name }}.Migrations.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +27,7 @@ public class Program
 
         {%- if cookiecutter.database == "PostgreSql" %}
         builder.AddNpgsqlDbContext<DatabaseContext>("{{cookiecutter.database_name | lower}}"); // this allows for telemetry
-        {% elif cookiecutter.database == "MongoDb" %}
+        {%- elif cookiecutter.database == "MongoDb" %}
         //mongodb here
         builder.AddMongoDBClient("{{cookiecutter.database_name| lower}}");
         {%- endif %}
@@ -53,7 +53,7 @@ public class Program
         {%- if cookiecutter.database == "PostgreSql" %}
         builder.Services.AddNpgsqlDataSource(connectionString);
         builder.Services.AddPostgresMigrations();
-        {% elif cookiecutter.database == "MongoDb" %}
+        {%- elif cookiecutter.database == "MongoDb" %}
         builder.Services.AddMongoDbMigrations(builder.Configuration);
         {%- endif %}
         builder.Services.AddHostedService<MainService>();

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 {%- if cookiecutter.database == "PostgreSql" %}
 using Hyperbee.Migrations.Providers.Postgres;
-{% elif cookiecutter.database == "MongoDb" %}
+{%- elif cookiecutter.database == "MongoDb" %}
 using Hyperbee.Migrations.Providers.MongoDB;
 using MongoDB.Driver;
 {%- endif %}

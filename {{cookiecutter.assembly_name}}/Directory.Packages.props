@@ -76,7 +76,7 @@
   <PackageVersion Include="Testcontainers" Version="4.10.0" />
    {%- if cookiecutter.database =="PostgreSql" %}
    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.10.0" />
-   {% elif cookiecutter.database =="MongoDb" %}
+   {%- elif cookiecutter.database =="MongoDb" %}
   <PackageVersion Include="Testcontainers.MongoDb" Version="4.10.0" />
    {%- endif %}
 </ItemGroup>
@@ -92,7 +92,7 @@
   <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
   <PackageVersion Include="Aspire.Hosting.PostgreSql" Version="13.1.0" />
   <PackageVersion Include="Hyperbee.Migrations.Providers.Postgres" Version="2.0.7" />
-  {% elif cookiecutter.database =="MongoDb" %} 
+  {%- elif cookiecutter.database =="MongoDb" %} 
    <!-- MongoDB has not Update to EF Core 10 yet -->
   <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
   <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.12" />
@@ -120,7 +120,7 @@
   <PackageVersion Include="Audit.NET" Version="32.0.0" />
     {%- if cookiecutter.database =="PostgreSql" %}
   <PackageVersion Include="Audit.NET.PostgreSql" Version="32.0.0" />
-    {% elif cookiecutter.database == "MongoDb" %}
+    {%- elif cookiecutter.database == "MongoDb" %}
   <PackageVersion Include="Audit.NET.MongoDB" Version="32.0.0" />
     {%- endif %} 
 </ItemGroup>

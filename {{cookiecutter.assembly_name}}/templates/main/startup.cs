@@ -52,7 +52,7 @@ public class Startup : IStartupRegistry
         {%- if cookiecutter.database == "PostgreSql" %}
         services.AddHealthChecks()
             .AddNpgSql(Configuration["{{cookiecutter.database}}:ConnectionString"]!);
-        {% elif cookiecutter.database == "MongoDb" %}
+        {%- elif cookiecutter.database == "MongoDb" %}
         services.AddHealthChecks()
             .AddMongoDb(
                 sp => new MongoClient(Configuration["MongoDb:ConnectionString"]),
