@@ -1,11 +1,11 @@
 {% raw %}
 name: Create Test Report
 on:
-  # ① Automatic – when the Test workflow ends on main / develop
+  # Automatic -- when the Test workflow ends on main
   workflow_run:
     workflows: ["Run Tests"]
     types:     [completed]
-    branches:  [main, develop]
+    branches:  [main]
 
 permissions:
   contents: read
