@@ -149,4 +149,51 @@ This template depends on a workflow stored in **`shared-workflows`**:
 
 ---
 
+## 🔒 Required Post-Creation Setup (Branch Protection)
+
+Generated repos follow a **trunk-based** workflow: all changes PR into `main`, and the `Create Release` workflow bumps `version.json` directly on `main` before creating a draft release. For that `version.json` push to land on a protected branch, the repo's branch protection must allow the `stillpoint-version-bot` GitHub App to bypass PR requirements.
+
+Apply this once after pushing the new repo to GitHub (requires admin/owner on the repo):
+
+```bash
+gh api --method PUT repos/Stillpoint-Software/<new-repo>/branches/main/protection \
+  -H "Content-Type: application/json" \
+  --input - <<'EOF'
+{
+  "required_status_checks": null,
+  "enforce_admins": false,
+  "required_pull_request_reviews": {
+    "dismiss_stale_reviews": false,
+    "require_code_owner_reviews": true,
+    "require_last_push_approval": false,
+    "required_approving_review_count": 1,
+    "bypass_pull_request_allowances": {
+      "users": [],
+      "teams": ["Admin"],
+      "apps": ["stillpoint-version-bot"]
+    }
+  },
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+EOF
+```
+
+Without this, `Create Release` will fail with `GH006: Protected branch update failed ... Changes must be made through a pull request.`
+
+The `stillpoint-version-bot` app is installed org-wide; org secrets `RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` supply its credentials to the shared `set_version.yml` workflow.
+
+## Release Process
+
+Trunk-based, three steps:
+
+1. Squash-merge feature PRs into `main`.
+2. Run the **Create Release** workflow on `main` (choose `bump` + increment, or `auto`).
+3. Review the draft release and click **Publish release**. Publishing triggers `Pack and Publish` → NuGet.
+
+Branch policy for `auto` mode: `main`/`vX.Y` → stable, `hotfix/*` → `-alpha` patch, feature branches → `-alpha` minor.
+
+---
+
 Happy coding — and happy template-syncing! 🚀

@@ -20,7 +20,6 @@
 
 | Branch    | Action       |
 | --------- | ------------ |
-| `develop` | [![Build status](https://github.com/{{cookiecutter.github_organization}}/{{cookiecutter.assembly_name}}/actions/workflows/pack_publish.yml/badge.svg?branch=develop)](https://github.com/{{cookiecutter.github_organization}}/{{cookiecutter.assembly_name}}/actions/workflows/pack_publish.yml)  |
 | `main`    | [![Build status](https://github.com/{{cookiecutter.github_organization}}/{{cookiecutter.assembly_name}}/actions/workflows/pack_publish.yml/badge.svg)](https://github.com/{{cookiecutter.github_organization}}/{{cookiecutter.assembly_name}}/actions/workflows/pack_publish.yml)    
 
 # Help
